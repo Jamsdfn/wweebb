@@ -1,0 +1,46 @@
+*{
+    padding: 0;
+    margin: 0;
+    font-family: "微软雅黑";
+}
+body{
+    background: #ccc;
+
+}
+ul{
+    list-style-type: none;
+}
+a{
+    color: #fff;
+    text-decoration: none;
+
+}
+a:hover{
+    color: orange;
+}
+.litem{
+
+    width: 200px;
+    border-bottom: solid 1px #fff;
+
+}
+.litem > a{
+    display: block;
+    height: 30px;
+    background: #2d78f4;
+    line-height: 30px;
+    border-left: solid 12px #2319DC;
+    padding-left: 5px;
+}
+
+.uitem li{
+    border-bottom: solid 1px #fff;
+}
+.uitem a{
+    display: block;
+    height: 30px;
+    background: #23ADE5;
+    line-height: 30px;
+    border-left: solid 25px #23c0e0;
+    padding-left: 5px;
+}

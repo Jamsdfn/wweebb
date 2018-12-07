@@ -1,0 +1,89 @@
+bady,ul,li{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+html,body{
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.7);
+}
+.clock{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -200px;
+    margin-left: -200px;
+    width: 400px;
+    height: 400px;
+    border: 10px solid #000000;
+    border-radius: 50%;
+    background: radial-gradient(#ccc,#fff);
+}
+.num-box{
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 50%;
+}
+.num{
+    position: absolute;
+    left: 50%;
+    top: 0;
+    margin-left: -25px;
+    width: 50px;
+    text-align: center;
+    font-size: 30px;
+    font-weight: 600;
+    transform-origin: 50% 200px;
+}
+.num span{
+    display: inline-block;
+    user-select: none;
+}
+
+
+.radio{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -10px;
+    margin-top: -10px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: radial-gradient(#000,#ccc);
+}
+.hou{
+    position: absolute;
+    left: 50%;
+    margin-left: -3px;
+    top: 110px;
+    width: 6px;
+    height: 120px;
+    background: linear-gradient(to top,#333,#666);
+    border-radius: 50% 50% 3px 3px;
+    transform-origin: 50% 90px;
+}
+.min{
+    position: absolute;
+    left: 50%;
+    margin-left: -3px;
+    top: 70px;
+    width: 6px;
+    height: 160px;
+    background: linear-gradient(to top,#333,#666);
+    border-radius: 50% 50% 3px 3px;
+    transform-origin: 50% 130px;
+}
+.sec{
+    position: absolute;
+    left: 50%;
+    margin-left: -2px;
+    top: 30px;
+    width: 4px;
+    height: 200px;
+    background-color: red;
+    border-radius: 50% 50% 2px 2px;
+    transform-origin: 50% 170px;
+}

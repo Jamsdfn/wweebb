@@ -1,0 +1,61 @@
+*{
+    padding: 0;
+    margin: 0;
+    /* 微软雅黑 */
+    font-family: Hiragino Sans GB,Microsoft Yahei,arial,\5b8b\4f53,Helvetica Neue,Helvetica,STHeiTi,sans-serif;
+    list-style-type: none;
+}
+
+a{
+    text-decoration: none;
+
+}
+.pic{
+    width:1100px;
+    height: 430px;
+    margin-top: 70px;
+}
+li{
+    float: left;
+    width: 90px;
+    height: 280px;
+}
+.pic1{
+    background-image: url("../img/1.jpg");
+    
+}
+.pic2{
+    background-image: url("../img/2.jpg");
+}
+.pic3{
+    background-image: url("../img/3.jpg");
+}
+.pic4{
+    background-image: url("../img/4.jpg");
+    width: 520px;
+}
+
+.txt{
+    background-color: #fff;
+    background: rgba(0, 0, 0, 0.5);
+    height: 280px;
+    width: 90px;
+} 
+
+p {
+    color: #fff;
+    float: left;
+}
+.p1{
+    padding: 19px 3px 0 19px;
+    font-size: 12px;
+    width: 12px;
+
+
+}
+
+.p2{
+    padding: 18px 18px 0 18px;
+    font-size: 14px;
+    width: 14px;
+}
