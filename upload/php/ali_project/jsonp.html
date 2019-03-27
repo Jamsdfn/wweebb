@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="jquery-3.3.1.js"></script>
+</head>
+<body>
+<script>
+    //要为每一个请求创建一个唯一的函数
+    // var funcName = 'aaa_'+Date.now()+Math.random().toString().substr(2,5)
+    // var script = document.createElement('script')
+    // script.src = 'http://wxy.com/test1.php?callback=' + funcName
+    // document.body.appendChild(script)
+    // window[funcName] = function (res) {
+    //     console.log(res)
+    // }
+
+    $.ajax({
+        url:'https://api.douban.com/v2/movie/in_theaters',
+        dataType:'jsonp',
+        success: function (res) {
+            console.log(res)
+        }
+    })
+
+
+</script>
+</body>
+</html>
