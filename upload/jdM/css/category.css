@@ -1,0 +1,152 @@
+html, body {
+    height: 100%;
+}
+
+.jd_layout {
+    width: 100%;
+    height: 100%;
+    /*background: pink;*/
+
+}
+
+.jd_topbar {
+    width: 100%;
+    height: 45px;
+    border-bottom: 1px solid #ccc;
+    background: url("../images/header-bg.png") 0 0/ 1px 44px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 1;
+}
+
+.jd_topbar a {
+    width: 40px;
+    height: 44px;
+    padding: 12px 10px;
+    position: absolute;
+    top: 0;
+    background-origin: content-box;
+    background-clip: content-box;
+}
+
+.jd_topbar .icon_back {
+    left: 0;
+    background-position: -20px 0;
+}
+
+.jd_topbar .icon_menu {
+    right: 0;
+    background-position: -60px 0;
+}
+
+.jd_topbar form {
+    width: 100%;
+    padding: 0 40px;
+}
+
+.jd_topbar form input {
+    width: 100%;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    margin-top: 7px;
+    padding: 0 10px;
+}
+
+.jd_main {
+    width: 100%;
+    height: 100%;
+    padding-top: 45px;
+}
+
+.jd_main .jd_cateLeft {
+    /*background: pink;*/
+    width: 90px;
+    height: 100%;
+    float: left;
+    overflow: hidden;
+}
+
+.jd_main .jd_cateLeft ul {
+    width: 90px;
+}
+
+.jd_main .jd_cateLeft ul li {
+    width: 90px;
+    height: 50px;
+    line-height: 50px;
+    background: #f3f4f5;
+    text-align: center;
+    font-size: 12px;
+    border-bottom: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+}
+
+.jd_main .jd_cateLeft ul li:first-child{
+    margin-top: -1px;
+    border-top: 1px solid #ccc;
+}
+
+.jd_main .jd_cateLeft ul li.now{
+    border-right: none;
+    background: #fff;
+}
+
+.jd_main .jd_cateLeft ul li a {
+    display: block;
+    width: 100%;
+}
+
+.jd_main .jd_cateLeft ul li.now a{
+    color: #d8505c;
+}
+
+.jd_main .jd_cateRight {
+    overflow: hidden;
+    /*background: green;*/
+    height: 100%;
+}
+
+.jd_main .jd_cateRight .jd_cateRight_box{
+    padding: 0 10px;
+}
+.jd_main .jd_cateRight .jd_cateRight_box .banner{
+    margin-top: 10px;
+    display: block;
+    width: 100%;
+}
+.jd_main .jd_cateRight .jd_cateRight_box .banner img{
+    display: block;
+    width: 100%;
+}
+
+.jd_main .jd_cateRight .hot{
+    margin: 10px 0;
+}
+.jd_main .jd_cateRight .hot h3{
+    font-size: 12px;
+}
+.jd_main .jd_cateRight .hot ul{
+    width: 100%;
+}
+.jd_main .jd_cateRight .hot ul li{
+    width: 33.3333%;
+    float: left;
+    padding-top: 5px;
+}
+.jd_main .jd_cateRight .hot ul li a{
+    display: block;
+    width: 100%;
+}
+.jd_main .jd_cateRight .hot ul li a img{
+    width: 62px;
+    height: 62px;
+    display: block;
+    margin: 0 auto;
+}
+.jd_main .jd_cateRight .hot ul li a p{
+    font-size: 12px;
+    text-align: center;
+    padding: 5px 0;
+}

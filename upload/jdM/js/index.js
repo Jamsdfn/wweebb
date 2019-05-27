@@ -15,14 +15,14 @@ var search = function () {
 //    监听页面滚动事件
     window.onscroll = function () {
         var scrollTop = document.documentElement.scrollTop
-        console.log("height:"+height+"scrollTop:"+scrollTop+".")
+        console.log("height:" + height + "scrollTop:" + scrollTop + ".")
         var opacity = 0
-        if(scrollTop<height){
-            opacity = scrollTop/height *0.85
-        }else{
+        if (scrollTop < height) {
+            opacity = scrollTop / height * 0.85
+        } else {
             opacity = 0.85
         }
-        searchBox.style.background='rgba(201,21,35,'+opacity+')'
+        searchBox.style.background = 'rgba(201,21,35,' + opacity + ')'
     }
 }
 
@@ -50,8 +50,8 @@ var banner = function () {
         imageBox.style.webkitTransition = 'none'
     }
     var setTranslateX = function (x) {
-        imageBox.style.transform = 'translateX('+ x +'px)'
-        imageBox.style.webkitTransform = 'translateX('+ x+'px)'
+        imageBox.style.transform = 'translateX(' + x + 'px)'
+        imageBox.style.webkitTransform = 'translateX(' + x + 'px)'
     }
 
     var index = 1
@@ -59,20 +59,20 @@ var banner = function () {
     var timer = setInterval(function () {
         index++
         addTransition()
-        setTranslateX(-index*width)
+        setTranslateX(-index * width)
 
-    },3000)
+    }, 3000)
 
-    imageBox.addEventListener('transitionend',function () {
-        if(index >= 9 ){
+    imageBox.addEventListener('transitionend', function () {
+        if (index >= 9) {
             index = 1
             removeTransition()
-            setTranslateX(-index*width)
+            setTranslateX(-index * width)
         }
-        else if(index <= 0){
+        else if (index <= 0) {
             index = 8
             removeTransition()
-            setTranslateX(-index*width)
+            setTranslateX(-index * width)
         }
         setPoint()
     })
@@ -82,18 +82,18 @@ var banner = function () {
             var obj = points[i]
             obj.classList.remove('now')
         }
-        points[index-1].classList.add('now')
+        points[index - 1].classList.add('now')
     }
 //    滑动效果
     var startX = 0
     var distanceX = 0
     var isMove = false
-    imageBox.addEventListener('touchstart',function (e) {
+    imageBox.addEventListener('touchstart', function (e) {
         // console.log(e)
         clearInterval(timer)
         startX = e.changedTouches[0].clientX
     })
-    imageBox.addEventListener('touchmove',function (e) {
+    imageBox.addEventListener('touchmove', function (e) {
         //轮播图跟着手指滑动
         var moveX = e.changedTouches[0].clientX
         distanceX = moveX - startX
@@ -102,20 +102,20 @@ var banner = function () {
         setTranslateX(translateX)
         isMove = true
     })
-    imageBox.addEventListener('touchend',function (e) {
-        if(isMove){
-            if(Math.abs(distanceX) < width/3){
+    imageBox.addEventListener('touchend', function (e) {
+        if (isMove) {
+            if (Math.abs(distanceX) < width / 3) {
                 addTransition()
-                setTranslateX(-index*width)
-            }else{
-                if(distanceX>0){
+                setTranslateX(-index * width)
+            } else {
+                if (distanceX > 0) {
                     index--
 
-                }else{
+                } else {
                     index++
                 }
                 addTransition()
-                setTranslateX(-index*width)
+                setTranslateX(-index * width)
             }
             //参数重置
             startX = 0
@@ -125,13 +125,35 @@ var banner = function () {
             timer = setInterval(function () {
                 index++
                 addTransition()
-                setTranslateX(-index*width)
+                setTranslateX(-index * width)
 
-            },3000)
+            }, 3000)
         }
     })
 }
 
 var downTime = function () {
+    var time = 4 * 60 * 60;
+    var timeBox = document.querySelector('.time').querySelectorAll('span');
+    var timer = setInterval(function () {
+        time--;
+        var h = Math.floor(time / 3600);
+        var m = Math.floor(time % 3600 / 60);
+        var s = time % 60;
+
+        timeBox[0].innerHTML = Math.floor(h / 10);
+        timeBox[1].innerHTML = h % 10;
+
+        timeBox[3].innerHTML = Math.floor(m / 10);
+        timeBox[4].innerHTML = m % 10;
+
+        timeBox[6].innerHTML = Math.floor(s / 10);
+        timeBox[7].innerHTML = s % 10;
+
+        if (time <= 0){
+            clearInterval(timer);
+        }
+
+            }, 1000);
 
 }
