@@ -1,0 +1,95 @@
+/*=======reset css======*/
+*,
+*::before,
+*::after{
+    /*所有标签和伪元素*/
+    margin: 0;
+    padding: 0;
+    /*防止内容溢出  默认是content-box设置宽度是不包含边框宽度的，即width：100%；后再加border会溢出
+    border-box设置的宽度是包含边框度的*/
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    /*点击高亮效果的清除*/
+    -webkit-tap-highlight-color: transparent;
+}
+
+html {
+    overflow-y: scroll;
+}
+
+:root {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+:root body {
+    position: absolute;
+}
+
+body {
+    width: 100vw;
+    overflow: hidden;
+}
+
+body{
+    font-size: 14px;
+    font-family: "Microsoft YaHei",sans-serif;
+    color: #333;
+}
+ul,ol{
+    list-style: none;
+}
+a{
+    text-decoration: none;
+    color: #333;
+}
+input,textarea{
+    border: none;
+    outline: none;
+    /*不允许用户对textarea放大缩小*/
+    resize: none;
+    /*元素外观完全空白*/
+    -webkit-appearance: none;
+}
+/*=======common css=====*/
+.f_left{
+    float: left;
+}
+.f_right{
+    float: right;
+}
+.clearFix::before,
+.clearFix::after{
+    content: "";
+    display: block;
+    visibility: hidden;
+    height: 0;
+    line-height: 0;
+    clear: both;
+}
+
+.m_l10{
+    margin-left: 10px;
+}
+.m_r10{
+    margin-right: 10px;
+}
+.m_t10{
+    margin-top: 10px;
+}
+.m_b10{
+    margin-bottom: 10px;
+}
+/*=======================以上为通用代码========================================*/
+
+
+
+
+[class^="icon-"],[class*="icon_"]{
+    background-repeat: no-repeat;
+    background-image: url("../images/sprites.png");
+    background-size: 200px 200px;
+}
+::-webkit-scrollbar {/*隐藏滚轮*/
+    display: none;
+}
