@@ -1,0 +1,57 @@
+@charset "UTF-8";
+/*混入*/
+/*1.类混入*/
+//准备类
+.w50 {
+  width: 50%;
+}
+
+.f_left {
+  float: left;
+}
+
+.f_right {
+  float: right;
+}
+
+//混入
+.w50-f_left {
+  .w50();
+  .f_left();
+}
+
+/*2.函数混入*/
+//函数准备,函数不会编译到css文件中，防止css代码冗余
+.W50() {
+  width: 50%;
+}
+
+//这个less有点冗余
+.f-left() {
+  float: left;
+}
+
+.f-right() {
+  float: right;
+}
+
+//用传参解决less代码冗余,可以像下面函数一样设置默认值，这样可以在调用函数时不传参数
+//也可以不设置，但是不设置就不能调用函数时不传参数
+.f(@direction:left) {
+  float: @direction;
+}
+
+//解决兼容性问题造成的css代码冗余
+.borderRadius(@width:100px) {
+  -webkit-border-radius: @width;
+  -moz-border-radius: @width;
+  border-radius: @width;
+}
+
+//混入
+.W50-f-left {
+  .W50();
+  //.f-left();
+  .f(right);
+  .borderRadius(20px);
+}

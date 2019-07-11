@@ -1,0 +1,17 @@
+@charset "UTF-8";
+/*这种less编译后会留在css文件中*/
+/*
+变量要用@声明，类似于php中的$ ,赋值用: 而不是 =
+分号结尾，且变量不能以数字开头，不能包含特殊字符，区分大小写
+字符拼接要用大括号
+*/
+a:hover {
+  color: #e92322;
+}
+div {
+  background: #e92322;
+}
+.boxs {
+  color: #e92322;
+}
+/*# sourceMappingURL=variables.css.map */
