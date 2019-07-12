@@ -1,0 +1,11 @@
+@charset "UTF-8";
+//less 没有循环语法
+//用递归来完成遍历 when是条件判断
+.adapterMixin(@index) when (@index > 0) {
+  @media (min-width: extract(@adapterDeviceList, @index)) {
+    html {
+      font-size: @baseFontSize/@psdWidth*extract(@adapterDeviceList,@index);
+    }
+  }
+  .adapterMixin(@index - 1);
+}
