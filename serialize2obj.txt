@@ -1,0 +1,12 @@
+//
+var X = function (serializeStr) {
+    var obj = {}
+    if(serializeStr){
+        var arr = serializeStr.split('&');
+        arr.forEach(function (item,i) {
+            var itemArr = item.split('=');
+            obj[itemArr[0]] = itemArr[1]
+        })
+    }
+    return obj
+}
