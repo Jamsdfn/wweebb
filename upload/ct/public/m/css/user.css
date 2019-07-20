@@ -1,0 +1,12 @@
+.p20{
+    padding: 10px 10px;
+}
+.btn_login,
+.btn_outLogin,
+.btn_register,
+.btn_submit,
+.btn_updatePass
+{
+    width: 100%;
+    margin: 20px 0;
+}
