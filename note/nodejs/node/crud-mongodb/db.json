@@ -1,0 +1,74 @@
+{
+  "students": [
+    {
+      "id": 1,
+      "name": "张小三",
+      "gender": 0,
+      "age": 18,
+      "hobbies": "吃饭、睡觉、打豆豆"
+    },
+    {
+      "id": 2,
+      "name": "李四",
+      "gender": 0,
+      "age": 18,
+      "hobbies": "吃饭、睡觉、打豆豆、LOL"
+    },
+    {
+      "id": 3,
+      "name": "张小三",
+      "gender": 0,
+      "age": 18,
+      "hobbies": "吃饭、睡觉、打豆豆、LOL"
+    },
+    {
+      "id": 4,
+      "name": "张三",
+      "gender": 0,
+      "age": 18,
+      "hobbies": "吃饭、睡觉、打豆豆、LOL"
+    },
+    {
+      "id": 5,
+      "name": "小三",
+      "gender": 0,
+      "age": 18,
+      "hobbies": "吃饭、睡觉、打豆豆、LOL"
+    },
+    {
+      "id": 7,
+      "name": "张三",
+      "gender": 0,
+      "age": 18,
+      "hobbies": "吃饭、睡觉、打豆豆、LOL"
+    },
+    {
+      "name": "王五",
+      "gender": 0,
+      "age": 12,
+      "hobbies": "吃",
+      "id": 8
+    },
+    {
+      "name": "阿斯蒂芬",
+      "gender": 1,
+      "age": 12,
+      "hobbies": "唱、跳、Rap",
+      "id": 9
+    },
+    {
+      "name": "啊啊",
+      "gender": 1,
+      "age": 12,
+      "hobbies": "打篮球",
+      "id": 10
+    },
+    {
+      "name": "阿斯蒂芬",
+      "gender": 0,
+      "age": 12,
+      "hobbies": "唱、跳、Rap、打篮球",
+      "id": 11
+    }
+  ]
+}

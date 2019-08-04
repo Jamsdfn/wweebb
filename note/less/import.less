@@ -1,0 +1,23 @@
+@charset "UTF-8";
+/*导入*/
+@import "variables";
+@import "maxins";
+
+.@{className}@{mainColor}s{
+  color:@mainColor;
+  .borderRadius(5px);
+}
+
+//内置函数
+//运算
+@imageNum: 7;
+ul{
+  width: 100%*@imageNum;
+  li{
+    width: 100%/@imageNum;
+    //颜色相加不进位，即超过f则为f
+    color: #777777+#aaaaaa;
+  //  内置函数
+    border-color:darken(lighten(red,30%),30%)
+  }
+}
