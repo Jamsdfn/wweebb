@@ -513,6 +513,38 @@ npm config list
   - 如果重新 `install` 其实会下载最新的版本，而不是 `1.1.1`
   - 所以这个 `package-lock.json` 这个文件的另一个作用就是锁定版本号，防止自动升级到新版本
 
+## path 路径操作模块
+
+- path.basename
+  - 获取一个路径的文件名（默认包含扩展名）
+- path.dirname
+  - 获取一个路径的目录部分
+- path.extname
+  - 获取一个路径的扩展名部分
+- path.parse
+  - 把一个路径转为对象
+    - root 根路径
+    - dir 目录
+    - base 文件名（包含扩展名）
+    - ext 扩展名
+    - name 文件名 （不包含扩展名）
+- path.join
+  - 路径拼接的时候推荐用，防止自己手动拼接路径出错
+- path.isAbsolute
+  - 判断一个路径是否为绝对路径
+
+## Node 中的其他成员
+
+在每个模块中，除了 `require`、`exports` 等模块相关 API 之外，还有两个特殊的成员：
+
+- `__dirname`   **动态获取**   可以用来获取当前文件模块所属目录的绝对路径
+
+- `__filename `  **动态获取 **  可以用来获取当前文件的绝对路径
+
+在文件操作中，使用相对路径是不可靠的，因为在 Node 中文件操作的路径被设计为相对于 node 命令所处的路径。
+
+为了解决这个问题，只需要把相对路径变为绝对路径就可以了，这就用到了 `__dirname` 
+
 ## Express
 
 - 原生的 http 在某些方面的表现不足以应对我们的开发需求，所以我们就需要使用框架来加快开发效率，框架的目的就是提高效率，让代码更统一
@@ -584,6 +616,133 @@ app.post('/', function (req,res) {
 })
 ```
 
+由于一个网站可能路由十分复杂，所以不可能全部都放入入口模块去写，因此要专门写一个路由模块，为了让入口模块接收到路由信息，express 提供了一个比较好的方法
+
+```javascript
+/*
+* router.js 路由模块
+* 职责：
+*   处理路由
+*   根据不同的请求方法+请求路径设置具体请求处理函数
+* */
+// Express 提供了一种比较好的方法
+// 专门用来包装路由
+var express = require('express')
+// 1. 创建一个路由容器
+var router = express.Router()
+var Students = require('./students')
+// 2. 把路由都挂载到 router 路由容器中
+router.get('/students', function (req, res) {
+    Students.find(function (err, students) {
+        if (err) {
+            return res.status(500).send('Sever error')
+        }
+        res.render('index.html', {
+            fruits: [
+                'apple',
+                'pineapple',
+                'banana',
+                'orange'
+            ],
+            students: students
+        })
+    })
+
+})
+
+router.get('/students/new', function (req, res) {
+    res.render('new.html')
+})
+
+router.post('/students/new', function (req, res) {
+//    获取表单数据
+//    处理
+//    发送请求
+//    res.send(req.body)
+    new Students(req.body).save(function (err) {
+        if (err) {
+            return res.status(500).send('Sever error')
+        }
+        res.redirect('/students')
+    })
+})
+
+router.get('/students/edit', function (req, res) {
+    Students.findById(req.query.id, function (err, stu) {
+        if (err) {
+            return res.status(500).send('Sever error')
+        }
+        res.render('edit.html', {
+            student: stu
+        })
+    })
+
+})
+
+router.post('/students/edit', function (req, res) {
+    Students.findByIdAndUpdate(req.body.id, req.body, function (err) {
+        if (err) {
+            return res.status(500).send('Sever error')
+        }
+        res.redirect('/students')
+    })
+})
+
+router.get('/students/delete', function (req, res) {
+    Students.findByIdAndRemove(req.query.id, function (err) {
+        if (err) {
+            return res.status(500).send('Sever error')
+        }
+        res.redirect('/students')
+    })
+})
+
+
+module.exports = router
+```
+
+```javascript
+/*
+* app.js 入口模块
+*职责;
+*   启动服务
+*   做一些服务相关配置
+*       模板引擎
+*       body-parser 解析表单 POST 请求体
+*       提供静态资源服务
+*   挂载路由
+*   监听端口启动服务
+* */
+
+var express = require('express')
+var bodyParser = require('body-parser')
+// var fs = require('fs')
+var router = require('./router')
+
+var app = express()
+
+app.use('/node_modules/', express.static('./node_modules/'))
+app.use('/public/', express.static('./public/'))
+
+app.engine('html', require('express-art-template'))
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }))
+// parse application/json
+app.use(bodyParser.json())
+//----------------------------------------------------------------------
+// 把路由容器挂载到 app 服务中 ！！中间件的配置 必须在挂载路由之前
+app.use(router)
+//----------------------------------------------------------------------
+app.listen(3000,function () {
+    console.log('running')
+})
+```
+
+
+
+
+
 ### 静态服务
 
 ```javascript
@@ -604,6 +763,108 @@ app.use(express.static('./public/'))
 //or
 //app.use(express.static('public'))
 ```
+
+### Express 的中间件
+
+> <http://www.expressjs.com.cn/guide/using-middleware.html>
+
+中间件的本质就是一个请求处理方法，我们把用户从请求到响应的整个过程分发到多个中间件中去处理，这样做的目的是提高代码的灵活性，动态可扩展性。
+
+中间件简单地说就是：在处理响应业务前，先对响应对象和请求对象进行处理，提高开发效率。
+
+Express 中的中间件：处理请求的，本质就是个函数，在 Express 中对中间件有几种分类
+
+同一个请求所经过的中间件都是同一个请求对象和响应对象
+
+#### 应用程序级别中间件
+
+- 不关心请求路径和请求方法的中间件（也就是说，任何请求都会进入这个中间件）
+
+```javascript
+// 中间件本身是一个方法，该方法接受三个参数（req, res, next）next: 下一个中间件
+app.use(function (req, res, next) {
+    console.log('1')
+    next() // 直接调用下一个能匹配的(符合 use 条件的)中间件
+})
+app.use(function (req, res, next) {
+    console.log('2')
+})
+// 输出 1 2
+```
+
+- 关系请求路径的中间件
+
+```javascript
+// 中间件本身是一个方法，该方法接受三个参数（req, res, next）next: 下一个中间件
+app.use(function (req, res, next) {
+    console.log('1')
+    next() // 直接调用下一个能匹配的(符合 use 条件的)中间件，不是调用紧挨着的中间件
+})
+
+app.use('/a',function (req, res, next) {
+    console.log('a')
+})
+
+app.use('/b',function (req, res, next) {
+    console.log('b')
+})
+// url: /b/abc
+// 输出 1 b
+```
+
+#### 路由级别中间件
+
+- 严格匹配请求方法和请求路径的中间件
+  - `app.get`
+  - `app.post`
+
+#### 错误处理中间件
+
+统一处理错误
+
+```javascript
+fs.readFile('.asdfsadfst.hsdfml', function (err, data) {
+  if (err) {
+//任何模块处理错误信息都可以调，不过一定要加err参数，不然他只会调用直接调用下一个能匹配的(符合 use 条件的)中间件
+     next(err)//直接找到错误处理中间件，执行那个中间件的代码
+  }
+  res.end(data)
+})
+
+// 一定要放到最后（处理路由信息之后），一定要传 4 个参数，少了就变成普通中间件了
+app.use(function (err, req, res, next) {
+  console.error(err.stack)
+  res.status(500).send(err.message)
+})
+
+```
+
+#### 内置中间件
+
+- [express.static](http://www.expressjs.com.cn/en/4x/api.html#express.static) serves static assets such as HTML files, images, and so on.
+- [express.json](http://www.expressjs.com.cn/en/4x/api.html#express.json) parses incoming requests with JSON payloads. **NOTE: Available with Express 4.16.0+**
+- [express.urlencoded](http://www.expressjs.com.cn/en/4x/api.html#express.urlencoded) parses incoming requests with URL-encoded payloads. **NOTE: Available with Express 4.16.0+**
+
+#### 第三方中间件
+
+- [body-parser](http://www.expressjs.com.cn/en/resources/middleware/body-parser.html)
+- [compression](http://www.expressjs.com.cn/en/resources/middleware/compression.html)
+- [connect-rid](http://www.expressjs.com.cn/en/resources/middleware/connect-rid.html)
+- [cookie-parser](http://www.expressjs.com.cn/en/resources/middleware/cookie-parser.html)
+- [cookie-session](http://www.expressjs.com.cn/en/resources/middleware/cookie-session.html)
+- [cors](http://www.expressjs.com.cn/en/resources/middleware/cors.html)
+- [csurf](http://www.expressjs.com.cn/en/resources/middleware/csurf.html)
+- [errorhandler](http://www.expressjs.com.cn/en/resources/middleware/errorhandler.html)
+- [method-override](http://www.expressjs.com.cn/en/resources/middleware/method-override.html)
+- [morgan](http://www.expressjs.com.cn/en/resources/middleware/morgan.html)
+- [multer](http://www.expressjs.com.cn/en/resources/middleware/multer.html)
+- [response-time](http://www.expressjs.com.cn/en/resources/middleware/response-time.html)
+- [serve-favicon](http://www.expressjs.com.cn/en/resources/middleware/serve-favicon.html)
+- [serve-index](http://www.expressjs.com.cn/en/resources/middleware/serve-index.html)
+- [serve-static](http://www.expressjs.com.cn/en/resources/middleware/serve-static.html)
+- [session](http://www.expressjs.com.cn/en/resources/middleware/session.html)
+- [timeout](http://www.expressjs.com.cn/en/resources/middleware/timeout.html)
+- [vhost](http://www.expressjs.com.cn/en/resources/middleware/vhost.html)
 
 ### 在 Express 中配置使用 art-template 模板引擎
 
@@ -649,6 +910,55 @@ app.get('/', function (req, res) {
 app.set('views','目录路径')
 ```
 
+#### include(子模板) & extent-block（模板继承）
+
+```html
+<!-- header.html -->
+
+
+<div>
+  <h1>公共头部</h1>
+</div>
+```
+
+```html
+<!-- layout.html -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+    <!-- 让继承者添加自己页面的样式 -->
+    {{ block 'head' }}{{ /block }}
+</head>
+<body>
+    <!-- 引入子模板 -->
+{{ include './header.html' }}
+    <!-- 被继承无修改则显示的默认内容 -->
+{{ block 'content' }}
+<h1> 默认内容 </h1>
+{{ /block }}
+    <!-- 让继承者添加自己页面的 js 脚本 -->
+{{ block 'script' }}{{ /block }}
+</body>
+</html>
+```
+
+```html
+<!-- index.html -->
+
+<!-- 继承 layout 模板 -->
+{{ extend './layout.html' }}
+<!-- 修改默认的内容 -->
+{{ block 'content' }}
+<h1> {{ name }} 内容 </h1>
+{{ /block }}
+```
+
+
+
 ### 在 Express 获取表单 POST 请求体数据
 
 在 Express 中没有内置获取表单 POST 请求体的 API，需要使用一个第三方模块
@@ -688,6 +998,43 @@ app.post('/', function (req, res) {
 })
 
 ```
+
+###  node服务器使用session
+
+通常结合express使用 express-session
+
+安装：
+
+```shell
+npm install --save express-session
+```
+
+配置：
+
+```javascript
+var session = require('express-session')
+var express = require('express')
+var app = express()
+app.use(session({
+    // 配置加密字符串，它会在原有加密基础之上和这个字符串拼起来去加密
+    // 目的是为了增加安全性，防止客户端恶意伪造
+    // 字符串内容随意什么都行
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true// 无论是否使用 Session 都默认分配一把钥匙
+}))
+```
+
+使用：
+
+```javascript
+// 添加 Session 数据 
+req.session.foo = 'bar'
+// 访问 Session 数据
+req.session.foo
+```
+
+默认 Session 数据是内存存储的，服务器一旦重启就会丢失，真正的生产环境会把 Session 持久化存储。有插件可以自动存入数据库，在此就不多说了。
 
 
 
@@ -1176,7 +1523,19 @@ p1
     })
 ```
 
+### 关于数据加密问题 （用户密码） MD5
 
+安装
+
+```shell
+npm install --save md5
+```
+
+使用
+
+```javascript
+console.log(md5('message'))
+```
 
 ## 使用 Node 操作 MySQL 数据库
 
