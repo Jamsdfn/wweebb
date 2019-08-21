@@ -1,0 +1,10 @@
+.preview figure {
+    float: left;
+    width: 100px;
+    height: 80px;
+    margin: 1.5%;
+}
+
+.preview figure img {
+    width: 100%;
+}
