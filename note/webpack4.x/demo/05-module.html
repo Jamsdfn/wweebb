@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			/*
+			 * loader	转换器，用于转换非js文件
+			 * 	2、test	被转换的文件类型
+			 * 	3、use	转换时所需的loader
+			 * 		值为数组时执行的顺序是从后往前
+			 * 	4、定义在module.rules中
+			 * 	5、https://webpack.docschina.org/loaders
+			 * 
+			 * 1、处理CSS文件
+			 * 	1、style-loader
+			 * 	2、css-loader
+			 * 
+			 * 	安装：npm i style-loader css-loader -D
+			 * 	配置：
+			 *		{
+			 *			test:/\.css$/,
+			 *			use:['style-loader','css-loader'],
+			 * 			//loader:['style-loader','css-loader']
+			 *		}
+			 *				
+			 * 
+			 * 2、单独输出CSS
+			 * 	1、extract-text-webpack-plugin
+			 * 		使用步骤：
+			 * 			1、安装：npm i extract-text-webpack-plugin@next -D
+			 * 			2、在webpack.config.js里引入模块
+			 * 			3、在plugins里new一个，参数为目录这个目录在output.path生成的目录里面
+			 * 			4、修改css文件对应的use为：
+			 * 				use:ExtractTextPlugin.extract({
+			 *					fallback: "style-loader",
+			 *          		use: "css-loader"
+			 *				})
+			 * 
+			 * 	2、mini-css-extract-plugin
+			 * 		1、注意：需要4.3以上的版本才能用
+			 * 		2、使用步骤：
+			 * 			1、安装：npm i mini-css-extract-plugin -D
+			 * 			2、在webpack.config.js里引入模块
+			 * 			3、use:[MiniCssExtractPlugin.loader,"css-loader"]
+			 * 		
+			 * 		3、处理css文件里路径问题
+			 * 			{
+			 * 				test:/\.css$/,
+			 * 				use:[
+			 *					{
+			 *						loader:MiniCssExtractPlugin.loader,
+			 *						options:{
+			 *							publicPath:'../'	//会统一加在有地址的前面
+			 *						}
+			 *					},
+			 *					"css-loader"
+			 *				]
+			 * 			}
+			 * 3、压缩CSS
+			 * 	1、optimize-css-assets-webpack-plugin
+			 * 		安装：npm i optimize-css-assets-webpack-plugin -D
+			 * 	2、在plugins里new一个，参数不用给
+			 * 
+			 * 4、处理图片
+			 * 	1、file-loader	解析地址
+			 * 	2、url-loader	把图片地址解析成base64
+			 * 	
+			 * 	安装：npm i file-loader url-loader -D
+			 * 	配置：
+			 *		{
+			 *			test:/\.(png|jpg|gif)$/,
+			 * 			
+			 * 			//如果需要给loader加参数，写成下面的形式
+			 * 			use:[
+			 * 				{
+			 *					loader:'url-loader',
+			 *					options:{
+			 *						limit:50000,//小于50k会被转成base64
+			 * 						outputPath: 'images'	//图片输出到images文件夹里
+			 *					}
+			 *				}
+			 * 			]
+			 * 			
+			 * 			//或者写成下面的形式
+			 * 			use:'url-loader?limit=50000&outputPath=images'
+			 *		}
+			 */
+		</script>
+	</body>
+</html>

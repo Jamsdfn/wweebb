@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<script>
+			/*
+			 * webpack的配置文件
+			 * 
+			 * 1、entry		入口文件
+			 * 	1、只打包一个文件（一个入口），写个字符串
+			 * 	2、把多个文件打包成一个文件，写个数组
+			 * 	3、把多个文件分别打包成多个文件，写成对象
+			 * 	（webpakc把打包后的文件叫Chunck）
+			 * 	4、https://www.webpackjs.com/configuration/entry-context/
+			 * 
+			 * 2、output		出口文件
+			 * 	1、filename	输出文件的名称
+			 * 		1、输出一个文件，写个字符串
+			 * 		2、输出多个文件，文件名前面加个标识符（id/name/hash）
+			 * 	2、path	输出文件的路径
+			 * 		1、路径必需为绝对路径
+			 * 		2、__dirname	是nodejs里的一个模块，表示当前文件的绝对路径
+			 * 		3、path为系统模块，直接引入后调用path.resolve(__dirname,'输出文件的路径');
+			 * 	3、https://www.webpackjs.com/configuration/output/
+			 * 
+			 * 3、module		模块
+			 * 4、plugins	插件
+			 * 	1、每个插件都是一个模块，需要先安装，再引入
+			 * 	2、在plugins里new一个，传入配置参数即可
+			 * 	3、https://www.webpackjs.com/plugins/
+			 * 
+			 * 5、devServer	服务器
+			 * 6、mode		模式（开发模式、生产模式）
+			 * 
+			 * 
+			 * 注意：
+			 * 	1、名字最好是webpack.config.js
+			 * 	2、如果名字是其它的，想要运行的话执行命令webpack --config kaivon.js
+	 		 * 	
+			 */
+			
+			/*
+			 * 
+			 * 常用插件
+			 * 	1、html-webpack-plugin	生成页面
+			 * 		1、https://www.npmjs.com/package/html-webpack-plugin
+			 * 		2、安装：npm install html-webpack-plugin --save-dev	或者-D
+			 * 		3、配置
+			 * 
+			 * 		注意：
+			 * 			1、title要生效的话，要把模板里的title标签里写上<%= htmlWebpackPlugin.options.title %>
+			 * 			2、如果要生成多个html文件，那个写多个new HtmlWebpackPlugin()
+			 * 
+			 * 	2、clean-webpack-plugin	清除打包的文件
+			 * 		1、https://www.npmjs.com/package/clean-webpack-plugin
+			 * 		2、安装：npm install clean-webpack-plugin --save-dev	或者-D
+			 * 			
+			 */
+		</script>
+	</body>
+</html>

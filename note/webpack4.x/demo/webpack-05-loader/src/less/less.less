@@ -1,0 +1,25 @@
+@w:200px;
+@border:1px solid #f00;
+
+#box{
+    width: @w;
+    border: @border;
+   
+   ul{
+       margin: 0;
+       padding: 0;
+       list-style: none;
+       
+       li{
+           height: 30px;
+           background: #ccc;
+           
+           a{
+               color: #f00;
+               &:hover{
+                   color: #008000;
+               }
+           }
+       }
+   } 
+}

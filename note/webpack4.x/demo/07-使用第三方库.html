@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+	</head>
+	<body>
+		<!--
+			author:陈学辉
+			wechat:kaivon
+			QQ:356985332
+		-->
+		<script>
+			/*
+			 * webpack.ProvidePlugin
+			 * 	1、自动加载模块，而不必用import或require
+			 * 	2、如果加载的模块没有使用，则不会被打包
+			 * 	3、加载的模块为全局模块，在全局都可以使用
+			 * 
+			 * optimization	优化
+			 * 	1、splitChunks	分离第三方库
+			 * 		cacheGroups	缓存组
+			 * 	2、能被提取的条件
+			 * 		1、模块被重复引用或者来自node_modules中的模块
+			 * 		2、模块压缩前至少有30kb
+			 * 			（小于30kb的模块不值得再单独发送一次请求，在很小的模块的前提下，相比与多次打包，减少请求次数成本要低。）
+			 * 		3、按需（异步）请求的数量小于5个
+			 * 		4、初始化加载时，请求数量小于等于3
+			 * 		
+			 */
+		</script>
+	</body>
+</html>

@@ -1,0 +1,115 @@
+const path=require('path'),
+	HtmlWebpackPlugin=require('html-webpack-plugin'),
+	MiniCssExtractPlugin=require('mini-css-extract-plugin'),
+	OptimizeCssAssetsPlugin=require('optimize-css-assets-webpack-plugin'),
+	webpack=require('webpack');
+	
+module.exports={
+	entry:{
+		index:'./src/js/index.js'
+	},
+	output:{
+		path:path.resolve(__dirname,'dist'),
+		filename:'js/[name].bundle.js'
+	},
+	plugins:[
+		new HtmlWebpackPlugin({
+			template:'./src/index.html',
+			filename:'index.html',
+			minify:{
+				collapseWhitespace:true,	//压缩空格
+				removeAttributeQuotes:true,	//压缩引号
+			}
+		}),
+		new MiniCssExtractPlugin({
+			filename:'css/index.css'
+		}),
+		new OptimizeCssAssetsPlugin(),
+		new webpack.HotModuleReplacementPlugin(),
+		new webpack.ProvidePlugin({
+			$:'jquery'
+		})
+	],
+	devServer:{
+		host:'localhost',
+		port:1573,
+		open:true,
+		hot:true,
+	},
+	module:{
+		rules:[
+			{
+				test:/\.css$/,
+				use:[
+					{
+						loader:MiniCssExtractPlugin.loader,
+						options:{
+							publicPath:'../'
+						}
+					},
+					'css-loader'
+				]
+			},
+			{
+				test:/\.less$/,
+				use:[
+					{
+						loader:MiniCssExtractPlugin.loader,
+						options:{
+							publicPath:'../'
+						}
+					},
+					//'style-loader',
+					'css-loader',
+					'less-loader'
+				]
+			},
+			{
+				test:/\.html$/,
+				use:[
+					{
+						loader:'html-loader',
+						options:{
+							interpolate:'require'	//让页面使用ES6的语法把模块引入进来
+						}
+					}
+				]
+			},
+			{
+				test:/\.(jpg|png|gif)$/,
+				use:[
+					{
+						loader:'url-loader',
+						options:{
+							limit:50*1024,
+							outputPath:'images'
+						}
+					}
+				]
+			},
+			{
+				test:/\.js$/,
+				use:[
+					{
+						loader:'babel-loader',
+						options:{
+							presets:['env']
+						}
+					}
+				],
+				include:path.resolve(__dirname,'src/components')
+			}
+		]
+	},
+	optimization:{
+		splitChunks:{
+			cacheGroups:{
+				js:{
+					name:'vender',
+					test:/\.js$/,
+					chunks:'initial'
+				}
+			}
+		}
+	}
+};
