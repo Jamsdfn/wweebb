@@ -12,7 +12,7 @@
 
 var express = require('express')
 var bodyParser = require('body-parser')
-// var fs = require('fs')
+var fs = require('fs')
 var router = require('./router')
 
 var app = express()
@@ -29,6 +29,15 @@ app.use(bodyParser.json())
 
 // 把路由容器挂载到 app 服务中 ！！配置模板引擎 和 body-parser 必须在挂载路由之前
 app.use(router)
+
+app.use(function (req, res) {
+    fs.readFile('./views/404.html', function (err, data) {
+        if (err) {
+            return res.end('404 Not Found.')
+        }
+        res.end(data)
+    })
+})
 
 app.listen(3000,function () {
     console.log('running')
