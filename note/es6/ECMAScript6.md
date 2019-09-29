@@ -439,6 +439,7 @@ var y = 2
   ```js
   let {sin, cos} = Math // 其实就是把 Math.sin 和 Math.cos 两个方法赋值给了 sin 和 cos
   console.log('cos(π) = ' + cos(Math.PI))// cos(π) = -1
+  ```
 ```
   
 
@@ -451,7 +452,7 @@ var y = 2
   console.log(a, b, c, d, e)// h e l l o
   const {length:len} = 'How are you?'
   console.log(len)// 12
-  ```
+```
 
 - 数值的解构赋值
 
