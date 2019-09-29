@@ -1,5 +1,5 @@
-"use strict";
+"use strict"
 
 var x = function x(n) {
-  return n + 1;
-};
+  return n + 1
+}

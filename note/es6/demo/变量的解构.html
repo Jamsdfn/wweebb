@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+  // 普通的赋值方式
+  var x = 1
+  var y = 2
+  var z = 3
+  //  解构需要进行模式的匹配(如果形式一样就给变量依次赋值)
+  //  解构的数组形式，就是用数组的方式给变量进行同时赋值
+
+  //定义时解构赋值
+  let [a,b,c] = [4,5,6]
+  console.log('a = ' + a)
+  console.log('b = ' + b)
+  console.log('c = ' + c)
+  // 后期解构赋值
+  ;[x,y,z] = [10,20,30]
+  console.log('x = ' + x)
+  console.log('y = ' + y)
+  console.log('z = ' + z)
+  //嵌套解构赋值
+  let [age, [salary, [name]]] = [20, [3000, ['Sill']]]
+  // let [age, [salary, [name]]] = [20, 3000, 'Sill']
+  console.log('age = ' + age)
+  console.log('salary = ' + salary)
+  console.log('name = ' + name)
+
+  let [m,n,...v] = ['a','b','c','d','e','f']
+  console.log('m = ' + m)
+  console.log('n = ' + n)
+  console.log('v = ' + v)
+//  Generator 会没调用一次，会暂停，所以下面的方法不会无限循环
+  let gen = function* (x) {
+      while (true) {
+          yield x
+          x = x + 2
+      }
+  }
+  let [g1, g2 ,g3] = gen(10)
+  console.log('g1 = ' + g1) // g1 = 10
+  console.log('g2 = ' + g2) // g2 = 12
+  console.log('g3 = ' + g3) // g3 = 14
+  // 解构赋值的默认值
+  let [name1] = []
+  console.log('name1 = ' + name1)
+  let [name2 = 'Bill'] = []
+  console.log('name1 = ' + name2)
+
+  let f = function () {
+      console.log('f')
+      return 'hello'
+  }
+  let ff = function () {
+      console.log('ff')
+  }
+  let [f1 = f(),f2 = ff(),f3 = f] = []// f ff 这是函数直接调动的结果
+  console.log('f1 = ' + f1)// f1 = hello
+  console.log('f2 = ' + f2)
+  console.log('f3 = ' + f3)
+  //let [xx = yy, yy = 20] = [] 直接报错
+  var {name3, age1} = {age1: 30, name3: 'Bill'} // 因为有键值对的关系，所以顺序可以打乱
+  console.log(name3,age1) // Bill 30
+  var {value1, value2} = {value1: 30}
+  console.log(value1, value2) // 30 undefined
+
+  var {product: a1, price: b1} = {product:'phone', price:'666'}
+  console.log('a1 = ' + a1, 'b1 = ' +b1)// a1 = phone b1 = 666
+  //let { foo: baz } = { foo: 'aaa', baz: 'bbb' };// 相当于 = 后面{}的 foo 的值 给了 = 前面{}的 baz
+  //console.log('foo = ' + foo, 'baz = ' + baz)// foo error:foo is not defined; baz  aaa
+
+  var {product: a2, price1} = {product: 'pen', price1: 777}
+  console.log('a2 = ' + a2, 'price1 = ' + price1)
+
+  var obj = {p: ['hello', {x: 100}]}
+  var {p: [ss, {x:yy}]} = obj
+  console.log('ss = ' + ss)
+  console.log('yy = ' + yy)
+
+  var xxx
+  var yyy
+  xxx = 30
+  ;({xxx, yyy} = {xxx: 20, yyy: 30})
+
+  let {sin, cos} = Math
+  console.log('sin(π/2) = ' + sin(Math.PI/2))
+
+  let [aa, bb, cc, dd, ee] = 'hello'
+  console.log(aa, bb, cc, dd, ee)
+
+  const {length:len} = 'How are you?'
+  console.log(len)
+
+  // 数值的解构固执 （如果 = 右侧不是对象，系统会将其转化为对象，然后在解构）
+  let {toString: s} = 456
+  if (s === Number.prototype.toString) {
+      console.log('true')
+  } else console.log('false')
+
+  let {toString: sss} = true
+  if (sss === Boolean.prototype.toString) {
+      console.log('sss === Boolean.prototype.toString')
+  }
+
+  var foo = function ([...v]) {
+      v.map(x => console.log(x))
+  }
+  foo([1,2,3,4,5])
+</script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+<body>
+<script>
+    {
+        let a = 100
+        var b = 200
+        alert(a)
+        alert(b)
+    }
+    if (typeof a == 'undefined') {
+        alert('a未定义')
+    } else if (typeof b == 'undefined') {
+        alert('b未定义')
+    }
+
+    var a = []
+    for (var n = 0; n < 10; n++) {
+        a[n] = function () {
+            console.log(n)
+        }
+    }
+    a[4]() // 10
+
+    var a = []
+    for (let n = 0; n < 10; n++) {
+        a[n] = function () {
+            console.log(n)
+        }
+    }
+    a[4]() // 4 每次循环可以都看成一个新的代码块
+    f = function () {
+        return '10'
+    }
+    console.log(f())
+
+    var s = 'hello world'
+    var fun = function () {
+        console.log(s) // 用 this.s 则会找到 window 下全局的 s 则输出会变为 hello world
+        if (false) {
+            var s = '???' // 即使不被执行，但因为变量提升，内层s还是覆盖了 外层变量s的值
+        }
+        console.log(s)
+    }
+    fun()
+    var depthFreezeObject = (obj) => {
+        obj = Object.freeze(obj)
+        Object.keys(obj).forEach((key => {
+            if (typeof obj[key] == 'object') {
+                depthFreezeObject(obj[key])
+            }
+        }))
+    }
+    depthFreezeObject({d:'d'})
+</script>
+</body>
+</html>
