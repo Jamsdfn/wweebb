@@ -110,6 +110,32 @@
       v.map(x => console.log(x))
   }
   foo([1,2,3,4,5])
+
+  var mm = 1
+  var nn = 2
+  ;[mm, nn] = [nn, mm]
+  console.log("mm = " + mm)
+  console.log("nn = " + nn)
+
+  var multiNames = function () {
+      return ['Bill', 'Mike', 'John']
+  }
+  var [name11, name22, name33] = multiNames()
+  console.log('name11 = ' + name11)
+  console.log('name22 = ' + name22)
+  console.log('name33 = ' + name33)
+
+  var sub = function ({x, y, z}) {
+      return x - y - z
+  }
+  console.log(sub({z: 20, y:-15, x:10}))// 5
+  var map = new Map()
+  map.set('id', 49)
+  map.set('name', 'John')
+  map.set('age', 20)
+  for (let [key, value] of map) {
+      console.log(key + ': ' + value)
+  }
 </script>
 </body>
 </html>

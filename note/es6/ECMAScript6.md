@@ -486,5 +486,231 @@ var foo = function ([...v]) {
 foo([1,2,3,4,5])
 ```
 
+### 变量解构的应用
 
+- 变量交换
+
+  ```js
+  var m = 1
+  var n = 2
+  ;[m, n] = [n, m]
+  console.log("m = " + m)// m = 2 
+  console.log("n = " + n)// n = 1
+  ```
+
+- 函数返回一个数组，并将返回结果赋给多个变量
+
+  ```js
+  var multiNames = function () {
+      return ['Bill', 'Mike', 'John']
+  }
+  var [name11, name22, name33] = multiNames()
+  console.log('name11 = ' + name11)// name11 = Bill
+  console.log('name22 = ' + name22)// name22 = Mike
+  console.log('name33 = ' + name33)// name33 = John
+  ```
+
+- 使用对象形式的参数，可以无序传递参数
+
+  ```js
+  var sub = function ({x, y, z}) {
+      return x - y - z
+  }
+  console.log(sub({z: 20, y:-15, x:10}))// 5
+  ```
+
+- 函数参数可以使用默认值
+
+- 遍历 Map 数据结构
+
+  - ```js
+    //map是ES提供的一种字典数据结构。
+    
+    //字典结构——用来存储不重复key的hash结构。不同于集合（set）的是，字典使用的是键值对的形式来存储数据
+    
+    //JavaScript对象（object：{}）只能用字符串来当key，这对使用带来了不便
+    
+    //为了解决这个问题，ES6提供了map数据结构。其类似于对象，也是键值对的集合，但“key”的范围不仅限于字符串，而是各种类型的值都可以当做key。也就是说，object提供了“字符串-值”的对应结构，map则提供的是“值-值”的对应。是一种更加完善的hash结构
+    const map=new Map([
+         ['a',1],
+         ['b',2]
+    ]);
+    console.log(map);
+    ```
+  
+  - 任何部署了 Iterator 接口的对象，都可以使用 for…of循环变量
+  
+  - Map 结构原生支持 Iterator 接口
+  
+  ```js
+  var map = new Map()
+  map.set('id', 49)
+  map.set('name', 'John')
+  map.set('age', 20)
+  for (let [key, value] of map) {
+      console.log(key + ': ' + value)
+  }
+  ```
+
+### 字符串的拓展
+
+- 字符的 Unicode 表示法
+
+  - Unicode 是一种字符的编码方式，可以将一个字符对应成一个数字
+  - js 中用 \uxxxx 表示 Unicode 编码，x 为16进制数字 \u0000 ~ \uFFFF
+
+  ```js
+  var s = '中'
+  // string.charCodeAt(0), 返回值是10进制编码，参数为字符串的第几个字符
+  // .toString(16), 表示转为16进制编码
+  console.log('中: ' + s.charCodeAt(0).toString(16)) // 4e2d
+  console.log('\u4e2d') // 中
+  // 如果是 Unicode2 则要用 ES6 新增的 \u{xxxxx}
+  console.log('\u{1f412}')// 🐒
+  var ss = '🐒' // 此处的 🐒 是 utf-16 编码
+  // 因为 utf-16 字符串长度为 2，两次输出才是这个完整的字符
+  console.log('🐒: ' + ss.charCodeAt(0).toString(16))// 🐒: d83d
+  console.log('🐒: ' + ss.charCodeAt(1).toString(16))// 🐒: dc12
+  console.log('\ud83d\udc12')// 🐒 此处的 utf-16 和 Unicode2 相对应
+  console.log('🐒: ' + ss.codePointAt(0).toString(16))// 🐒: 1f412 直接获得 Unicode2 编码
+  ```
+
+- String.fromCodePoint
+
+  ```js
+  // 对 ES5 的 String.fromCharCode() 的补充，因为这个方法只能适用于 Unicode1，
+  console.log(String.fromCharCode(0x9f99))// 龙
+  console.log(String.fromCharCode(0x1f412))// 
+  // 对 Unicode2 也支持
+  console.log(String.fromCodePoint(0x9f99))// 龙
+  console.log(String.fromCodePoint(0x1f412))// 🐒
+  ```
+
+- 字符串的遍历器接口
+
+  - ES6 为字符串添加了遍历器接口，使字符串可以由 for…of 循环遍历
+
+  ```js
+  var text = '🐒龙'
+  for (let c of text) {
+      console.log(c)
+  }
+  // 🐒
+  // 龙
+  ```
+
+- 在字符串中查找子字符串
+
+  ```js
+  // ES5 indexOf
+  // 从第0位开始查找 'cd',第一次出现的位置
+  console.log('cdabcde'.indexOf('cd',0))// 0
+  // 从第1位开始查找 'cd'
+  console.log('cdabcde'.indexOf('cd',1))// 4
+  // ES6
+  // includes() 返回值为布尔类型，用于判断字符串是否存在于原字符串
+  console.log('cdabcde'.includes('cd'))// true
+  console.log('cdabcde'.includes('cdf'))// false
+  // startsWith() 返回值为布尔类型，用于判断字符串是否以某字符串开头
+  console.log('cdabcde'.startsWith('cd'))// true
+  console.log('cdabcde'.startsWith('ccd'))// false
+  // endsWith() 返回值为布尔类型，用于判断字符串是否以某字符串结尾
+  console.log('cdabcde'.endsWith('cd'))// false
+  console.log('cdabcde'.endsWith('de'))// true
+  ```
+
+- 将原字符串重复 n 次
+
+  ```js
+  // repeat() 将一个字符串重复 n 次
+  // 如果参数是0，则输出一个空字符串；如果参数是浮点数，则舍去小数部分直接取整；如果参数是负数或Infinity（无穷），则会抛出错误；如果参数是字符串，那么如果字符串是纯数字，则会重复n次，如果字符串不是纯数字则输出空字符串
+  console.log('x'.repeat(5))
+  ```
+  
+- 模板字符串
+
+  - 用 ` 包裹的字符串，其可以保留字符串的格式
+
+  ```js
+  console.log(`hello
+  	world`)
+  //输出如下
+  hello
+       world
+  ```
+
+  - 也可以在模板字符串中嵌入变量 ${}，大括号中可以放任何表达式，可以进行运算，也可以放函数
+
+  ```js
+  var name = 'Bill'
+  console.log(`name = ${name}`)// name = Bill
+  var x = 10
+  var y = 20
+  console.log(`${x} + ${y} = ${x + y}`)// 10 + 20 = 30
+  var wow = function () {
+      return 'wow function'
+  }
+  console.log(`${wow()}`)// wow function
+  ```
+
+- 标签模板
+
+  - 函数的一种特殊调用形式
+
+  ```js
+  var x = 1
+  var y = 2
+  var fun = function (s, n, m) {
+      console.log(s)// ["abc", "def", "ccc"]
+      console.log(n)// 1
+      console.log(m)// 2
+  }
+  fun`abc${x}def${y}ccc`
+  // 非模板字符串方式放入第一个参数(模板变量起分割符作用)，模板字符串中的变量当做另外的参数，模板变量少了则函数后面缺的参数为 undefined；模板变量多了，则多的部分舍去不用，不会报错
+  ```
+
+  - 用于过滤 HTML 字符串，就是把页面不能直接显示的 < > 空格 改为 html 的输出方式
+
+  ```js
+  function SaferHTML(templateData) {
+    let s = templateData[0];
+    for (let i = 1; i < arguments.length; i++) {
+      let arg = String(arguments[i]);
+  
+      s += arg.replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;")
+  
+      s += templateData[i];
+    }
+    return s;
+  }
+  var sender = '<script>'
+  var message = SaferHTML`<p>${sender}</p>`// <p>&lt;script&gt;</p> dom元素就可以直接用了
+  ```
+
+- String.raw 方法
+
+  - 直接输出最原始的字符串
+  - 这个函数可以说是给模板字符串设计的，因为参数十分复杂，如果用普通的调用会十分的复杂，但是很符合用标签模板的方式调用的方式
+
+  ```js
+  console.log('abc \n xyz')
+  // 输出如下
+  abc 
+   xyz
+   
+   console.log(String.raw`abc \n xyz`)// abc \n xyz
+  
+  // 正常情况下，你也许不需要将 String.raw() 当作函数调用。可以理解为raw数组和后面的参数交替输出
+  // 但是为了模拟 `t${0}e${1}s${2}t` 你可以这样做:
+  String.raw({ raw: 'test' }, 0, 1, 2); // 't0e1s2t'
+  // 注意这个测试, 传入一个 string, 和一个类似数组的对象
+  // 下面这个函数和 `foo${2 + 3}bar${'Java' + 'Script'}baz` 是相等的.
+  String.raw({
+    raw: ['foo', 'bar', 'baz'] 
+  }, 2 + 3, 'Java' + 'Script'); // 'foo5barJavaScriptbaz'
+  ```
+
+  
 
