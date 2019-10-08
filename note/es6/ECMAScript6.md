@@ -552,7 +552,7 @@ foo([1,2,3,4,5])
   }
   ```
 
-### 字符串的拓展
+### 字符串的扩展
 
 - 字符的 Unicode 表示法
 
@@ -712,5 +712,152 @@ foo([1,2,3,4,5])
   }, 2 + 3, 'Java' + 'Script'); // 'foo5barJavaScriptbaz'
   ```
 
+
+### 数值的扩展
+
+- 新的二进制和八进制表示法
+
+  - 二进制：0b/0B
+  - 八进制：0o/0O
+
+  ```js
+  var n1 = 345
+  var n2 = 0o531
+  var n3 = 0b101011001
+  if (n1 == n2) {
+      console.log('n1 == n2')
+  }
+  // n1 == n2
+  if (n3 == n2) {
+      console.log('n3 == n2')
+  }
+  // n2 == n3
   
+  //将二进制和八进制转回十进制
+  console.log(Number('0o531'))// 345
+  console.log(Number('0b101011001'))// 345
+  ```
+
+- Number.isFinite 和 Number.isNaN
+
+  ```js
+  // ES6 提供了这两个方法来判断数值是否是 有限值 和 NaN，因为这个方法是在 Number 对象的，所以所有非数值参数传参都返回false
+  console.log(Number.isFinite(20))// true
+  console.log(Number.isFinite(Infinity))// false
+  console.log(Number.isFinite(NaN))// false
+  console.log(Number.isFinite('20'))// false
+  
+  console.log(Number.isNaN(20))// false
+  console.log(Number.isNaN(Infinity))// false
+  console.log(Number.isNaN(NaN))// true
+  console.log(Number.isNaN(20/NaN))// true
+  console.log(Number.isNaN('20'/'2'))// false (因为进行运算自动转为了数字，所以是 false)
+  console.log(Number.isNaN('a'))// false (非数值)
+  console.log(Number.isNaN('a'/1))// true (对非数字字符串进行运算，所以是 NaN)
+  console.log(Number.isNaN('a'/'b'))// true (同上)
+  ```
+  
+- Number.parseInt 、Number.parseFloat 、Number.isInteger
+
+  - 前两个方法和 ES5 的全局方法保持一致，但是 `Number.isInterger` 方法非数值作为参数传参直接返回 false
+
+- Number.EPSILON (极小值)
+
+  - 因为前端对浮点数的运算都是有误差的，所以引入了这个极小值来消除误差
+
+  ```js
+  console.log(0.1 + 0.2) // 0.30000000000000004
+  // 所以用前端判断浮点数是有问题的
+  console.log(0.1 + 0.2 == 0.3) // false
+  console.log(((0.1 + 0.2)-0.3) < Number.EPSILON) // true 做差后小于极小值，近似相等
+  ```
+
+### Math对象的扩展
+
+- Math.trunc  
+
+  - 用于去除一个数的小数部分，返回整数部分，直接保留符号位
+  - 对于非数值参数，Math.trunc 内部会使用 Number 方法将其转换为数值类型
+
+  ```js
+  Math.trunc(4.1) // 4
+  Math.trunc(4.8) // 4
+  Math.trunc(-4.1) // -4
+  Math.trunc(-4.8) // -4
+  Math.trunc(-0.123)// -0 其实-0和0是严格相等的 即 -0 === 0 
+  
+  Math.trunc('asd')// NaN
+  Math.trunc('1.1')// 1
+  Math.trunc()// NaN
+  ```
+
+- Math.sign
+
+  - 用于判断一个数到底是正数、负数还是0
+    - 参数为正数：返回 1
+    - 参数为负数：返回 -1
+    - 参数为 0： 返回 0
+    - 参数为 -0：返回 -0
+    - 参数为其他值：返回 NaN
+
+- Math.cbrt
+
+  - 用于计算一个数的立方根（x^(-3)）
+
+- Math.clz32
+
+  - JS的整数使用32位二进制形式表示，返回值是32位无符号整数形式有多少个前导0
+  - 参数为小数，只取其整数部分判断
+  - 参数为负数，返回值为 0
+  - 参数为 true，返回值为 31，因为 true 数值类型是等于 1，false 等于0
+  - 参数为其他值，返回值全部为 32
+
+  ```js
+  Math.clz(2) // 30 有30个零在1前面 000...0010
+  Math.clz32(2.123456)// 30
+  ```
+
+- Math.imul
+
+  - 返回两个数以32位带符号整数形式相乘的结果，返回值也是32位带符号整数，系统默认转回10进制数
+
+- Math.fround
+
+  - 返回一个数的单精度浮点数形式
+
+- Math.hypot
+
+  - 返回所有参数的平方和的平方根（用于相量的模，向量的模，两点间距离公式等）
+
+- 新增计算方法
+
+  - Math.expm1
+    - 返回 (e^x) - 1
+  - Math.log1p
+    - 返回 ln(1+x)
+  - Math.log10
+    - 返回 以10 为底的对数 lgx
+  - Math.log2
+    - 返回 以2 为底的对数 lbx
+
+### 数组的扩展
+
+- Array.from
+
+  - 将两类对象转化为数组
+    - 类似数组的对象（伪数组）
+    - 可遍历的对象
+
+  ```js
+  let obj1 = {
+      0: 'hello',
+      1: 'world',
+      length: 2
+  }
+  Array.from(obj1) // ["hello", "world"]
+  ```
+
+  
+
+
 
