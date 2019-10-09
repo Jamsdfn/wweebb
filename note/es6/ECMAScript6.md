@@ -846,18 +846,399 @@ foo([1,2,3,4,5])
 
   - 将两类对象转化为数组
     - 类似数组的对象（伪数组）
-    - 可遍历的对象
-
+    - 可遍历的对象（Iterator ）
+  - 可遍历的对象
+  
   ```js
   let obj1 = {
       0: 'hello',
       1: 'world',
       length: 2
   }
-  Array.from(obj1) // ["hello", "world"]
+  // 根据 length 来设置数组长度，少则舍，多则 undefined
+Array.from(obj1) // ["hello", "world"]
+  
+  // 可遍历
+  Array.from('string')// ["s", "t", "r", "i", "n", "g"]
+  // Array.from 方法还可以接受第二个参数，和 map 方法类似，遍历数组元素返回一个新数组
+  Array.from([1, 2, 3, 4], x => x*x)// [1, 4, 9, 16]
+  // 可用于参数随机数数组
+  Array.from({length: 5}, () => Math.random())
+  ```
+  
+- Array.of
+
+  - 用于将一组值转换为数组
+  - Array.of 出现的主要目的是为了弥补 Array() 的不足
+
+  ```js
+  Array.of(1, 2, 3, 4, 5)// [1, 2, 3, 4, 5]
+  Array.of(1)// [1]
+  Array.of(10).length// 1
+  // 区别于 Array() 构造函数
+  Array(1, 2)// [1, 2]
+  Array() // []
+  Array(10)// [] 长度为10，每个元素都为空的数组
+  Array(10).length// 10
   ```
 
+- 数组实例的 copyWithin
+
+  - 用于在当前数组内部，将指定位置的成员复制到其他位置（会覆盖原有成员），然后返回当前数组。也就是说，使用这个方法，会修改当前数组。
+  - 它接受三个参数。
+    - target（必需）：从该位置开始替换数据。如果为负值，表示倒数。
+    - start（可选）：从该位置开始读取数据，默认为 0。如果为负值，表示从末尾开始计算。
+    - end（可选）：到该位置前停止读取数据，默认等于数组长度。如果为负值，表示从末尾开始计算
+
+  ```js
+  [1, 2, 3, 4, 5, 6].copyWithin(0, 3)// [4, 5, 6, 4, 5, 6]
+  ```
+
+- 数组实例的 find 和 findIndex 方法
+
+  - 用来扫描数组，查找第一个满足条件的数组元素
+  - find 返回数组元素本身
+  - findIndex 返回数组元素的索引
+  - 两个参数
+    - 函数体
+    - 用来绑定回调函数的this
+
+  ```js
+  // 注意这里 return 的是一个判断的表达式，不是元素
+  // find() 传入的函数体可以带三个参数，（元素本身，索引，数组本身）
+  [3, 5, 1, 10, 6].find(value => value > 3)// 5
+  [3, 5, 1, 10, 6].find(value => value > 111)// undefined
+  [3, 5, 1, 10, 6].find(function (value, index, arr) {
+      return value > 5
+  })// 10
   
+  [3, 5, 1, 10, 6].findIndex (value => value > 3)// 1
+  ;[3, 5, 1, 10, 6].findIndex (value => value > 111)// -1
+  
+  // findIndex 和 indexOf 的区别，findIndex 可以查询到 NaN
+  [NaN].indexOf(NaN) // -1 查询不到
+  [NaN].findIndex(n => Object.is(NaN, n)) // 0
+  ```
+
+  - Object.is() 判断两个值是否相同。如果下列任何一项成立，则两个值相同：
+
+    - 两个值都是 undefined
+    - 两个值都是 null
+    - 两个值都是 true 或者都是 false
+    - 两个值是由相同个数的字符按照相同的顺序组成的字符串
+    - 两个值指向同一个对象
+    - 两个值都是数字并且
+      - 都是正零 +0
+      - 都是负零 -0
+      - 都是 NaN
+      - 都是除零和 NaN外的其它同一个数字
+
+    这种相等性判断逻辑和传统的 == 运算不同，== 运算符会对它两边的操作数做隐式类型转换（如果它们类型不同），然后才进行相等性比较，（所以才会有类似 0 == false 等于 true 的现象），但 Object.is 不会做这种类型转换。
+
+    这与 === 运算符的判定方式也不一样。=== 运算符（和 == 运算符）将数字值 -0 和 +0 视为相等，并认Number.NaN 为 NaN 不等于 。
+
+- 数组实例的 fill 方法
+
+  - 使用给定值，填充一个数组，主要用于纯属实话数组
+  - 如果数组原本就有值，就会将其覆盖
+  - 三个参数
+    - 填充内容（必须）
+    - 填充起始位置，默认为0
+    - 填充结束为止，默认为数组长度
+
+  ```js
+  new Array(10).fill(6)// [6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+  [1,2,3].fill(6)// [6, 6, 6]
+  [1,2,3].fill(6,1,2)// [1,6,3]
+  ```
+
+- 数组实例的 entries 、 keys 和 values 方法
+
+  - ES6 提供三个新的方法——`entries()`，`keys()`和`values()`——用于遍历数组。它们都返回一个遍历器对象（Iterator 详见后文 Iterator 一节），可以用`for...of`循环进行遍历，唯一的区别是`keys()`是对键名的遍历、`values()`是对键值的遍历，`entries()`是对键值对的遍历。
+
+    ```javascript
+    for (let index of ['a', 'b'].keys()) {
+      console.log(index);
+    }
+    // 0
+    // 1
+    
+    for (let elem of ['a', 'b'].values()) {
+      console.log(elem);
+    }
+    // 'a'
+    // 'b'
+    
+    for (let [index, elem] of ['a', 'b'].entries()) {
+      console.log(index, elem);
+    }
+    // 0 "a"
+    // 1 "b"
+    ```
+
+    如果不使用`for...of`循环，可以手动调用遍历器对象的`next`方法，进行遍历。
+
+    ```javascript
+    let letter = ['a', 'b', 'c'];
+    let entries = letter.entries();
+    console.log(entries.next().value); // [0, 'a']
+    console.log(entries.next().value); // [1, 'b']
+    console.log(entries.next().value); // [2, 'c']
+    ```
+
+- 数组的空位（Array(n) 就是 n 个空位的数组）
+
+  - 数组的空位指，数组的某一个位置没有任何值。比如，`Array`构造函数返回的数组都是空位。
+
+  - `Array(3)`返回一个具有 3 个空位的数组。
+
+    注意，空位不是`undefined`，一个位置的值等于`undefined`，依然是有值的。空位是没有任何值，`in`运算符可以说明这一点。
+
+    ```javascript
+    0 in [undefined, undefined, undefined] // true
+    0 in [, , ,] // false
+    ```
+
+    上面代码说明，第一个数组的 0 号位置是有值的，第二个数组的 0 号位置没有值。
+
+    ES5 对空位的处理，已经很不一致了，大多数情况下会忽略空位。
+
+    - `forEach()`, `filter()`, `reduce()`, `every()` 和`some()`都会跳过空位。
+    - `map()`会跳过空位，但会保留这个值
+    - `join()`和`toString()`会将空位视为`undefined`，而`undefined`和`null`会被处理成空字符串。
+
+    ```javascript
+    // forEach方法
+    [,'a'].forEach((x,i) => console.log(i)); // 1
+    
+    // filter方法
+    ['a',,'b'].filter(x => true) // ['a','b']
+    
+    // every方法
+    [,'a'].every(x => x==='a') // true
+    
+    // reduce方法
+    [1,,2].reduce((x,y) => x+y) // 3
+    
+    // some方法
+    [,'a'].some(x => x !== 'a') // false
+    
+    // map方法
+    [,'a'].map(x => 1) // [,1]
+    
+    // join方法
+    [,'a',undefined,null].join('#') // "#a##"
+    
+    // toString方法
+    [,'a',undefined,null].toString() // ",a,,"
+    ```
+
+    ES6 则是明确将空位转为`undefined`。
+
+    `Array.from`方法会将数组的空位，转为`undefined`，也就是说，这个方法不会忽略空位。
+
+    ```javascript
+    Array.from(['a',,'b'])
+    // [ "a", undefined, "b" ]
+    ```
+
+    扩展运算符（`...`）也会将空位转为`undefined`。
+
+    ```javascript
+    [...['a',,'b']]
+    // [ "a", undefined, "b" ]
+    ```
+
+    `copyWithin()`会连空位一起拷贝。
+
+    ```javascript
+    [,'a','b',,].copyWithin(2,0) // [,"a",,"a"]
+    ```
+
+    `fill()`会将空位视为正常的数组位置。
+
+    ```javascript
+    new Array(3).fill('a') // ["a","a","a"]
+    ```
+
+    `for...of`循环也会遍历空位。
+
+    ```javascript
+    let arr = [, ,];
+    for (let i of arr) {
+      console.log(1);
+    }
+    // 1
+    // 1
+    ```
+
+    上面代码中，数组`arr`有两个空位，`for...of`并没有忽略它们。如果改成`map`方法遍历，空位是会跳过的。
+
+    `entries()`、`keys()`、`values()`、`find()`和`findIndex()`会将空位处理成`undefined`。
+
+    ```javascript
+    // entries()
+    [...[,'a'].entries()] // [[0,undefined], [1,"a"]]
+    
+    // keys()
+    [...[,'a'].keys()] // [0,1]
+    
+    // values()
+    [...[,'a'].values()] // [undefined,"a"]
+    
+    // find()
+    [,'a'].find(x => true) // undefined
+    
+    // findIndex()
+    [,'a'].findIndex(x => true) // 0
+    ```
+
+    由于空位的处理规则非常不统一，所以建议避免出现空位。
+
+### 函数的扩展
+
+- 函数参数的默认值
+
+  ```js
+  var write = function (x = 'Hello', y = 'world!') {
+      console.log(x, y)
+  }
+  write()
+  ```
+
+- 函数参数的默认值和解构赋值默认值的结合使用
+
+  ```js
+  var fun = function ({x,y = 5}) {
+      console.log(x, y)
+  }
+  fun()// error
+  fun({})// undefined 5
+  fun({x: 'hello'})// hello 5
+  fun({x: 'hello',y: 'world'})// hello world
+  
+  var fun1 = function (n,{x,y = 5}) {
+      console.log(n, x, y)
+  }
+  fun1(1)// error
+  fun1(1,{})// 1 undefined 5
+  fun1(1,{x: 'hello'})// 1 hello 5
+  fun1(1,{x: 'hello',y: 'world'})// 1 hello world
+  
+  var fun2 =  function (n,{x,y = 5} = {}) {
+      console.log(n, x, y)
+  }
+  fun2(1)// 1 undefined 5
+  fun2(1,{})// 1 undefined 5
+  fun2(1,{x: 'hello'})// 1 hello 5
+  fun2(1,{x: 'hello',y: 'world'})// 1 hello world
+  
+  // 下面两种例子的区别
+  var f1 = function ({x=0,y=0} = {}) {
+      console.log(x,y)
+  }
+  var f2 = function ({x,y} = {x:0,y:0}) {
+      console.log(x,y)
+  }
+  f1({x:1})// 1 0 因为解构赋值原本就有了默认值，所以这样覆盖解构y也有值
+  f2({x:1})// 1 undefined 这样赋值相当于覆盖了给对象的解构赋值，所以y未定义
+  ```
+
+- 获取函数无默认值参数的个数
+
+  - 函数的 length 属性(形参从前往后检测，遇到有默认值的就不检测了，不准确，所以并没什么用)
+
+  ```js
+  (function (x,y,z) {
+      
+  }).length // 3
+  (function (x,y=1,z) {
+      
+  }).length // 1
+  (function (x,y,z=1,n) {
+      
+  }).length // 2
+  ```
+
+- rest参数
+
+  - 语法：…变量名
+  - 一定要放在数组解构或者函数形参的最后面
+  - arguments 和 rest参数 的区别
+    - arguments是对象，定义函数时不需要放入形参，获取所有参数的值
+    - rest参数是数组，定义函数时要放入形参并命名，获取的是，除了前面其他形参的剩余值，并且 rest 参数也可以用于数组解构，不一定要在函数中使用
+
+  ```js
+  var add = function (...value) {
+      var sum = 0
+      value.map(n => sum += n)
+      return sum
+  }
+  add(1,2,3,4)// 10
+  var sub = function (a,b,...value) {
+      var sum = 0
+      sum = value[0]-value[1]
+      return sum
+  }
+  sub(1,2,3,4)//-1
+  sub(1,2,3)//NaN 3-undefined是NaN
+  ```
+
+- 扩展运算符 `...`
+
+  - 通俗理解，把数组的括号去掉，即一个参数，变成了多个参数
+  - 用途
+    - 合并数组
+    - 精确获取 UTF-16 的字符串长度
+
+  ```js
+  var values = ["hello","world","!"]
+  console.log(...value)// 相当于 console.log("hello","world","!")
+  // hello world !
+  
+  //合并数组
+  var arr1 = [1,2]
+  var arr2 = [3,4]
+  var arr3 = [5,6]
+  var arr4 = arr1.concat(arr2,arr3)// [1,2,3,4,5,6]
+  var arr5 = [...arr1,...arr2,...arr3]// [1,2,3,4,5,6]
+  
+  //精确获取字符串长度
+  "a🐒a".length// 4 "a\ud83d\udc12a"
+  [..."a🐒a"].length// 3
+  "a🐒b".split('').reverse().join('')// "b��a" "b\udc12\ud83da"
+  [..."a🐒b"].reverse().join('')// "b🐒a" "b\ud83d\udc12a"
+  ```
+
+- 函数的 name 属性
+
+  ```js
+  var fun = function () {}
+  fun.name// ES6 fun ES5是空串
+  
+  function fun1() {}
+  fun1.name// fun1
+  
+  // 下面的函数定义方法是 Airbnb代码规范 中推荐使用的
+  var f1 = function f2() {
+      
+  }
+  f1.name// f2
+  
+  (new Function).name// anonymous(匿名)
+  
+  function test() {}
+  test.bind(f1).name // bound test
+  ```
+
+- 箭头函数 (vue那篇笔记中有详细说明)
+
+  - 使用 `=>` 定义的函数
+  - 箭头的左侧为函数的参数，右侧表示函数体
+  - 如果右侧只有一条语句，则作为返回值
+  - 箭头函数的 this 的指向关系是重点，在vue那篇笔记中也有详细的讲述
+
+
 
 
 

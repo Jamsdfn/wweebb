@@ -326,7 +326,7 @@ npm i -D babel-loader babel-core babel-preset-es2015 babel-plugin-transform-runt
 - 箭头函数基本形式
 
 ```javascript
-let func = （num) => num;
+let func = (num) => num;
 let func = () => num;
 let sum = (num1,num2) => num1 + num2;
 [1,2,3].map(x => x * x);
@@ -362,15 +362,14 @@ let person = {
     init:()=>{
         //为body添加一个点击事件，看看这个点击后的this属性有什么不同
         document.body.onclick = ()=>{
-            alert(this.name);//undefined                  
+            alert(this.name);//""                  
         }
     }
 }
 person.init();
 ```
 
-上例中，init为箭头函数，其内部的this为全局window（因为window是person的上一级），onclick的this也就是init函数的this，也是window，
-得到的this.name就为undefined。
+上例中，init为箭头函数，其内部的this为全局window（因为window是person的上一级），onclick的this也就是init函数的this，也是window，可以看做this往上抛了两层，得到的this.name就为window.name。window.name 默认为 ""。
 
 - 箭头函数不能作为构造函数，不能使用new
 
@@ -390,7 +389,7 @@ var Person = (p) => {
 - 箭头函数没有arguments，caller，callee
 
 箭头函数本身没有arguments，如果箭头函数在一个function内部，它会将外部函数的arguments拿过来使用。
-箭头函数中要想接收不定参数，应该使用rest参数...解决。
+箭头函数中要想接收不定参数，应该使用rest参数解决。
 
 ```javascript
 let B = (b)=>{
