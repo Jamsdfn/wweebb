@@ -1238,6 +1238,238 @@ Array.from(obj1) // ["hello", "world"]
   - 如果右侧只有一条语句，则作为返回值
   - 箭头函数的 this 的指向关系是重点，在vue那篇笔记中也有详细的讲述
 
+### 对象的扩展
+
+- 属性的简介表示法
+
+  - 如果属性名和属性值位置的变量名相同，则可以只用一个变量名，即表示属性名又表示属性值
+  - 如果此属性是一个函数，属性值是一个匿名函数，则可以直接定义函数，即表示属性名又表示属性值
+
+  ```js
+  // ES5
+  var name = 'Bill'
+  var obj = {name: name}
+  // ES6
+  var obj1 = {name}
+  
+  // ES5
+  var obj2 = {
+      fun: function () {
+          return "hello world"
+      }
+  }
+  // ES6
+  var obj3 = {
+      fun() {
+          return "hello world"
+      }
+  }
+  ```
+
+- 属性名表达式
+
+  - 一种新增的，动态给对象添加属性的方法
+
+  ```js
+  var obj = {}
+  // ES5
+  obj.age = 30
+  obj['salary'] = 3000
+  // ES6 属性名表达式
+  var p = 'x'
+  obj['na'+'me'] = 'Mary'
+  obj[p+p] = 'pp'
+  // {age: 30, salary: 3000, name: "Mary", xx: "pp"}
+  var obj2 = {
+      ['product' + 1 * 666]: 'ioooooooooo',
+      [p]: 'p'
+  }
+  // {product666: "ioooooooooo", x: "p"}
+  var obj1 = {
+      ['f'+'un']() {
+          console.log('fun')
+      }
+  }
+  obj1.fun() // fun
+  ```
+
+- Object.is
+
+  - 判断两个值是否相同。如果下列任何一项成立，则两个值相同：
+
+    - 两个值都是 undefined
+    - 两个值都是 null
+    - 两个值都是 true 或者都是 false
+    - 两个值是由相同个数的字符按照相同的顺序组成的字符串
+    - 两个值指向同一个对象
+    - 两个值都是数字并且
+      - 都是正零 +0
+      - 都是负零 -0
+      - 都是 NaN
+      - 都是除零和 NaN外的其它同一个数字
+
+    这种相等性判断逻辑和传统的 == 运算不同，== 运算符会对它两边的操作数做隐式类型转换（如果它们类型不同），然后才进行相等性比较，（所以才会有类似 0 == false 等于 true 的现象），但 Object.is 不会做这种类型转换。
+
+    这与 === 运算符的判定方式也不一样。=== 运算符（和 == 运算符）将数字值 -0 和 +0 视为相等，并认Number.NaN 为 NaN 不等于 。
+
+- Object.assign
+
+  - 用于复制对象属性（包括属性值），如果目标对象或者各源对象含有同名属性，则后面复制的属性会覆盖前面的属性
+  - assign 只复制资深的属性，不可枚举的属性和继承的属性不会复制
+  - 两个参数
+    - targetObj
+    - …rest参数（sourceObj）
+
+  ```js
+  var target = {id: 10}
+  var source1 = {name: 'iooo'}
+  var source2 = {price: 7000}
+  var source3 = {location: 'CN'}
+  Object.assign(target, source1, source2, source3)
+  console.log(target)// {id: 10, name: "iooo", price: 7000, location: "CN"}
+  
+  var target = {id: 10}
+  var source1 = {name: 'iooo',id: 11}
+  var source2 = {price: 7000,name: 'iooq',id:12}
+  var source3 = {location: 'CN'}
+  Object.assign(target, source1, source2, source3)
+  console.log(target)// {id: 12, name: "iooq", price: 7000, location: "CN"}
+  
+  // 为对象添加属性
+  class MyClass {
+      constructor(x,y) {
+          Object.assign(this, {x, y})
+      }
+  }
+  var my = new MyClass(10, 20)
+  console.log(my)// MyClass {x: 10, y: 20}
+  
+  //克隆对象
+  function cloneObj(origin) {
+      return Object.assign({}, origin)
+  }
+  var origin = {id: 20,name: 'Bill'}
+  var clone = cloneObj(origin)// {id: 20, name: "Bill"}
+  ```
+
+### Symbol
+
+ES5 的对象属性名都是字符串，这容易造成属性名的冲突。比如，你使用了一个他人提供的对象，但又想为这个对象添加新的方法（mixin 模式），新方法的名字就有可能与现有方法产生冲突。如果有一种机制，保证每个属性的名字都是独一无二的就好了，这样就从根本上防止属性名的冲突。这就是 ES6 引入`Symbol`的原因。
+
+ES6 引入了一种新的原始数据类型 `Symbol`，表示独一无二的值。它是 JavaScript 语言的第七种数据类型，前六种是：`undefined`、`null`、布尔值（Boolean）、字符串（String）、数值（Number）、对象（Object）。
+
+Symbol 值通过`Symbol`函数生成。这就是说，对象的属性名现在可以有两种类型，一种是原来就有的字符串，另一种就是新增的 Symbol 类型。凡是属性名属于 Symbol 类型，就都是独一无二的，可以保证不会与其他属性名产生冲突。
+
+- Symbol 不能与其他类型的值进行运算，否则会报错
+
+  ```js
+  var sym = Symbol('Test Symbol')
+  
+  // Symbol 可以显式转换为 String，但不能隐式转换为 String
+  var sss = 'hello' + sym //error 运算是隐式转换
+  var str = String(sym)// "Symbol(Test Symbol)"
+  var str1 = sym.toString()// "Symbol(Test Symbol)"
+  
+  // Symbol 可以转为布尔值，但不能转为数值
+  Boolean(sym)// true
+  Number(sym)// error
+  ```
+
+- Symbol 作为属性名
+
+  - 调用用 Symbol 定义的对象的属性时，不能用 . 的方式调用，因为 . 调用的是 字符串属性名
+  - 关于全局状态下用 `var name = Symbol` 会报错的问题
+    - name 是 window 的特有属性，在全局环境下定义的name变量，赋任何值都会自动转化成字符串，而Symbol类型不能直接转化为字符串，所以报错了。
+
+  ```js
+  var s = Symbol('a')
+  var ss = Symbol('a')
+  var obj = {}
+  // 方法一
+  obj[s] = 'Bill'
+  obj[ss] = 'Mary'
+  
+  // 方法二
+  var obj2 = {
+      [s]: 'John'
+  }
+  
+  // 方法三
+  var obj3 = {}
+  Object.defineProperty(obj3,s,{value: 'John'})
+  
+  // 调用
+  console.log(obj[s])
+  ```
+
+- Symbol 属性名的遍历
+
+  ```js
+  var obj = {name: 'Bill'}
+  var a = Symbol('a')
+  var b = Symbol('b')
+  obj[a] = 'Hello'
+  obj[b] = 'World'
+  // Object.getOwnPropertySymbols 方法只遍历 Symbol 属性
+  var objectSymbols = Object.getOwnPropertySymbols(obj)
+  console.log(objectSymbols)// [Symbol(a), Symbol(b)]
+  
+  // for...in, Object.keys(), Object.getOwnPropertyNames 只能遍历字符串属性
+  for (var key in obj) {
+      console.log(key)
+  }
+  // name
+  
+  // 同时获取 Symbol 和非 Symbol 属性
+  console.log(Reflect.ownKeys(obj))// ["name", Symbol(a), Symbol(b)]
+  
+  // 可以利用 Symbol 的特性为对象添加一些非私有，但是又希望只用于内部的方法
+  var size = Symbol('size')
+  class Collection {
+      constructor() {
+          this[size] = 0 // 为对象添加一个 Symbol 类型，名为 size 的属性
+      }
+      add(item) {
+          this[this[size]] = item
+          this[size]++
+      }
+      static sizeOf(instance) {
+          return instance[size]
+      }
+  }
+  var cc = new Collection()
+  console.log(Collection.sizeOf(cc))
+  cc.add('ok')
+  cc.add('not ok')
+  console.log(Collection.sizeOf(cc))
+  console.log(object.keys(cc))// ["0", "1"]
+  console.log(Reflect.ownKeys(cc))// ["0", "1", Symbol(size)]
+  ```
+
+- Symbol.for & Symbol.keyFor
+
+  - Symbole.for 
+    - 有时，我们希望重新使用同一个 Symbol 值，`Symbol.for`方法可以做到这一点。它接受一个字符串作为参数，然后搜索有没有以该参数作为名称的 Symbol 值。如果有，就返回这个 Symbol 值，否则就新建并返回一个以该字符串为名称的 Symbol 值。
+    - `Symbol.for()`与`Symbol()`这两种写法，都会生成新的 Symbol。它们的区别是，前者会被登记在全局环境中供搜索，后者不会。`Symbol.for()`不会每次调用就返回一个新的 Symbol 类型的值，而是会先检查给定的`key`是否已经存在，如果不存在才会新建一个值。比如，如果你调用`Symbol.for("cat")`30 次，每次都会返回同一个 Symbol 值，但是调用`Symbol("cat")`30 次，会返回 30 个不同的 Symbol 值。
+  - Symbol.keyFor
+    - `Symbol.keyFor`方法返回一个已登记的 Symbol 类型值的`key`。
+
+  ```js
+  var name1 = Symbol('name')
+  var name2 = Symbol('name')
+  console.log(name1 === name2)// false
+  var s = Symbol.for('x')
+  var ss = Symbol.for('x')
+  console.log(s === ss)// true
+  
+  console.log(Symbol.keyFor(s))// x
+  console.log(Symbol.keyFor(name1))// undefined 因为直接用Symbol() 方式生成的 Symbol 值不会被登记
+  ```
+
+  
+
+
+
 
 
 
