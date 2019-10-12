@@ -1466,6 +1466,227 @@ Symbol 值通过`Symbol`函数生成。这就是说，对象的属性名现在�
   console.log(Symbol.keyFor(name1))// undefined 因为直接用Symbol() 方式生成的 Symbol 值不会被登记
   ```
 
+
+### Proxy
+
+Proxy 用于修改某些操作的默认行为，等同于在语言层面做出修改，所以属于一种“元编程”（meta programming），即对编程语言进行编程。
+
+Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界对该对象的访问，都必须先通过这层拦截，因此提供了一种机制，可以对外界的访问进行过滤和改写。Proxy 这个词的原意是代理，用在这里表示由它来“代理”某些操作，可以译为“代理器”。
+
+- Proxy 用于拦截对象的操作
+
+  - var obj = new Proxy(target, handler)
+    target: 要拦截的对象
+    handler: 拦截的动作
+
+  ```js
+  var obj1 = {
+      name: 'Bill',
+      fun() {
+          console.log('Function Bill')
+      }
+  }
+  
+  var obj2 = {
+      name: 'Mike',
+      fun() {
+          console.log('Function Mike')
+      }
+  }
+  // 调用访问对象前，统一进行操作，也就是拦截
+  // 创建代理
+  var obj = new Proxy(obj1, {
+      get: function (target, key, receiver) {
+          console.log('-------------------')
+          return Reflect.get(target, key, receiver)
+      }
+  })
+  console.log(obj.name)
+  // -------------------
+  // Bill
+  obj.fun()
+  // -------------------
+  // Function Bill
+  ```
+
+- 拦截属性的读取操作：get
+
+  ```js
+  // 通过代理我们可以让读取对象不存在属性时抛出异常
+  var product = {
+      name: 'ioo'
+  }
+  var proxy = new Proxy(product,{
+      get: function (target, property) {
+          // in 操作符: 如果指定的属性在指定的对象或其原型链中，则in 运算符返回true。
+          if (property in target) {
+              return target[property]
+          } else {
+              throw new ReferenceError(`属性"${property}"不存在`)
+          }
+      }
+  })
+  console.log(proxy.name)
+  console.log(proxy.price)
+  
+  // get 代理继承
+  let proto = new Proxy({},{
+      get(target, propertyKey, receiver) {
+          console.log('GET ' + propertyKey)
+          return target[propertyKey]
+      }
+  })
+  // Object.create()方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
+  let obj = Object.create(proto)
+  console.log(obj.name)
+  
+  // 应用，利用 get 代理读取数组的负索引
+  var arr = [1,2,3]
+  // arr[0] = arr[-3]; arr[1] = arr[-2]; arr[2] = arr[-1]
+  function createSuperArray(...elements) {
+      let handler = {
+          get(target, key, receiver) {
+              let index = Number(key)
+              if (index < 0) {
+                  key = String(target.length + index)
+              }
+              return Reflect.get(target, key, receiver)
+          }
+      }
+      return new Proxy(elements, handler)
+  }
+  
+  let arr1 = createSuperArray(1,2,3)
+  //arr1[-1]
+  //3
+  //arr1[-4]
+  //undefined
+  //arr1[-2]
+  //2
+  //arr1[-3]
+  //1
+  ```
+
+- 拦截属性写入操作的：set
+
+  ```js
+  // 校验属性值
+  var pro = {
+      name: 'iooo',
+      price: 80// 30-180
+  }
+  let validator = {
+      set(obj, key, value) {
+          if (key === 'price') {
+              if (!Number.isInteger(value)) {
+                  throw new TypeError('价格必须是整数')
+              }
+              if (value < 30 || value > 180) {
+                  throw new RangeError('价格必须在30到180之间')
+              }
+          }
+          obj[key] = value
+      }
+  }
+  let product = new Proxy(pro, validator)
+  product.price = 200
+  
+  // 控制属性是否被访问
+  // 对象的内部属性 通常属性名以 _ 开头的，都是内部私有属性
+  var handler = {
+      get(target, key) {
+          invariant(key)
+          return target[key]
+      },
+      set(target, key, value) {
+          invariant(key)
+          return 'ok'
+      }
+  }
+  
+  function invariant(key) {
+      if (key[0] === '_') {
+          throw new Error('私有属性，不能被访问')
+      }
+  }
+  
+  var obj = {
+      name:'Bill',
+      _value: 20
+  }
+  var objProxy = new Proxy(obj, handler)
+  console.log(objProxy.name) // Bill
+  console.log(objProxy._value)// Error: 私有属性，不能被访问
+  objProxy._value = 31// Error: 私有属性，不能被访问
+  ```
+
+- 拦截函数的调用、call 和 apply：apply
+
+  - `apply`方法拦截函数的调用、`call`和`apply`操作。
+
+    `apply`方法可以接受三个参数，分别是目标对象、目标对象的上下文对象（`this`）和目标对象的参数数组。
+
+  ```js
+  var fun = function () {
+      return 'hello world!'
+  }
+  var handler = {
+      apply() {
+          return '你好' // 改变返回值
+      }
+  }
+  var funProxy = new Proxy(fun, handler)
+  funProxy() // 你好
+  
+  function sum(n1, n2) {
+      return n1 + n2
+  }
+  var twice = {
+      apply(target, ctx, args) {
+          //Reflect.apply(...arguments) 相当于用Reflect.apply方法调用sum
+          return Reflect.apply(...arguments) * 2
+      }
+  }
+  var funProxy = new Proxy(sum, twice)
+  ```
+
+- 隐藏属性操作：has
+
+  - `has`方法用来拦截`HasProperty`操作，即判断对象是否具有某个属性时，这个方法会生效。典型的操作就是`in`运算符。但是这只会拦截单个属性的 in 判断，for…in 是不会拦截的。
+
+    `has`方法可以接受两个参数，分别是目标对象、需查询的属性名。
+
+  ```js
+  var obj = {
+      name: 'ioo',
+      price: 58,
+      _value: 5800,
+      _test: 'ok'
+  }
+  
+  var handler = {
+      has(target, key) {
+          if (key[0] === '_') {
+              return false
+          }
+          return key in target
+      }
+  }
+  var hasProxy = new Proxy(obj, handler)
+  console.log('name' in hasProxy)// true
+  console.log('price' in hasProxy)// true
+  console.log('_value' in hasProxy)// false
+  console.log('_test' in hasProxy)// false
+  // 不会拦截 for...in 
+  for (key in hasProxy) {
+      console.log(key)
+  }
+  // name
+  // price
+  // _value
+  // _test
+  ```
+
   
 
 
