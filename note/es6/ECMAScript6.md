@@ -6,7 +6,7 @@
 - ECMA: European Computer Manufacturers Association（欧洲计算机制造商协会）
 - ECMAScript6：简称 ES6，是 JavaScript 语言的下一代标准，也是目前正式发布的最新的 JavaScript 标准。由于 ES6 是在 2015 年发布的，所以 ES6 也称为 ECMAScript2015。
 - ECMAScript 是 JavaScript 的标准。JavaScript 是 EcmaScript 的实现，就好像。当然，除了 JavaScript，EcmaScript 还有其他的实现，比如 JScript、ActionScript。
-- 学习推荐 书籍 http://es6.ruanyifeng.com/
+- 本文档参考书籍 http://es6.ruanyifeng.com/
 
 ## 运行 ECMAScript 的方法
 
@@ -1648,6 +1648,9 @@ Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界�
       }
   }
   var funProxy = new Proxy(sum, twice)
+  console.log(funProxy(1,2))// 6
+  console.log(funProxy.call(null,1,2))// 6
+  console.log(funProxy.apply(null,[1,2]))// 6
   ```
 
 - 隐藏属性操作：has
@@ -1687,11 +1690,281 @@ Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界�
   // _test
   ```
 
+  - 如果原对象不可配置或禁止扩展，那么这是 has 拦截会报错
   
+  ```js
+  var obj = {a: 20}
+  // Object.preventExtensions()方法让一个对象变的不可扩展，也就是永远不能再添加新的属性。
+  Object.preventExtensions(obj)
+  var proxy = new Proxy(obj1,{
+      has(target, key) {
+          return false
+      }
+  })
+  console.log('a' in proxy)// Uncaught TypeError: 'has' on proxy: trap returned falsish for property 'a' but the proxy target is not extensible
+  ```
+  
+- 拦截 new 指令：construct
 
+  - 用于拦截创建对象的 new 指令
 
+  ```js
+  var handler = {
+      // target 是传入的构造函数，并且如果返回值不是一个对象会报错
+      construct(target, args) {
+          console.log('construct')
+          return new target()
+      }
+  }
+  var proxy = new Proxy(function () {}, handler)
+  new proxy// construct
+  ```
 
+- 拦截 delete 操作：deleteProperty
 
+  -  `deleteProperty`方法用于拦截`delete`操作，如果这个方法抛出错误或者返回`false`，当前属性就无法被`delete`命令删除。 
 
+  ```js
+  var handler = {
+      deleteProperty(target, key) {
+          delete target[key]
+          console.log(`删除"${key}"属性成功`)
+          return true
+      }
+  }
+  var obj = {
+      name: 'Bill',
+      age: 20
+  }
+  var proxy = new Proxy(obj, handler)
+  delete proxy.age// 删除"age"属性成功
+  console.log(proxy.age)// undefined
+  ```
 
+- 拦截 defineProperty 操作：defineProperty
+
+  -  `defineProperty`方法拦截了`Object.defineProperty`操作。 拦截动态添加属性的操作
+
+  ```js
+  var obj = {}
+  var handler = {
+      defineProperty(target, key, descriptor) {
+          console.log(`<${key}>`)
+          // target[key] = descriptor.value
+          Reflect.defineProperty(target, key, descriptor)
+          return true
+      }
+  }
+  var proxy = new Proxy(obj, handler)
+  proxy.name = 'Bill'
+  ```
+
+### Reflect
+
+**Reflect** 是一个内置的对象，它提供拦截 JavaScript 操作的方法。这些方法与[处理器对象](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Proxy/handler)的方法相同。`Reflect`不是一个函数对象，因此它是不可构造的。 
+
+与大多数全局对象不同，`Reflect`不是一个构造函数。你不能将其与一个[new运算符](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/new)一起使用，或者将`Reflect`对象作为一个函数来调用。`Reflect`的所有属性和方法都是静态的（就像[`Math`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Math)对象）。 
+
+  - `Reflect`对象与`Proxy`对象一样，也是 ES6 为了操作对象而提供的新 API。`Reflect`对象的设计目的有这样几个。
+
+    - 将`Object`对象的一些明显属于语言内部的方法（比如`Object.defineProperty`），放到`Reflect`对象上。现阶段，某些方法同时在`Object`和`Reflect`对象上部署，未来的新方法将只部署在`Reflect`对象上。也就是说，从`Reflect`对象上可以拿到语言内部的方法。
+    - 修改某些`Object`方法的返回结果，让其变得更合理。比如，`Object.defineProperty(obj, name, desc)`在无法定义属性时，会抛出一个错误，而`Reflect.defineProperty(obj, name, desc)`则会返回`false`。
+
+    ```javascript
+    // 老写法
+    try {
+      Object.defineProperty(target, property, attributes);
+      // success
+    } catch (e) {
+      // failure
+    }
+    
+    // 新写法
+    if (Reflect.defineProperty(target, property, attributes)) {
+      // success
+    } else {
+      // failure
+    }
+    ```
+
+    -  让`Object`操作都变成函数行为。某些`Object`操作是命令式，比如`name in obj`和`delete obj[name]`，而`Reflect.has(obj, name)`和`Reflect.deleteProperty(obj, name)`让它们变成了函数行为。 
+
+    ```javascript
+    // 老写法
+    'assign' in Object // true
+    
+    // 新写法
+    Reflect.has(Object, 'assign') // true
+    ```
+
+    -  `Reflect`对象的方法与`Proxy`对象的方法一一对应，只要是`Proxy`对象的方法，就能在`Reflect`对象上找到对应的方法。这就让`Proxy`对象可以方便地调用对应的`Reflect`方法，完成默认行为，作为修改行为的基础。也就是说，不管`Proxy`怎么修改默认行为，你总可以在`Reflect`上获取默认行为。 
+
+    ```javascript
+    Proxy(target, {
+      set: function(target, name, value, receiver) {
+        var success = Reflect.set(target, name, value, receiver);
+        if (success) {
+          console.log('property ' + name + ' on ' + target + ' set to ' + value);
+        }
+        return success;
+      }
+    });
+    ```
+
+    ​	上面代码中，`Proxy`方法拦截`target`对象的属性赋值行为。它采用`Reflect.set`方法将值赋值给对象的属性，确保完成原有的行为，然后再部署额外的功能。
+
+    下面是另一个例子。
+
+    ```javascript
+    var loggedObj = new Proxy(obj, {
+      get(target, name) {
+        console.log('get', target, name);
+        return Reflect.get(target, name);
+      },
+      deleteProperty(target, name) {
+        console.log('delete' + name);
+        return Reflect.deleteProperty(target, name);
+      },
+      has(target, name) {
+        console.log('has' + name);
+        return Reflect.has(target, name);
+      }
+    });
+    ```
+
+    上面代码中，每一个`Proxy`对象的拦截操作（`get`、`delete`、`has`），内部都调用对应的`Reflect`方法，保证原生行为能够正常执行。添加的工作，就是将每一个操作输出一行日志。
+
+    有了`Reflect`对象以后，很多操作会更易读。
+
+    ```javascript
+    // 老写法
+    Function.prototype.apply.call(Math.floor, undefined, [1.75]) // 1
+    
+    // 新写法
+    Reflect.apply(Math.floor, undefined, [1.75]) // 1
+    ```
+
+### Promise
+
+见 Nodejs 笔记，有详细的笔记
+
+### Iterator 和 for...of 循环
+
+JavaScript 原有的表示“集合”的数据结构，主要是数组（`Array`）和对象（`Object`），ES6 又添加了`Map`和`Set`。这样就有了四种数据集合，用户还可以组合使用它们，定义自己的数据结构，比如数组的成员是`Map`，`Map`的成员是对象。这样就需要一种统一的接口机制，来处理所有不同的数据结构。
+
+遍历器（Iterator）就是这样一种机制。它是一种接口，为各种不同的数据结构提供统一的访问机制。任何数据结构只要部署 Iterator 接口，就可以完成遍历操作（即依次处理该数据结构的所有成员）。
+
+Iterator 的作用有三个：一是为各种数据结构，提供一个统一的、简便的访问接口；二是使得数据结构的成员能够按某种次序排列；三是 ES6 创造了一种新的遍历命令`for...of`循环，Iterator 接口主要供`for...of`消费。
+
+Iterator 的遍历过程是这样的。
+
+（1）创建一个指针对象，指向当前数据结构的起始位置。也就是说，遍历器对象本质上，就是一个指针对象。
+
+（2）第一次调用指针对象的`next`方法，可以将指针指向数据结构的第一个成员。
+
+（3）第二次调用指针对象的`next`方法，指针就指向数据结构的第二个成员。
+
+（4）不断调用指针对象的`next`方法，直到它指向数据结构的结束位置。
+
+每一次调用`next`方法，都会返回数据结构的当前成员的信息。具体来说，就是返回一个包含`value`和`done`两个属性的对象。其中，`value`属性是当前成员的值，`done`属性是一个布尔值，表示遍历是否结束。
+
+下面是一个模拟`next`方法返回值的例子。
+
+```javascript
+var it = makeIterator(['a', 'b']);
+
+it.next() // { value: "a", done: false }
+it.next() // { value: "b", done: false }
+it.next() // { value: undefined, done: true }
+
+function makeIterator(array) {
+  var nextIndex = 0;
+  return {
+    next: function() {
+      return nextIndex < array.length ?
+        {value: array[nextIndex++], done: false} :
+        {value: undefined, done: true};
+    }
+  };
+}
+```
+
+上面代码定义了一个`makeIterator`函数，它是一个遍历器生成函数，作用就是返回一个遍历器对象。对数组`['a', 'b']`执行这个函数，就会返回该数组的遍历器对象（即指针对象）`it`。
+
+指针对象的`next`方法，用来移动指针。开始时，指针指向数组的开始位置。然后，每次调用`next`方法，指针就会指向数组的下一个成员。第一次调用，指向`a`；第二次调用，指向`b`。
+
+`next`方法返回一个对象，表示当前数据成员的信息。这个对象具有`value`和`done`两个属性，`value`属性返回当前位置的成员，`done`属性是一个布尔值，表示遍历是否结束，即是否还有必要再一次调用`next`方法。
+
+总之，调用指针对象的`next`方法，就可以遍历事先给定的数据结构。
+
+对于遍历器对象来说，`done: false`和`value: undefined`属性都是可以省略的，因此上面的`makeIterator`函数可以简写成下面的形式。
+
+```javascript
+function makeIterator(array) {
+  var nextIndex = 0;
+  return {
+    next: function() {
+      return nextIndex < array.length ?
+        {value: array[nextIndex++]} :
+        {done: true};
+    }
+  };
+}
+```
+
+由于 Iterator 只是把接口规格加到数据结构之上，所以，遍历器与它所遍历的那个数据结构，实际上是分开的，完全可以写出没有对应数据结构的遍历器对象，或者说用遍历器对象模拟出数据结构。下面是一个无限运行的遍历器对象的例子。
+
+```javascript
+var it = idMaker();
+
+it.next().value // 0
+it.next().value // 1
+it.next().value // 2
+// ...
+
+function idMaker() {
+  var index = 0;
+
+  return {
+    next: function() {
+      return {value: index++, done: false};
+    }
+  };
+}
+```
+
+上面的例子中，遍历器生成函数`idMaker`，返回一个遍历器对象（即指针对象）。但是并没有对应的数据结构，或者说，遍历器对象自己描述了一个数据结构出来。
+
+如果使用 TypeScript 的写法，遍历器接口（Iterable）、指针对象（Iterator）和`next`方法返回值的规格可以描述如下。
+
+```typescript
+interface Iterable {
+  [Symbol.iterator]() : Iterator,
+}
+
+interface Iterator {
+  next(value?: any) : IterationResult,
+}
+
+interface IterationResult {
+  value: any,
+  done: boolean,
+}
+```
+
+### Generator函数
+
+Generator 函数是 ES6 提供的一种异步编程解决方案，语法行为与传统函数完全不同。 
+
+Generator 函数有多种理解角度。语法上，首先可以把它理解成，Generator 函数是一个状态机，封装了多个内部状态。
+
+执行 Generator 函数会返回一个遍历器对象，也就是说，Generator 函数除了状态机，还是一个遍历器对象生成函数。返回的遍历器对象，可以依次遍历 Generator 函数内部的每一个状态。
+
+形式上，Generator 函数是一个普通函数，但是有两个特征。一是，`function`关键字与函数名之间有一个星号；二是，函数体内部使用`yield`表达式，定义不同的内部状态（`yield`在英语里的意思就是“产出”）。
+
+## 参考资料
+
+阮一峰《ECMAScript 6 入门》 http://es6.ruanyifeng.com/ 
+
+MDN https://developer.mozilla.org/zh-CN/ 
 
