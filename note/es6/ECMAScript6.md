@@ -2373,7 +2373,8 @@ console.log(gen.next())
   上面代码中，遍历器对象`i`连续抛出两个错误。第一个错误被 Generator 函数体内的`catch`语句捕获。`i`第二次抛出错误，由于 Generator 函数内部的`catch`语句已经执行过了，不会再捕捉到这个错误了，所以这个错误就被抛出了 Generator 函数体，被函数体外的`catch`语句捕获。
 
   - 我们可以通过 throw 语句提前结束 Generator 的状态
-
+- 但是通常都是用 return 结束的
+  
   ```js
   function fun(s) {
       console.log(s + s)
@@ -2393,7 +2394,49 @@ console.log(gen.next())
   obj.throw('stop')// stop
   ```
 
-  
+- return 方法
+
+  - 直接把返回的对象 done 变为 true。
+  - 没有 finally 或者 finally 里没有 yield 才返回 return 的参数，不然等执行完 finally 里的所有 yield 才返回 return 的参数。
+
+
+  ```js
+  function* gen() {
+      yield 'a'
+      yield 'b'
+      yield 'c'
+  }
+
+  var obj = gen()
+  console.log(obj.next())// {value: "a", done: false}
+  console.log(obj.return('hello world'))// {value: "hello world", done: true}
+  console.log(obj.next())// {value: undefined, done: true}
+  ```
+
+​	如果 Generator 函数内部有`try...finally`代码块，且正在执行`try`代码块，那么`return`方法会导致立刻进入`finally`代码块，执行完以后，整个函数才会结束。
+
+```javascript
+function* numbers () {
+  yield 1;
+  try {
+    yield 2;
+    yield 3;
+  } finally {
+    yield 4;
+    yield 5;
+  }
+  yield 6;
+}
+var g = numbers();
+g.next() // { value: 1, done: false }
+g.next() // { value: 2, done: false }
+g.return(7) // { value: 4, done: false } 
+g.next() // { value: 5, done: false }
+g.next() // { value: 7, done: true }
+```
+
+​	上面代码中，调用`return()`方法后，就开始执行`finally`代码块，不执行`try`里面剩下的代码了，然后等到`finally`代码块执行完，再返回`return()`方法指定的返回值。
+
 
 ## 参考资料
 
