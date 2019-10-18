@@ -2437,10 +2437,175 @@ g.next() // { value: 7, done: true }
 
 ​	上面代码中，调用`return()`方法后，就开始执行`finally`代码块，不执行`try`里面剩下的代码了，然后等到`finally`代码块执行完，再返回`return()`方法指定的返回值。
 
+- yield* 表达式与递归 Generator 函数
 
-## 参考资料
+  -  如果在 Generator 函数内部，调用另一个 Generator 函数。直接调用是没用的，需要在前者的函数体内部，自己手动完成遍历。 
+  -  ES6 提供了`yield*`表达式，作为解决办法，用来在一个 Generator 函数里面执行另一个 Generator 函数。 
 
-阮一峰《ECMAScript 6 入门》 http://es6.ruanyifeng.com/ 
+  ```js
+  // 递归 Generator 函数：在 Generator 函数内部调用 Generator 函数
+  
+  function* gen1() {
+      yield 'a'
+      yield 'b'
+  }
+  function* gen2() {
+      yield 1
+      yield* gen1()
+      yield 2
+  }
+  var obj = gen2()
+  console.log(obj.next())// {value: 1, done: false}
+  console.log(obj.next())// {value: "a", done: false}
+  console.log(obj.next())// {value: "b", done: false}
+  console.log(obj.next())// {value: 2, done: false}
+  console.log(obj.next())// {value: undefined, done: true}
+  ```
 
-MDN https://developer.mozilla.org/zh-CN/ 
+- 用 yield* 进行递归调用
+
+  ```js
+  function* enumerateArray(array) {
+      if (Array.isArray(array)) {
+          for (let i = 0; i < array.length; i++) {
+              yield* enumerateArray(array[i])
+          }
+      } else {
+          yield array
+      }
+  }
+  var arr = [1,2,[3,4,[5,6,[7,8]]]]
+  for (var value of enumerateArray(arr)) {
+      console.log(value)
+  }
+  ```
+
+- 作为对象属性的 Generator 函数
+
+  - 如果一个对象的属性是 Generator 函数，可以简写成下面的形式。
+
+    ```javascript
+    let obj = {
+      * myGeneratorMethod() {
+        ···
+      }
+    };
+    ```
+
+    上面代码中，`myGeneratorMethod`属性前面有一个星号，表示这个属性是一个 Generator 函数。
+
+    它的完整形式如下，与上面的写法是等价的。
+
+    ```javascript
+    let obj = {
+      myGeneratorMethod: function* () {
+        // ···
+      }
+    };
+    ```
+
+- Generator 函数的 this
+
+  - Generator 函数总是返回一个遍历器，ES6 规定这个遍历器是 Generator 函数的实例，也继承了 Generator 函数的`prototype`对象上的方法。
+
+    ```javascript
+    function* g() {}
+    
+    g.prototype.hello = function () {
+      return 'hi!';
+    };
+    
+    let obj = g();
+    
+    obj instanceof g // true
+    obj.hello() // 'hi!'
+    ```
+
+    上面代码表明，Generator 函数`g`返回的遍历器`obj`，是`g`的实例，而且继承了`g.prototype`。但是，如果把`g`当作普通的构造函数，并不会生效，因为`g`返回的总是遍历器对象，而不是`this`对象。
+
+    ```javascript
+    function* g() {
+      this.a = 11;
+    }
+    
+    let obj = g();
+    obj.next();
+    obj.a // undefined
+    ```
+
+    上面代码中，Generator 函数`g`在`this`对象上面添加了一个属性`a`，但是`obj`对象拿不到这个属性。
+
+    Generator 函数也不能跟`new`命令一起用，会报错。
+
+    ```javascript
+    function* F() {
+      yield this.x = 2;
+      yield this.y = 3;
+    }
+    
+    new F()
+    // TypeError: F is not a constructor
+    ```
+
+    上面代码中，`new`命令跟构造函数`F`一起使用，结果报错，因为`F`不是构造函数。
+
+    下面是一个变通方法。首先，生成一个空对象，使用`call`方法绑定 Generator 函数内部的`this`。这样，构造函数调用以后，这个空对象就是 Generator 函数的实例对象了。
+
+    ```javascript
+    function* F() {
+      this.a = 1;
+      yield this.b = 2;
+      yield this.c = 3;
+    }
+    var obj = {};
+    var f = F.call(obj);
+    
+    f.next();  // Object {value: 2, done: false}
+    f.next();  // Object {value: 3, done: false}
+    f.next();  // Object {value: undefined, done: true}
+    
+    obj.a // 1
+    obj.b // 2
+    obj.c // 3
+    ```
+
+    上面代码中，首先是`F`内部的`this`对象绑定`obj`对象，然后调用它，返回一个 Iterator 对象。这个对象执行三次`next`方法（因为`F`内部有两个`yield`表达式），完成 F 内部所有代码的运行。这时，所有内部属性都绑定在`obj`对象上了，因此`obj`对象也就成了`F`的实例。
+
+- Generator 与状态机
+
+  - Generator 是实现状态机的最佳结构。比如，下面的`clock`函数就是一个状态机。
+
+    ```javascript
+    var ticking = true;
+    var clock = function() {
+      if (ticking)
+        console.log('Tick!');
+      else
+        console.log('Tock!');
+      ticking = !ticking;
+    }
+    ```
+
+    上面代码的`clock`函数一共有两种状态（`Tick`和`Tock`），每运行一次，就改变一次状态。这个函数如果用 Generator 实现，就是下面这样。
+
+    ```javascript
+    var clock = function* () {
+      while (true) {
+        console.log('Tick!');
+        yield;
+        console.log('Tock!');
+        yield;
+      }
+    };
+    ```
+
+    上面的 Generator 实现与 ES5 实现对比，可以看到少了用来保存状态的外部变量`ticking`，这样就更简洁，更安全（状态不会被非法篡改）、更符合函数式编程的思想，在写法上也更优雅。Generator 之所以可以不用外部变量保存状态，是因为它本身就包含了一个状态信息，即目前是否处于暂停态。
+
+### 通过 Generator 函数的异步应用
+
+
+
+
+
+
 

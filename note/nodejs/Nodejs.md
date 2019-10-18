@@ -1440,7 +1440,7 @@ var p1 = new Promise(function (resolve, reject) {
             reject(err)//--------------------------------------|
         } else {//                                             |
         //    Promise 容器中的任务成功了                          |
-        //    把容器的 Pending 状态变为了 Rejected                |
+        //    把容器的 Pending 状态变为了 Resloved                |
         //    调用 resolve 函数 (then 方法传递的第一个定义的函数)    |   
             resolve(data)//-------------------------------|    |
         }//                                               |    |
