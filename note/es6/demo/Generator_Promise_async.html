@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test</title>
+</head>
+<body>
+    <script type="text/javascript">
+        var getJOSN = function (url) {
+            var promise = new Promise((reslove,reject) => {
+                var xhr = new XMLHttpRequest()
+                xhr.open('GET', url)
+                xhr.onreadystatechange = handler
+                xhr.responseType = 'text'
+                xhr.send()
+                function handler() {
+                    if (this.readyState != 4) {
+                        return
+                    }
+                    if (this.status == 200) {
+                        reslove(this.response)
+                    } else {
+                        reject(new Error(this.statusText))
+                    }
+                }
+            })
+            return promise
+        }
+        function* gen() {
+            var url = 'data.json'
+            var result = yield getJOSN(url)
+            console.log(`name: ${result.name}`)
+            console.log(`age: ${result.age}`)
+            console.log(`gender: ${result.gender}`)
+        }
+        var g = gen()
+        var obj = g.next()
+        obj.value.then((json) => {
+            var jsonObj = JSON.parse(json)
+            return jsonObj
+        }).then((jsonObj) => {
+            g.next(jsonObj)
+        })
+    </script>
+</body>
+</html>
