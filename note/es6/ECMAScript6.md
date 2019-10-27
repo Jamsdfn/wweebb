@@ -2657,6 +2657,47 @@ Promise 的最大问题是代码冗余，原来的任务被 Promise 包装了一
 
     换言之，`next`方法的作用是分阶段执行`Generator`函数。每次调用`next`方法，会返回一个对象，表示当前阶段的信息（`value`属性和`done`属性）。`value`属性是`yield`语句后面表达式的值，表示当前阶段的值；`done`属性是一个布尔值，表示 Generator 函数是否执行完毕，即是否还有下一个阶段。
 
+### async
+
+ES2017 标准引入了 async 函数，使得异步操作变得更加方便。async 函数是什么？一句话，它就是 Generator 函数的语法糖。只有一部分浏览器支持 ES7 语法
+
+```js
+// async 提出以前
+function timeout(ms) {
+    return new Promise((reslove, reject) => {
+        //setTimeout(reslove, ms)
+        if (ms % 2 == 0) {
+            setTimeout(reslove, ms)
+        } else {
+            // 必须用 reject 抛出异常，如果直接抛出，那么 async 和 promise 的 catch 都不会捕获异常
+            reject(new Error('延时时间必须为偶数'))
+        }
+    })
+}
+timeout(2000).then(() => {
+    console.log('111')
+}).catch((err) => {
+    console.log(err)
+})
+```
+
+- async 方法执行上面方法
+
+  ```js
+  async function asyncPrint(value, ms) {
+      // 当 promise 状态一转换为 reslove ，即reslove方法一被调用就继续执行
+      try{
+      	await timeout(ms).then(()=>{console.log('111')})
+      	console.log(value)
+      } catch(err) {
+          console.log(err)
+      }
+  }
+  asyncPrint('hello world', 3000)
+  ```
+
+  
+
 
 
 
