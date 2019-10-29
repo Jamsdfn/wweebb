@@ -2992,9 +2992,248 @@ Object.getOwnPropertyNames(Point.prototype)
   console.log(sumArray.sum())// 8
   ```
 
+- 类的 getter 和 setter 方法
+
+  - getter 和 setter 方法就是可以监控对象属性读写的方法(类似于 Proxy )
+
+  ```js
+  class Person {
+      constructor() {
+          this._name = ''
+      }
+      get name() {
+          console.log('get name')
+          return this._name
+      }
+      set name(value) {
+          console.log('set name')
+          this._name = value
+      }
+  }
+  var person = new Person()
+  person.name = 'Bill'
+  // set name
+  console.log(person.name)
+  // get name
+  // Bill
+  ```
+
+- 类的 Generator 方法
+
+  - 利用 Generator 方法可以遍历对象中的数据
+
+  ```js
+  class MyClass {
+      constructor(...args) {
+          this.args = args
+      }
+      * [Symbol.iterator]() { // 系统默认Iterator遍历器接口
+          for (let arg of this.args) {
+              yield arg
+          }
+      }
+      * gen() {
+          for (let arg of this.args) {
+              yield arg
+          }
+      }
+  }
+  var my = new MyClass(1,2,3,4,5)
+  var obj = my.gen()
+  console.log(obj.next().value)// 1
+  console.log(obj.next().value)// 2
   
+  for (let x of new MyClass('a', 'b', 'c')) {
+      console.log(x)// a  b  c
+  }
+  ```
 
+- 类的静态方法和静态属性
 
+  - 必须通过类本身调用，实例调用无效（这点和 Java 不一样）
+  - 成员方法会被继承，而静态方法不会被继承
+
+  ```js
+  class MyClass {
+      process() {
+          console.log('process')
+      }
+      static delete() {
+          console.log('delete')
+      }
+  }
+  
+  new MyClass().process()// process
+  new MyClass().delete()// error is not a function
+  MyClass.process()// error is not a function
+  MyClass.delete()// delete
+  ```
+
+  - 静态方法可以从 super 对象调用
+
+  ```js
+  class SubClass extends MyClass {
+      static method() {
+          console.log('method')
+          super.delete()
+      }
+  }
+  SubClass.method()
+  // method
+  // delete
+  ```
+
+  - 静态属性
+
+    静态属性指的是 Class 本身的属性，即`Class.propName`，而不是定义在实例对象（`this`）上的属性。
+
+    ```javascript
+    class Foo {
+    }
+    
+    Foo.prop = 1;
+    Foo.prop // 1
+    ```
+
+    上面的写法为`Foo`类定义了一个静态属性`prop`。
+
+    目前，只有这种写法可行，因为 ES6 明确规定，Class 内部只有静态方法，没有静态属性。现在有一个[提案](https://github.com/tc39/proposal-class-fields)提供了类的静态属性，写法是在实例属性的前面，加上`static`关键字。
+
+    ```javascript
+    class MyClass {
+      static myStaticProp = 42;
+    
+      constructor() {
+        console.log(MyClass.myStaticProp); // 42
+      }
+    }
+    ```
+
+    这个新写法大大方便了静态属性的表达。
+
+    ```javascript
+    // 老写法
+    class Foo {
+      // ...
+    }
+    Foo.prop = 1;
+    
+    // 新写法
+    class Foo {
+      static prop = 1;
+    }
+    ```
+
+    上面代码中，老写法的静态属性定义在类的外部。整个类生成以后，再生成静态属性。这样让人很容易忽略这个静态属性，也不符合相关代码应该放在一起的代码组织原则。另外，新写法是显式声明（declarative），而不是赋值处理，语义更好。
+
+- new.target 属性
+
+  -  `new`是从构造函数生成实例对象的命令。ES6 为`new`命令引入了一个`new.target`属性，该属性一般用在构造函数之中，返回`new`命令作用于的那个构造函数。如果构造函数不是通过`new`命令或`Reflect.construct()`调用的，`new.target`会返回`undefined`，因此这个属性可以用来确定构造函数是怎么调用的。 
+
+  ```js
+  // 写法一
+  function Person1(name) {
+      if (new.target != undefined) {
+          this.name = name
+      } else {
+          throw new Error('必须使用 new 实例化类')
+      }
+  }
+  // 写法二
+  function Person2(name) {
+      if (new.target === Person2) {
+          this.name = name
+      } else {
+          throw new Error('必须使用 new 实例化类')
+      }
+  }
+  var person = new Person1('Bill')
+  // var person11 = Person1.call(person, 'Bill')// error
+  
+  ```
+
+  Class 内部调用`new.target`，返回当前 Class(整个Class体，即代码)。
+
+  ```javascript
+  class Rectangle {
+    constructor(length, width) {
+      console.log(new.target === Rectangle);
+      this.length = length;
+      this.width = width;
+    }
+  }
+  
+  var obj = new Rectangle(3, 4); // 输出 true
+  ```
+
+  需要注意的是，子类继承父类时，`new.target` 会返回子类。
+
+  ```javascript
+  class Rectangle {
+    constructor(length, width) {
+      console.log(new.target === Rectangle);
+      // ...
+    }
+  }
+  
+  class Square extends Rectangle {
+    constructor(length) {
+      super(length, width);
+    }
+  }
+  
+  var obj = new Square(3); // 输出 false
+  ```
+
+  上面代码中，`new.target` 会返回子类。
+
+  利用这个特点，可以写出不能独立使用、必须继承后才能使用的类，即抽象类。抽象类有两个特征：
+
+  - 抽象类不能独立创建实例，必须通过子类继承才能实例化
+  - 抽象类的抽象方法不能直接调用，必须在子类中覆盖（override）才能调用
+
+  ```javascript
+  class Shape {
+    constructor() {
+      if (new.target === Shape) {
+        throw new Error('抽象类不能实例化');
+      }
+    }
+    print() {
+        throw new Error('抽象方法不能直接调用')
+    }
+    method() {
+        console.log('method: 普通方法')
+    }
+    print1() {
+        throw new Error('抽象方法不能直接调用')
+    }
+  }
+  
+  class Rectangle extends Shape {
+    constructor(length, width) {
+      super();
+      // ...
+    }
+    print() {
+        console.log('Rectangle')
+    }
+  }
+  
+  var x = new Shape();  // 报错
+  var y = new Rectangle(3, 4);  // 正确
+  new Rectangle().method()// method: 普通方法
+  new Rectangle().print()// Rectangle
+  new Rectangle().print1()// 报错
+  ```
+
+  上面代码中，`Shape`类不能被实例化，只能用于继承。
+
+  注意，在函数外部，使用`new.target`会报错。
+
+## 参考资料
+
+- http://es6.ruanyifeng.com/
 
 
 
