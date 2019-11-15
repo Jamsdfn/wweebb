@@ -1,8 +1,5 @@
-var message: string = "Hello World!"
-console.log(message)
+function buildName(firstName: string, ...restOfName: string[]) {
+    return firstName + " " + restOfName.join(" ");
+}
 
-var msg: string = "Hi"
-console.log(msg)
-var age: number = 3
-
-console.log(age)
+let employeeName = buildName("Joseph", "Samuel", "Lucas", "MacKinzie");

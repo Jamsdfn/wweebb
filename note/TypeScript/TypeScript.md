@@ -326,9 +326,500 @@ function loop(): never {
 }
 ```
 
+## TypeScript 变量声明
 
+变量是一种使用方便的占位符，用于引用计算机内存地址。
 
+我们可以把变量看做存储数据的容器。
 
+TypeScript 变量的命名规则：
+
+- 变量名称可以包含数字和字母。
+- 除了下划线 **_** 和美元 **$** 符号外，不能包含其他特殊字符，包括空格。
+- 变量名不能以数字开头。
+
+变量使用前必须先声明，我们可以使用 var 来声明变量。
+
+我们可以使用以下四种方式来声明变量：
+
+声明变量的类型及初始值：
+
+```ts
+var [变量名] : [类型] = 值;
+```
+
+例如：
+
+```ts
+var uname:string = "Runoob";
+```
+
+声明变量的类型及但没有初始值，变量值会设置为 undefined：
+
+```ts
+var [变量名] : [类型];
+```
+
+例如：
+
+```ts
+var uname:string;
+```
+
+声明变量并初始值，但不设置类型类型，该变量可以是任意类型：
+
+```ts
+var [变量名] = 值;
+```
+
+例如：
+
+```ts
+var uname = "Runoob";
+```
+
+声明变量没有设置类型和初始值，类型可以是任意类型，默认初始值为 undefined：
+
+```ts
+var [变量名];
+```
+
+例如：
+
+```ts
+var uname;
+```
+
+实例：
+
+```ts
+// ts
+var uname:string = "Runoob";
+var score1:number = 50;
+var score2:number = 42.50
+var sum = score1 + score2
+console.log("名字: "+uname)
+console.log("第一个科目成绩: "+score1)
+console.log("第二个科目成绩: "+score2)
+console.log("总成绩: "+sum)
+
+// 编译后的js
+var uname = "Runoob";
+var score1 = 50;
+var score2 = 42.50;
+var sum = score1 + score2;
+console.log("名字: " + uname);
+console.log("第一个科目成绩: " + score1);
+console.log("第二个科目成绩: " + score2);
+console.log("总成绩: " + sum);
+/* 结果
+名字: Runoob
+第一个科目成绩: 50
+第二个科目成绩: 42.5
+总成绩: 92.5
+*/
+```
+
+**注意：**变量不要使用 name 否则会与 DOM 中的全局 window 对象下的 name 属性出现了重名。
+
+### 类型断言（Type Assertion）
+
+- 类型断言可以用来手动指定一个值的类型，即允许变量从一种类型更改为另一种类型。
+
+语法格式：
+
+```ts
+<类型>值
+```
+
+或:
+
+```ts
+值 as 类型
+```
+
+实例：
+
+```ts
+var str: string = '1'
+// 编译前 str 因为声明时为 string 型，而 string 和 number 类型没有子集关系
+// 所以要先把 str 转为 any 类型，再转为 number 类型，才能赋值给 str2
+var str2: number = <number> <any> str
+// 编译后 str、str2 是 string 类型
+console.log(str2)
+console.log(typeof str2)
+```
+
+- TypeScript 是怎么确定单个断言是否足够
+
+当 S 类型是 T 类型的子集，或者 T 类型是 S 类型的子集时，S 能被成功断言成 S。这是为了在进行类型断言时提供额外的安全性，完全毫无根据的断言是危险的，如果你想这么做，你可以使用 any。
+
+它之所以不被称为**类型转换**，是因为转换通常意味着某种运行时的支持。但是，类型断言纯粹是一个编译时语法，同时，它也是一种为编译器提供关于如何分析代码的方法。
+
+编译后，以上代码会生成如下 JavaScript 代码：
+
+```ts
+var str = '1';
+var str2 = str;
+console.log(str2);
+```
+
+执行输出结果为：
+
+```
+1
+```
+
+### 类型推断
+
+当类型没有给出时，TypeScript 编译器利用类型推断来推断类型。
+
+如果由于缺乏声明而不能推断出类型，那么它的类型被视作默认的动态 any 类型。
+
+```ts
+var num = 2;    // 类型推断为 number*
+console.log("num 变量的值为 "+num);
+num = "12";    // 编译错误*
+console.log(num);
+```
+
+- 第一行代码声明了变量 num 并=设置初始值为 2。 注意变量声明没有指定类型。因此，程序使用类型推断来确定变量的数据类型，第一次赋值为 2，**num** 设置为 number 类型。
+
+- 第三行代码，当我们再次为变量设置字符串类型的值时，这时编译会错误。因为变量已经设置为了 number 类型。
+
+  ```
+  error TS2322: Type '"12"' is not assignable to type 'number'.
+  ```
+
+### 变量作用域
+
+变量作用域指定了变量定义的位置。
+
+程序中变量的可用性由变量作用域决定。
+
+TypeScript 有以下几种作用域：
+
+- **全局作用域** − 全局变量定义在程序结构的外部，它可以在你代码的任何位置使用。
+- **类作用域** − 这个变量也可以称为 **字段**。类变量声明在一个类里头，但在类的方法外面。 该变量可以通过类的对象来访问。类变量也可以是静态的，静态的变量可以通过类名直接访问。
+- **局部作用域** − 局部变量，局部变量只能在声明它的一个代码块（如：方法）中使用。
+
+以下实例说明了三种作用域的使用：
+
+```ts
+var global_num = 12          // 全局变量
+class Numbers {
+   num_val = 13;             // 实例变量
+   static sval = 10;         // 静态变量
+
+   storeNum():void {
+      var local_num = 14;    // 局部变量
+   }
+}
+console.log("全局变量为: "+global_num)  
+console.log(Numbers.sval)   // 静态变量
+var obj = new Numbers();
+console.log("实例变量: "+obj.num_val)
+```
+
+以上代码使用 tsc 命令编译为 JavaScript 代码为：
+
+```js
+var global_num = 12; // 全局变量
+var Numbers = /** @class */ (function () {
+    function Numbers() {
+        this.num_val = 13; // 类变量
+    }
+    Numbers.prototype.storeNum = function () {
+        var local_num = 14; // 局部变量
+    };
+    Numbers.sval = 10; // 静态变量
+    return Numbers;
+}());
+console.log("全局变量为: " + global_num);
+console.log(Numbers.sval); // 静态变量
+var obj = new Numbers();
+console.log("类变量: " + obj.num_val);
+```
+
+执行以上 JavaScript 代码，输出结果为：
+
+```
+全局变量为: 12
+10
+类变量: 13
+```
+
+如果我们在方法外部调用局部变量 local_num，会报错：
+
+```
+error TS2322: Could not find symbol 'local_num'.
+```
+
+## 函数的声明
+
+```ts
+function function_name():return_type { 
+    // 语句
+    return value; 
+}
+```
+
+- return_type 是返回值的类型。
+- return 关键词后跟着要返回的结果。
+- 一个函数只能有一个 return 语句。
+- 返回值的类型需要与函数定义的返回类型(return_type)一致。
+
+### 带参数函数
+
+在调用函数时，您可以向其传递值，这些值被称为参数。
+
+这些参数可以在函数中使用。
+
+您可以向函数发送多个参数，每个参数使用逗号 **,** 分隔：
+
+语法格式如下所示：
+
+```ts
+function func_name( param1 [:datatype], param2 [:datatype]) {   
+}
+```
+
+- param1、param2 为参数名。
+- datatype 为参数类型。
+
+**实例**
+
+```ts
+function add(x: number, y: number): number {
+    return x + y;
+}
+console.log(add(1,2))
+```
+
+- 实例中定义了函数 *add()*，返回值的类型为 number。
+- *add()* 函数中定义了两个 number 类型的参数，函数内将两个参数相加并返回。
+
+编译以上代码，得到以下 JavaScript 代码：
+
+```js
+function add(x, y) {
+    return x + y;
+}
+console.log(add(1, 2));
+/* 结果
+3
+*/
+```
+
+### 可选参数和默认参数
+
+- 可选参数
+
+在 TypeScript 函数里，如果我们定义了参数，则我们必须传入这些参数，除非将这些参数设置为可选，可选参数使用问号标识 ？。
+
+**实例**
+
+```ts
+function buildName(firstName: string, lastName: string) {
+    return firstName + " " + lastName;
+}
+ 
+let result1 = buildName("Bob");                  // 错误，缺少参数
+let result2 = buildName("Bob", "Adams", "Sr.");  // 错误，参数太多了
+let result3 = buildName("Bob", "Adams");         // 正确
+```
+
+以下实例，我么将 lastName 设置为可选参数：
+
+```ts
+function buildName(firstName: string, lastName?: string) {
+    if (lastName)
+        return firstName + " " + lastName;
+    else
+        return firstName;
+}
+ 
+let result1 = buildName("Bob");  // 正确
+let result2 = buildName("Bob", "Adams", "Sr.");  // 错误，参数太多了
+let result3 = buildName("Bob", "Adams");  // 正确
+```
+
+**注意**：可选参数必须跟在必需参数后面。 如果上例我们想让 firstName 是可选的，lastName 必选，那么就要调整它们的位置，把 firstName 放在后面。
+
+如果都是可选参数就没关系。
+
+- 默认参数
+
+我们也可以设置参数的默认值，这样在调用函数的时候，如果不传入该参数的值，则使用默认参数，语法格式为：
+
+```ts
+function function_name(param1[:type],param2[:type] = default_value) { 
+}
+```
+
+​	**注意**：参数不能同时设置为可选和默认。
+
+**实例**
+
+以下实例函数的参数 rate 设置了默认值为 0.50，调用该函数时如果未传入参数则使用该默认值：
+
+```ts
+function calculate_discount(price:number,rate:number = 0.50) { 
+    var discount = price * rate; 
+    console.log("计算结果: ",discount); 
+} 
+calculate_discount(1000) 
+calculate_discount(1000,0.30)
+```
+
+编译以上代码，得到以下 JavaScript 代码：
+
+```js
+function calculate_discount(price, rate) {
+    if (rate === void 0) { rate = 0.50; }
+    var discount = price * rate;
+    console.log("计算结果: ", discount);
+}
+calculate_discount(1000);
+calculate_discount(1000, 0.30);
+```
+
+输出结果为：
+
+```
+计算结果:  500
+计算结果:  300
+```
+
+### 剩余参数
+
+有一种情况，我们不知道要向函数传入多少个参数，这时候我们就可以使用剩余参数来定义。
+
+剩余参数语法允许我们将一个不确定数量的参数作为一个数组传入。
+
+```tsx
+function buildName(firstName: string, ...restOfName: string[]) {
+    return firstName + " " + restOfName.join(" ");
+}
+  
+let employeeName = buildName("Joseph", "Samuel", "Lucas", "MacKinzie");
+```
+
+函数的最后一个命名参数 restOfName 以 ... 为前缀，它将成为一个由剩余参数组成的数组，索引值从0（包括）到 restOfName.length（不包括）。类似于 ES6 的 rest参数。
+
+```ts
+function addNumbers(...nums:number[]) {  
+    var i;   
+    var sum:number = 0; 
+    
+    for(i = 0;i<nums.length;i++) { 
+       sum = sum + nums[i]; 
+    } 
+    console.log("和为：",sum) 
+ } 
+ addNumbers(1,2,3) 
+ addNumbers(10,10,10,10,10)
+```
+
+编译以上代码，得到以下 JavaScript 代码：
+
+```js
+function addNumbers() {
+    var nums = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        nums[_i] = arguments[_i];
+    }
+    var i;
+    var sum = 0;
+    for (i = 0; i < nums.length; i++) {
+        sum = sum + nums[i];
+    }
+    console.log("和为：", sum);
+}
+addNumbers(1, 2, 3);
+addNumbers(10, 10, 10, 10, 10);
+/* 结果
+和为： 6
+和为： 50
+*/
+```
+
+### Lambda 函数
+
+和 ES6 的箭头函数的基本用法差不多，但是可以在参数上定义类型`var foo = (x:number) => x + 10`
+
+### 函数重置
+
+- 重载是指不同的函数使用相同的函数名，但是函数的参数个数或类型不同。调用的时候根据函数的参数来区别不同的函数。
+
+- 重载是方法名字相同，而参数不同，返回类型可以相同也可以不同。
+
+- 每个重载的方法（或者构造函数）都必须有一个独一无二的参数类型列表。
+
+参数类型不同：
+
+```ts
+function disp(string):void; 
+function disp(number):void;
+```
+
+参数数量不同：
+
+```ts
+function disp(n1:number):void; 
+function disp(x:number,y:number):void;
+```
+
+参数类型顺序不同：
+
+```ts
+function disp(n1:number,s1:string):void; 
+function disp(s:string,n:number):void;
+```
+
+如果参数类型不同，则参数类型应设置为 **any**。
+
+参数数量不同你可以将不同的参数设置为可选。
+
+**实例**
+
+以下实例定义了参数类型与参数数量不同：
+
+```ts
+function disp(s1:string):void; 
+function disp(n1:number,s1:string):void; 
+ 
+function disp(x:any,y?:any):void { 
+    console.log(x); 
+    console.log(y); 
+} 
+disp("abc") 
+disp(1,"xyz");
+```
+
+编译以上代码，得到以下 JavaScript 代码：
+
+```js
+function disp(x, y) {
+    console.log(x);
+    console.log(y);
+}
+disp("abc");
+disp(1, "xyz");
+```
+
+输出结果为：
+
+```
+abc
+undefined
+1
+xyz
+```
+
+### 注
+
+未提及的部分基本和 js 一致
 
 ## 参考资料
 
