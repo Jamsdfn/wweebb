@@ -1507,7 +1507,7 @@ namespace SomeNameSpaceName {
 }
 ```
 
-以上定义了一个命名空间 SomeNameSpaceName，如果我们需要在外部可以调用 SomeNameSpaceName 中的类类和接口，则需要在类和接口添加 **export** 关键字。
+以上定义了一个命名空间 SomeNameSpaceName，如果我们需要在外部可以调用 SomeNameSpaceName 中的类和接口，则需要在类和接口添加 **export** 关键字。
 
 要在另外一个命名空间调用语法格式为：
 
@@ -1532,6 +1532,7 @@ namespace Drawing {
     }
 }  
 // Circle.ts 文件代码
+/// <reference path = "IShape.ts" />
 namespace Drawing {
     export class Circle implements IShape {
         public draw() {
