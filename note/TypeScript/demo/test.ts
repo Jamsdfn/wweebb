@@ -52,3 +52,43 @@ class AgriLoan implements ILoan {
 
 var obj = new AgriLoan(10,1)
 console.log("利润为 : "+obj.interest+"，抽成为 : "+obj.rebate )
+
+
+function identity<T>(arg: T): T {
+    return arg;
+}
+
+//let myIdentity: <T>(arg: T) => T = identity;
+
+let antzone: (webName:string, age:number) => string=
+    function(webName: string, age: number): string {
+        return webName+"已经成立"+age+"年了";
+    }
+interface GenericIdentityFn {
+    <T>(arg: T): T;
+}
+
+
+let myIdentity: GenericIdentityFn = identity;
+class GenericNumber<T> {
+    zeroValue: T;
+    add: (x: T, y: T) => T;
+}
+
+let myGenericNumber = new GenericNumber<number>();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function(x, y) { return x + y; };
+let stringNumeric = new GenericNumber<string>();
+stringNumeric.zeroValue = "14";
+stringNumeric.add = function(x, y) { return x + y; };
+
+console.log(stringNumeric.add(stringNumeric.zeroValue, "test"));
+interface Lengthwise {
+    length: number;
+}
+
+function loggingIdentity<T extends Lengthwise>(arg: T): T {
+    console.log(arg.length);  // Now we know it has a .length property, so no more error
+    return arg;
+}
+loggingIdentity("sss")

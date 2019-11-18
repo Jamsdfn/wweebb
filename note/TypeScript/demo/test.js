@@ -40,3 +40,28 @@ var AgriLoan = /** @class */ (function () {
 }());
 var obj = new AgriLoan(10, 1);
 console.log("利润为 : " + obj.interest + "，抽成为 : " + obj.rebate);
+function identity(arg) {
+    return arg;
+}
+//let myIdentity: <T>(arg: T) => T = identity;
+var antzone = function (webName, age) {
+    return webName + "已经成立" + age + "年了";
+};
+var myIdentity = identity;
+var GenericNumber = /** @class */ (function () {
+    function GenericNumber() {
+    }
+    return GenericNumber;
+}());
+var myGenericNumber = new GenericNumber();
+myGenericNumber.zeroValue = 0;
+myGenericNumber.add = function (x, y) { return x + y; };
+var stringNumeric = new GenericNumber();
+stringNumeric.zeroValue = "14";
+stringNumeric.add = function (x, y) { return x + y; };
+console.log(stringNumeric.add(stringNumeric.zeroValue, "test"));
+function loggingIdentity(arg) {
+    console.log(arg.length); // Now we know it has a .length property, so no more error
+    return arg;
+}
+loggingIdentity("sss");

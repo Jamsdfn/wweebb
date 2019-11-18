@@ -817,6 +817,97 @@ undefined
 xyz
 ```
 
+### 函数类型
+
+TypeScript核心原则之一是对数据具有的结构进行类型检查。
+
+函数也不例外，首先看一段代码实例:
+
+```ts
+function antzone(webName: string, age: number): string {
+    return webName+"已经成立"+age+"年了";
+}
+```
+
+以函数声明方式创建函数，括号中规定了函数参数的类型；最后一个冒号后面规定函数返回值类型。
+
+```ts
+let antzone = function(webName: string, age: number): string {
+    return webName+"已经成立"+age+"年了";
+}
+```
+
+以表达式方式创建函数，参数类型和返回值类型的规定与上面是一样的。
+
+上面方式其实是简写形式，如同以下代码:
+
+```ts
+let str="sss";
+```
+
+变量str的类型是由它的值推断出来的，完整的写法如下:
+
+```ts
+let str:string="sss";
+```
+
+同样的道理，antzone也可以显式给出类型，代码实例如下:
+
+```ts
+let antzone: (webName:string, age:number) => string // ts格式，记住就好了
+```
+
+小括号中规定参数的类型，箭头后面是函数返回值类型；完整代码如下:
+
+```ts
+let antzone: (webName:string, age:number) => string=
+    function(webName: string, age: number): string {
+        return webName+"已经成立"+age+"年了";    
+    }
+```
+
+特别说明:
+
+（1）.函数的类型必须是完整的，即便函数没有返回值，也要显式规定void:
+
+```ts
+let antzone: (webName:string, age:number) => void
+```
+
+（2）.函数类型中参数的名称没必要和函数数据中的参数名称相同，只要类型匹配即可:
+
+```ts
+let antzone: (webName:string, age:number) => string=    
+    function(name: string, webAge: number): string {
+        return name+"已经成立"+webAge+"年了";    
+    }
+```
+
+**函数类型推断:**
+
+```ts
+let antzone = function(webName: string, age: number): string {
+    return webName+"已经成立"+age+"年了";
+}
+```
+
+上面代码可以由右边推断出antzone的类型为:
+
+```ts
+(webName:string, age:number) => string
+```
+
+再来看一段代码实例:
+
+```ts
+let antzone: (webName:string, age:number) => string=
+    function(name, webAge){
+        return name+"已经成立"+webAge+"年了";    
+    }
+```
+
+由左到右推断类型。
+
 ### 注
 
 未提及的部分基本和 js 一致
@@ -1872,7 +1963,7 @@ function identity<T>(arg: T): T {
 
 我们给identity添加了类型变量`T`。 `T`帮助我们捕获用户传入的类型（比如：`number`），之后我们就可以使用这个类型。 之后我们再次使用了 `T`当做返回值类型。现在我们可以知道参数类型与返回值类型是相同的了。 这允许我们跟踪函数里使用的类型的信息。
 
-我们把这个版本的`identity`函数叫做泛型，因为它可以适用于多个类型。 不同于使用 `any`，它不会丢失信息，像第一个例子那像保持准确性，传入数值类型并返回数值类型。
+这个的`identity`函数叫做泛型，因为它可以适用于多个类型。 不同于使用 `any`，它不会丢失信息，像第一个例子那像保持准确性，传入数值类型并返回数值类型。
 
 我们定义了泛型函数后，可以用两种方法使用。 第一种是，传入所有的参数，包含类型参数：
 
@@ -1997,7 +2088,7 @@ function identity<T>(arg: T): T {
 let myIdentity: GenericIdentityFn<number> = identity;
 ```
 
-注意，我们的示例做了少许改动。 不再描述泛型函数，而是把非泛型函数签名作为泛型类型一部分。 当我们使用 `GenericIdentityFn`的时候，还得传入一个类型参数来指定泛型类型（这里是：`number`），锁定了之后代码里使用的类型。 对于描述哪部分类型属于泛型部分来说，理解何时把参数放在调用签名里和何时放在接口上是很有帮助的。
+注意，上示例做了少许改动。 不再描述泛型函数，而是把非泛型函数签名作为泛型类型一部分。 当我们使用 `GenericIdentityFn`的时候，还得传入一个类型参数来指定泛型类型（这里是：`number`），锁定了之后代码里使用的类型。 对于描述哪部分类型属于泛型部分来说，理解何时把参数放在调用签名里和何时放在接口上是很有帮助的。
 
 除了泛型接口，我们还可以创建泛型类。 注意，无法创建泛型枚举和泛型命名空间。
 
@@ -2020,7 +2111,7 @@ myGenericNumber.add = function(x, y) { return x + y; };
 
 ```ts
 let stringNumeric = new GenericNumber<string>();
-stringNumeric.zeroValue = "";
+stringNumeric.zeroValue = "1";
 stringNumeric.add = function(x, y) { return x + y; };
 
 console.log(stringNumeric.add(stringNumeric.zeroValue, "test"));
