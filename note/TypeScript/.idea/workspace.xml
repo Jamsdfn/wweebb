@@ -15,7 +15,7 @@
     <session id="2021283716">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="3" />
+          <entry key="project.closed" value="4" />
           <entry key="project.open.time.10" value="1" />
           <entry key="project.open.time.16" value="1" />
           <entry key="project.open.time.18" value="1" />
@@ -25,13 +25,13 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="js" value="5" />
+          <entry key="js" value="7" />
           <entry key="ts" value="10" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="JavaScript" value="5" />
+          <entry key="JavaScript" value="7" />
           <entry key="TypeScript" value="10" />
         </counts>
       </usages-collector>
@@ -245,16 +245,15 @@
       <workItem from="1572528467141" duration="117000" />
       <workItem from="1572528616104" duration="2728000" />
       <workItem from="1573817629969" duration="1891000" />
-      <workItem from="1573992509304" duration="3745000" />
+      <workItem from="1573992509304" duration="4398000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="8481000" />
+    <option name="totallyTimeSpent" value="9134000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="574" y="30" width="1042" height="724" extended-state="0" />
-    <editor active="true" />
+    <frame x="474" y="28" width="1042" height="724" extended-state="0" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.16998012" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -392,6 +391,18 @@
           <caret line="6" column="5" lean-forward="true" selection-start-line="6" selection-start-column="5" selection-end-line="6" selection-end-column="5" />
         </state>
       </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo/TestShape_1.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="n#!!doc" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/demo/app.js">
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/demo/TestShape_1.ts">
       <provider selected="true" editor-type-id="text-editor">
