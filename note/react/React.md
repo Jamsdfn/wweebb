@@ -18,7 +18,7 @@ React 起源于 Facebook 的内部项目，用来架设 Instagram 的网站，�
 
 React 拥有较高的性能，代码逻辑非常简单，越来越多的人已开始关注和使用它。
 
-### React 特点
+**React 特点**
 
 - **声明式设计** −React 采用声明范式，可以轻松描述应用。
 - **高效** −React 通过对 DOM 的模拟，即虚拟 DOM，最大限度地减少与 DOM 的交互。
@@ -27,7 +27,7 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
 - **组件化** − 通过 React 构建组件，使得代码更加容易得到复用，能够很好的应用在大项目的开发中。
 - **单向响应的数据流** − React 实现了单向响应的数据流，从而减少了重复代码，这也是它为什么比传统数据绑定更简单。原生没有双向数据绑定，可以自己写。
 
-### React 发展史
+**React 发展史**
 
 - Facebook 内部用来开发 Instagram
 - 2013 年开源了 React
@@ -40,45 +40,41 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
   - React  最后架不住社区的压力，最后还是修改了许可协议条款。
 - [React - Releases](https://github.com/facebook/react/releases)
 
-### React 和 Vue 对比
+**React 和 Vue 对比**
 
-#### 技术层面
+- **技术层面**
+  - Vue 生产力更高（更少的代码实现更强劲的功能）
+  - React 更底层一点，技术占比比较重
+  - 两个框架的效率都采用了虚拟 DOM
+    - 性能都差不多
+  - 组件化
+    - Vue 支持
+    - React 支持
+  - 数据绑定
+    - 都支持数据驱动视图
+    - Vue 支持表单控件双向数据绑定
+    - React 不支持双向数据绑定
+  - 它们的核心库都很小，都是渐进式 JavaScript 库
+  - React 采用 JSX 语法来编写组件
+  - Vue 采用单文件组件
+    - `template`
+    - `script`
+    - `style`
 
-- Vue 生产力更高（更少的代码实现更强劲的功能）
-- React 更底层一点，技术占比比较重
-- 两个框架的效率都采用了虚拟 DOM
-  - 性能都差不多
-- 组件化
-  - Vue 支持
-  - React 支持
-- 数据绑定
-  - 都支持数据驱动视图
-  - Vue 支持表单控件双向数据绑定
-  - React 不支持双向数据绑定
-- 它们的核心库都很小，都是渐进式 JavaScript 库
-- React 采用 JSX 语法来编写组件
-- Vue 采用单文件组件
-  - `template`
-  - `script`
-  - `style`
+- **开发团队**
+  - React 由 Facebook 前端维护开发
 
-#### 开发团队
+  - Vue
 
-- React 由 Facebook 前端维护开发
-- Vue
-  - 早期只有尤雨溪一个人
-  - 由于后来使用者越来越多，后来离职专职开发维护 Vue
-  - 目前也有一个小团队在开发维护
+    早期只有尤雨溪一个人由于后来使用者越来越多，后来离职专职开发维护 Vu目前也有一个小团队在开发维护
 
-#### Native APP 开发
+- **Native APP 开发**
+  - React Native
+    - 可以写安卓/iOS原生应用
+  - Weex
+    - 阿里巴巴内部做出来的一个东西，基于 Vue
 
-- React Native
-  - 可以原生应用
-  - React 结束之后会学习
-- Weex
-  - 阿里巴巴内部做出来的一个东西，基于 Vue
-
-### 相关资源链接
+**相关资源链接**
 
 - [React 官网](https://reactjs.org/)(被墙)
   - [中文官网](https://react.docschina.org/)
@@ -90,21 +86,17 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
   - API 参考文档
 - [React - GitHub](https://github.com/facebook/react)
 - [阮一峰 - React 技术栈系列教程](http://www.ruanyifeng.com/blog/2016/09/react-technology-stack.html)
-- [阮一峰 - React 入门实例教程]（http://www.ruanyifeng.com/blog/2015/03/react.html
+- [阮一峰 - React 入门实例教程](http://www.ruanyifeng.com/blog/2015/03/react.html)
 - [awesome react](https://github.com/enaqx/awesome-react)
 - [awesome-react-components](https://github.com/brillout/awesome-react-components)
 
-## EcmaScript 6 补充
-
-- `class` 构造函数的语法糖
-
 ## React 核心概念
 
-### 组件化
+- 组件化
 
 ![react-component](https://cn.vuejs.org/images/components.png)
 
-### 虚拟 DOM
+- 虚拟 DOM
 
 > 虚拟 DOM 对于使用者来讲完全不用关心
 
@@ -116,7 +108,7 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
 - [50行代码实现Virtual DOM](http://www.jianshu.com/p/cbb7d7094fb9)
 - [网上都说操作真实 DOM 慢，但测试结果却比 React 更快，为什么？](https://www.zhihu.com/question/31809713)
 
-### JSX
+- JSX
 
 虚拟 DOM 写起来麻烦，所以提供了 JSX 的方式。
 
@@ -136,8 +128,6 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
 - 自己手动搭建模块化 webpack 开发环境
 
 > https://reactjs.org/docs/hello-world.html
-
-
 
 ### babel-standalone
 
@@ -238,11 +228,40 @@ JSX 全称 `JavaScript XML` ，是一种扩展的 JavaScript 语言，它允许 
 
 
 - 遇到 HTML 标签 （以 `<` 开头） 就用 HTML 规则解析
+  
   - 单标签不能省略结束标签。
+  
 - 遇到代码块（以 `{` 开头），就用 JavaScript 规则解析
+
+  ```jsx
+  // 因为 {} 会当成js规则解析，所以如果想在标签内写style属性时要用两层括号，不过定义一个变量里面写样式，要写行内样式时直接赋值就好了
+  const h1Style = {
+      color: 'hotpink',
+      fontSize :'18px'
+  }
+  <h1 style={{'color':'hotpink','font-size':'18px'}}></h1>
+  //推荐
+  <h1 style={h1Style}></h1>
+  ```
+
 - JSX 允许直接在模板中插入一个 JavaScript 变量
+  
   - 如果这个变量是一个数组，则会展开这个数组的所有成员添加到模板中
+  
 - 单标签必须结束 `/>`
+
+- 标签内的添加事件（onclick,onmouseover等这些）要遵循驼峰命名法
+
+
+    - onclick -> onClick
+    - onmouoseover -> onMouseOver
+
+  ```jsx
+  function myconsole() {
+      console.log('onMouseOver Event')
+  }
+  <img src={imgSrc} onMouseOver={myconsole}/>
+  ```
 
 基本语法：
 
@@ -498,7 +517,7 @@ ReactDOM.render(
 
 > 参考文档：https://reactjs.org/docs/conditional-rendering.html
 
-### 示例1：
+**示例1：**
 
 ```jsx
 function UserGreeting(props) {
@@ -524,7 +543,7 @@ ReactDOM.render(
 );
 ```
 
-### 示例2：
+**示例2：**
 
 ```jsx
 function LoginButton(props) {
@@ -584,7 +603,7 @@ ReactDOM.render(
 );
 ```
 
-### 示例3（行内判断）：
+**示例3（行内判断）：**
 
 ```jsx
 function Mailbox(props) {
@@ -608,7 +627,7 @@ ReactDOM.render(
 );
 ```
 
-### 示例4（if-else）：
+**示例4（if-else）：**
 
 ```jsx
 render() {
@@ -636,7 +655,7 @@ render() {
 }
 ```
 
-### 示例5（阻止组件渲染）：
+**示例5（阻止组件渲染）：**
 
 ```jsx
 function WarningBanner(props) {
@@ -686,7 +705,7 @@ ReactDOM.render(
 
 > 参考文档：https://reactjs.org/docs/handling-events.html
 
-### 示例1
+**示例1**
 
 ```jsx
 <button onclick="activateLasers()">
@@ -700,7 +719,7 @@ ReactDOM.render(
 </button>
 ```
 
-### 示例2
+**示例2**
 
 ```html
 <a href="#" onclick="console.log('The link was clicked.'); return false">
@@ -723,7 +742,7 @@ function ActionLink() {
 }
 ```
 
-### 示例3（this 绑定问题）
+**示例3（this 绑定问题）**
 
 ```jsx
 class Toggle extends React.Component {
@@ -795,7 +814,7 @@ class LoggingButton extends React.Component {
 }
 ```
 
-### 示例4（传递参数）
+**示例4（传递参数）**
 
 ```jsx
 <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
@@ -842,28 +861,6 @@ class LoggingButton extends React.Component {
 ```jsx
 <button onClick={(e) => {this.handleClick(e, 123, 456)}}>点击改变 message</button>
 ```
-
-
-
-## Class 和 Style
-
-class:
-
-```jsx
-<div className="before" title="stuff" />
-```
-
-style:
-
-```jsx
-<div style={{color: 'red', fontWeight: 'bold'}} />
-```
-
-### classNames
-
-> classNames 是一个第三方工具库，可以很方便的帮我们根据条件拼接样式类名
->
-> https://github.com/JedWatson/classnames
 
 ## 表单处理
 
@@ -1008,6 +1005,10 @@ return React.createElement('div', {className: 'shopping-list'},
 
 ### 组件传值 Props
 
+我们可以看一下继承 React.Comonent 后的类的this
+
+![this](./1.png)
+
 - Props 是只读的，不能修改
 
 EcmaScript 5 构造函数：
@@ -1023,12 +1024,15 @@ EcmaScript 6 Class：
 ```jsx
 class Welcome extends React.Component {
   render() {
-    return <h1>Hello, {this.props.name}</h1>;
+      // 因为实例中有props属性，所以可以这样获取参数
+    return <h1>Hello, {this.props.name},I'm {this.props.b} years old</h1>;
   }
 }
+// 参数在 组件像写属性那样写就行了
+ReactDOM.render(<Welcome name='Alexander' b='9'/>, app)
 ```
 
-### `this.props.children`
+### this.props.children
 
 > 参考文档：https://reactjs.org/docs/react-api.html#reactchildren
 
@@ -1201,8 +1205,6 @@ class CustomTextInput extends React.Component {
 }
 ```
 
-
-
 ## TodoMVC
 
 ### 开始
@@ -1227,14 +1229,6 @@ npm install --save babel-standalone react react-dom
 ```
 
 
-
-## React 其它
-
-### React DevTools
-
-> https://github.com/facebook/react-devtools
-
-### create-react-app
 
 
 
