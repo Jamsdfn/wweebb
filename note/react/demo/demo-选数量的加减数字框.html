@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+    <style>
+        div {
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class Number extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                number: 0
+            }
+        }
+        sub() {
+            this.setState({
+                number: this.state.number === this.props.min ? this.props.min : --this.state.number
+            })
+        }
+        add() {
+            this.setState({
+                number: this.state.number === this.props.max ? this.props.max : ++this.state.number
+            })
+        }
+        render() {
+            return (
+                <div>
+                    <button onClick={() => this.sub()}>-</button>
+                    <div>{this.state.number}</div>
+                    <button onClick={() => this.add()}>+</button>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Number min={0} max={15}/>,
+        document.querySelector('#app')
+    )
+</script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="bower_components/react/react.js"></script>
+  <script src="bower_components/react/react-dom.js"></script>
+  <script src="bower_components/babel/browser.js"></script>
+  <style>
+    .leo {
+      color: yellowgreen;
+    }
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    const user = {
+        name: '张三',
+        age: 18,
+        gender: 0
+    }
+    const h1Style = {
+        color: 'hotpink',
+        fontSize :'18px'
+    }
+    const imgSrc = 'http://www.baidu.com/img/bd_logo1.png'
+    function myconsole() {
+        console.log('onMouseOver Event')
+    }
+    let element = (
+        <div>
+            <img src={imgSrc} onMouseOver={myconsole}/>
+            <input type="text"/>
+            <h1 style={{'color':'hotpink','fontSize':'16px'}}>Hello React!</h1>
+            <span className='leo'>wow</span>
+            <p style={h1Style}>姓名：{user.name}</p>
+            <p>年龄：{user.age}</p>
+            <p>性别：{user.gender === 0 ? '男' : '女'}</p>
+        </div>
+    )
+    ReactDOM.render(
+        element,
+        document.querySelector('#app')
+    )
+</script>
+</body>
+</html>

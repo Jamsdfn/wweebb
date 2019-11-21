@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class MyComponent extends React.Component {
+        constructor () {
+            super()
+            // React 组件需要通过手动为组件类添加 state 成员来初始化：ViewModel
+            this.state = {
+                msg: 'Hello MyComponent'
+            }
+        }
+        handleClick () {
+            // 不能通过 this.state.msg = '' 这样直接重新赋值，这样是改不了的
+            this.setState({
+                msg: 'msg in state has been changed!'
+            })
+        }
+        render() {
+            return (
+                <div>
+                    <h1>{this.state.msg}</h1>
+                    {/* 把组件类的 this 传递给 handleClick 方法 */}
+                    <button onClick={this.handleClick.bind(this)}>改变内容</button>
+                    {/* 通过箭头函数调用 */}
+                    <button onClick={() => {this.handleClick()}}>改变内容</button>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <MyComponent/>,
+        document.querySelector('#app')
+    )
+</script>
+</body>
+</html>

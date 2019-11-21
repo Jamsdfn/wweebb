@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    const app = document.querySelector('#app')
+    class Alex extends React.Component {
+        constructor() {
+            super()
+            console.log(this)
+        }
+        render() {
+            return (
+                <div>
+                    <h1>Hello React!</h1>
+                    <p>{this.props.a}</p>
+                    <p>{this.props.b}</p>
+                </div>
+            )
+        }
+    }
+    // 给模块传参
+    ReactDOM.render(<Alex a='12' b='9'/>, app)
+</script>
+</body>
+</html>
