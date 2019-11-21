@@ -253,14 +253,13 @@ JSX 全称 `JavaScript XML` ，是一种扩展的 JavaScript 语言，它允许 
 - 标签内的添加事件（onclick,onmouseover等这些）要遵循驼峰命名法
 
 
-    - onclick -> onClick
-    - onmouoseover -> onMouseOver
-
   ```jsx
-  function myconsole() {
-      console.log('onMouseOver Event')
-  }
-  <img src={imgSrc} onMouseOver={myconsole}/>
+// onclick -> onClick
+// onmouoseover -> onMouseOver
+function myconsole() {
+    console.log('onMouseOver Event')
+}
+<img src={imgSrc} onMouseOver={myconsole}/>
   ```
 
 基本语法：
@@ -312,30 +311,6 @@ const element = (
 )
 ```
 
-
-
-### 在 JavaScript 表达式中嵌入 JSX
-
-```jsx
-function getGreeting (user) {
-  if (user) {
-    return <h1>Hello, {user.name}</h1>
-  }
-  return <h1>Hello, Stranger.</h1>
-}
-
-const user = {
-  name: 'Jack'
-}
-
-const element = getGreeting(user)
-
-ReactDOM.render(
-  element,
-  document.getElementById('root')
-)
-```
-
 ### JSX 中的节点属性
 
 - 动态绑定属性值
@@ -354,8 +329,6 @@ const element = <div tabIndex="0"></div>;
 ```jsx
 const element = <img src={user.avatarUrl}></img>;
 ```
-
-### 声明子节点
 
 - 必须有且只有一个根节点
 
@@ -396,50 +369,9 @@ function MyComponent() {
 }
 ```
 
-### 在 JSX 中使用注释
-
-在 JavaScript 中的注释还是以前的方式：
-
-```javascript
-// 单行注释
-
-/*
- * 多行注释
- */
-```
-
-在 jsx 的标签中写注释需要注意：
-
-写法一（不推荐）：
-
-```jsx
-{
-  // 注释
-  // ...
-}
-```
-
-写法二（推荐，把多行写到单行中）：
-
-```jsx
-{/* 单行注释 */}
-```
-
-写法三（多行）：
-
-```jsx
-{
-  /*
-   * 多行注释
-   */
-}
-```
-
 ### JSX 原理
 
 Babel 会把 JSX 编译为 `React.createElement()` 函数。
-
-
 
 下面两种方式是等价的：
 
@@ -474,9 +406,501 @@ const element = {
 
 > 参考文档：https://reactjs.org/docs/dom-elements.html
 
-### JSX 语法高亮
+## 组件
 
->  http://babeljs.io/docs/editors
+React 允许将代码封装成组件（component），然后像插入普通 HTML 标签一样，在网页中插入这个组件。
+
+### 组件规则注意事项
+
+- 组件类的第一个首字母必须大写
+- 组件类必须有 `render` 方法
+- 组件类必须有且只有一个根节点
+- 组件属性可以在组件的 `props` 获取
+  - 函数需要声明参数：`props`
+  - 类直接通过 `this.props`
+
+### 函数式组件（无状态）
+
+- 名字不能用小写
+  - React 在解析的时候，是以标签的首字母来区分的
+  - 如果首字母是小写则当作 HTML 来解析
+  - 如果首字母是大小则当作组件来解析
+  - 结论：组件首字母必须大写
+
+```jsx
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+const element = <Welcome name="Sara" />;
+ReactDOM.render(
+  element,
+  document.getElementById('root')
+);
+```
+
+组件构成：
+
+```jsx
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+
+function App() {
+  return (
+    <div>
+      <Welcome name="Sara" />
+      <Welcome name="Cahal" />
+      <Welcome name="Edite" />
+    </div>
+  );
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
+);
+```
+
+### 抽取组件
+
+```jsx
+function Comment(props) {
+  return (
+    <div className="Comment">
+      <div className="UserInfo">
+        <img className="Avatar"
+          src={props.author.avatarUrl}
+          alt={props.author.name}
+        />
+        <div className="UserInfo-name">
+          {props.author.name}
+        </div>
+      </div>
+      <div className="Comment-text">
+        {props.text}
+      </div>
+      <div className="Comment-date">
+        {formatDate(props.date)}
+      </div>
+    </div>
+  );
+}
+```
+
+### 类方式组件（有状态）
+
+### class 补充
+
+> 本质就是对 EcmaScript 5 中构造函数的一个语法糖
+>
+> 就是让你写构造函数（类）更方便了
+
+- 基本语法
+- `constructor` 构造函数
+- 实例成员
+  - 实例属性
+  - 实例方法
+- 类成员
+  - 静态方法
+  - 静态属性
+
+### class 组件语法
+
+> 在 React 中推荐使用 EcmaScript 6 Class 的方式类定义组件
+
+```jsx
+// class 组件类，必须继承自 React.Component 才是一个组件类，否则就是一个普通类
+// 在组件类中，必须通过 render 渲染函数返回组件模板
+class ShoppingList extends React.Component {
+  render() {
+    return (
+      <div className="shopping-list">
+        <h1>Shopping List for {this.props.name}</h1>
+        <ul>
+          <li>Instagram</li>
+          <li>WhatsApp</li>
+          <li>Oculus</li>
+        </ul>
+      </div>
+    );
+  }
+}
+
+// Example usage: <ShoppingList name="Mark" />
+```
+
+本质：
+
+```javascript
+return React.createElement('div', {className: 'shopping-list'},
+  React.createElement('h1', /* ... h1 children ... */),
+  React.createElement('ul', /* ... ul children ... */)
+);
+```
+
+### 组件传值 Props
+
+我们可以看一下继承 React.Comonent 后的类的this
+
+![this](./1.png)
+
+- Props 是只读的，不能修改
+
+EcmaScript 5 构造函数：
+
+```javascript
+function Welcome(props) {
+  return <h1>Hello, {props.name}</h1>;
+}
+```
+
+EcmaScript 6 Class：
+
+```jsx
+class Welcome extends React.Component {
+  render() {
+      // 因为实例中有props属性，所以可以这样获取参数
+    return <h1>Hello, {this.props.name},I'm {this.props.b} years old</h1>;
+  }
+}
+// 参数在 组件像写属性那样写就行了
+ReactDOM.render(<Welcome name='Alexander' b='9'/>, app)
+```
+
+**this.props.children**
+
+> 参考文档：https://reactjs.org/docs/react-api.html#reactchildren
+
+`this.props` 对象的属性与组件的属性一一对应，但是有一个例外，就是 `this.props.children` 属性。
+
+它表示组件的所有子节点。
+
+`this.props.children` 的值有三种可能：如果当前组件没有子节点，它就是 `undefined`;如果有一个子节点，数据类型是 `object` ；如果有多个子节点，数据类型就是 `array` 。所以，处理 `this.props.children` 的时候要小心。
+
+React 提供一个工具方法 [`React.Children`](https://facebook.github.io/react/docs/top-level-api.html#react.children) 来处理 `this.props.children` 。我们可以用 `React.Children.map` 来遍历子节点，而不用担心 `this.props.children` 的数据类型是 `undefined` 还是 `object`。
+
+### 组件中的事件处理
+
+> 参考文档：https://reactjs.org/docs/handling-events.html
+
+**示例1**
+
+```jsx
+<button onclick="activateLasers()">
+  Activate Lasers
+</button>
+```
+
+```jsx
+<button onClick={activateLasers}>
+  Activate Lasers
+</button>
+```
+
+**示例2**
+
+```html
+<a href="#" onclick="console.log('The link was clicked.'); return false">
+  Click me
+</a>
+```
+
+```jsx
+function ActionLink() {
+  function handleClick(e) {
+    e.preventDefault();
+    console.log('The link was clicked.');
+  }
+
+  return (
+    <a href="#" onClick={handleClick}>
+      Click me
+    </a>
+  );
+}
+```
+
+**示例3（this 绑定问题）**
+
+```jsx
+class Toggle extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {isToggleOn: true};
+
+    // This binding is necessary to make `this` work in the callback
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick() {
+    this.setState(prevState => ({
+      isToggleOn: !prevState.isToggleOn
+    }));
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        {this.state.isToggleOn ? 'ON' : 'OFF'}
+      </button>
+    );
+  }
+}
+
+ReactDOM.render(
+  <Toggle />,
+  document.getElementById('root')
+);
+```
+
+箭头函数：
+
+```jsx
+class LoggingButton extends React.Component {
+  // This syntax ensures `this` is bound within handleClick.
+  // Warning: this is *experimental* syntax.
+  handleClick = () => {
+    console.log('this is:', this);
+  }
+
+  render() {
+    return (
+      <button onClick={this.handleClick}>
+        Click me
+      </button>
+    );
+  }
+}
+```
+
+更简单的方式：
+
+```jsx
+class LoggingButton extends React.Component {
+  handleClick() {
+    console.log('this is:', this);
+  }
+
+  render() {
+    //因为用箭头函数定义函数时 , 函数内部的 this 是指向父级的 this 的，此处写法虽然是 JSX 但是其父级的 this 就是 类的 this。(有种定义时就已经绑定好 this 的感觉)
+    return (
+      <button onClick={() => this.handleClick()}>
+        Click me
+      </button>
+    );
+  }
+}
+```
+
+**示例4（传递参数）**
+
+```jsx
+<button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
+<button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
+```
+
+#### 事件绑定中的 this 指向问题
+
+> 多分享，多交流
+
+第一种绑定方式（不做任何处理）：
+
+- `this` 指向 Window
+- 默认接收一个参数 `event` 事件源对象
+- 不支持额外的参数传递
+
+```jsx
+<button onClick={this.handleClick}>点击改变 message</button>
+```
+
+第二种方式（bind）：
+
+- `this` 指向组件实例
+- 默认接收一个参数 `event`
+
+```jsx
+<button onClick={this.handleClick.bind(this)}>点击改变 message</button>
+```
+
+第二种方式还可以为方法传递额外参数：
+
+- 手动传递的参数会放到函数最前面，`event` 会作为函数的最后一个参数
+
+```jsx
+<button onClick={this.handleClick.bind(this, 123, 456)}>点击改变 message</button>
+```
+
+第三种方式（箭头函数）：
+
+- 自动 bind  this （父级的 this）
+- 手动传递参数
+- 参数顺序自己指定，`event` 也需要自己手动传递
+
+```jsx
+<button onClick={(e) => {this.handleClick(e, 123, 456)}}>点击改变 message</button>
+```
+
+### 组件状态 State （双工数据传递）
+
+> 参考文档：https://reactjs.org/docs/state-and-lifecycle.html
+
+通过实验，我们知道 props 属性是只读的，不能改变，但是官方给了我们一个可以读写的属性 `State`
+
+- 数据的双向绑定
+
+  - React 数据的传递本来是单工的，但是这样往往达不到需求，所以我们要实现数据的双向绑定。通过上一点我们知道了 state 属性可以读写，但是，改变了state属性只是改变了数据层面的东西，view 渲染层并没有渲染，所以我们要用到下面的函数进行 view 层的渲染
+
+- SetState 函数
+  - 有种拦截器的感觉，设置 state 属性的时候触发渲染事件
+  - 类似于 vue 中的 data 传参（数据驱动视图）
+
+```jsx
+class MyComponent extends React.Component {
+        constructor () {
+            super()
+            // React 组件需要通过手动为组件类添加 state 成员来初始化：ViewModel
+            this.state = {
+                msg: 'Hello MyComponent'
+            }
+        }
+        handleClick () {
+            // 不能通过 this.state.msg = '' 这样直接重新赋值，这样是改不了的
+            this.setState({
+                msg: 'msg in state has been changed!'
+            })
+        }
+        render() {
+            return (
+                <div>
+                    <h1>{this.state.msg}</h1>
+                    {/* 把组件类的 this 传递给 handleClick 方法 */}
+                    <button onClick={this.handleClick.bind(this)}>改变内容</button>
+                    {/* 通过箭头函数调用 */}
+                    <button onClick={() => {this.handleClick()}}>改变内容</button>
+                </div>
+            )
+        }
+    }
+```
+
+### 组件生命周期
+
+> 参考文档：https://reactjs.org/docs/state-and-lifecycle.html
+>
+> 完整生命周期 API：https://reactjs.org/docs/react-component.html#the-component-lifecycle
+
+### PropTypes 类型校验
+
+> 参考文档：https://reactjs.org/docs/typechecking-with-proptypes.html
+
+组件的属性可以接受任意值，字符串、对象、函数等等都可以。有时，我们需要一种机制，验证别人使用组件时，提供的参数是否符合要求。
+
+示例：
+
+```jsx
+import PropTypes from 'prop-types';
+
+class Greeting extends React.Component {
+  render() {
+    return (
+      <h1>Hello, {this.props.name}</h1>
+    );
+  }
+}
+
+Greeting.propTypes = {
+  name: PropTypes.string
+};
+```
+
+**Default Prop Values** 
+
+> 参考文档：https://reactjs.org/docs/typechecking-with-proptypes.html#default-prop-values
+
+示例：
+
+```jsx
+class Greeting extends React.Component {
+  render() {
+    return (
+      <h1>Hello, {this.props.name}</h1>
+    );
+  }
+}
+
+// Specifies the default values for props:
+Greeting.defaultProps = {
+  name: 'Stranger'
+};
+
+// Renders "Hello, Stranger":
+ReactDOM.render(
+  <Greeting />,
+  document.getElementById('example')
+);
+```
+
+或者：
+
+```jsx
+class Greeting extends React.Component {
+  static defaultProps = {
+    name: 'stranger'
+  }
+
+  render() {
+    return (
+      <div>Hello, {this.props.name}</div>
+    )
+  }
+}
+```
+
+## 和服务端交互
+
+组件的数据来源，通常是通过 Ajax 请求从服务器获取，可以使用 `componentDidMount` 方法设置 Ajax 请求，等到请求成功，再用 `this.setState` 方法重新渲染 UI 。
+
+## 获取真实 DOM 节点
+
+> 参考文档：https://reactjs.org/docs/refs-and-the-dom.html
+
+组件并不是真实的 DOM 节点，而是存在于内存之中的一种数据结构，叫做虚拟 DOM （virtual DOM）。只有当它插入文档以后，才会变成真实的 DOM 。根据 React 的设计，所有的 DOM 变动，都先在虚拟 DOM 上发生，然后再将实际发生变动的部分，反映在真实 DOM上，这种算法叫做 [DOM diff](http://calendar.perfplanet.com/2013/diff/) ，它可以极大提高网页的性能表现。
+
+但是，有时需要从组件获取真实 DOM 的节点，这时就要用到 `ref` 属性。
+
+示例：
+
+```jsx
+class CustomTextInput extends React.Component {
+  constructor(props) {
+    super(props);
+    this.focusTextInput = this.focusTextInput.bind(this);
+  }
+
+  focusTextInput() {
+    // Explicitly focus the text input using the raw DOM API
+    this.textInput.focus();
+  }
+
+  render() {
+    // Use the `ref` callback to store a reference to the text input DOM
+    // element in an instance field (for example, this.textInput).
+    return (
+      <div>
+        <input
+          type="text"
+          ref={(input) => { this.textInput = input; }} />
+        <input
+          type="button"
+          value="Focus the text input"
+          onClick={this.focusTextInput}
+        />
+      </div>
+    );
+  }
+}
+```
 
 ## 列表渲染
 
@@ -701,509 +1125,9 @@ ReactDOM.render(
 );
 ```
 
-## 事件处理
-
-> 参考文档：https://reactjs.org/docs/handling-events.html
-
-**示例1**
-
-```jsx
-<button onclick="activateLasers()">
-  Activate Lasers
-</button>
-```
-
-```jsx
-<button onClick={activateLasers}>
-  Activate Lasers
-</button>
-```
-
-**示例2**
-
-```html
-<a href="#" onclick="console.log('The link was clicked.'); return false">
-  Click me
-</a>
-```
-
-```jsx
-function ActionLink() {
-  function handleClick(e) {
-    e.preventDefault();
-    console.log('The link was clicked.');
-  }
-
-  return (
-    <a href="#" onClick={handleClick}>
-      Click me
-    </a>
-  );
-}
-```
-
-**示例3（this 绑定问题）**
-
-```jsx
-class Toggle extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {isToggleOn: true};
-
-    // This binding is necessary to make `this` work in the callback
-    this.handleClick = this.handleClick.bind(this);
-  }
-
-  handleClick() {
-    this.setState(prevState => ({
-      isToggleOn: !prevState.isToggleOn
-    }));
-  }
-
-  render() {
-    return (
-      <button onClick={this.handleClick}>
-        {this.state.isToggleOn ? 'ON' : 'OFF'}
-      </button>
-    );
-  }
-}
-
-ReactDOM.render(
-  <Toggle />,
-  document.getElementById('root')
-);
-```
-
-箭头函数：
-
-```jsx
-class LoggingButton extends React.Component {
-  // This syntax ensures `this` is bound within handleClick.
-  // Warning: this is *experimental* syntax.
-  handleClick = () => {
-    console.log('this is:', this);
-  }
-
-  render() {
-    return (
-      <button onClick={this.handleClick}>
-        Click me
-      </button>
-    );
-  }
-}
-```
-
-更简单的方式：
-
-```jsx
-class LoggingButton extends React.Component {
-  handleClick() {
-    console.log('this is:', this);
-  }
-
-  render() {
-    // This syntax ensures `this` is bound within handleClick
-    return (
-      <button onClick={(e) => this.handleClick(e)}>
-        Click me
-      </button>
-    );
-  }
-}
-```
-
-**示例4（传递参数）**
-
-```jsx
-<button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
-<button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
-```
-
-### 事件绑定中的 this 指向问题（坑）
-
-> 多分享，多交流
-
-第一种绑定方式（不做任何处理）：
-
-- `this` 指向 Window
-- 默认接收一个参数 `event` 事件源对象
-- 不支持额外的参数传递
-
-```jsx
-<button onClick={this.handleClick}>点击改变 message</button>
-```
-
-第二种方式（bind）：
-
-- `this` 指向组件实例
-- 默认接收一个参数 `event`
-
-```jsx
-<button onClick={this.handleClick.bind(this)}>点击改变 message</button>
-```
-
-第二种方式还可以为方法传递额外参数：
-
-- 手动传递的参数会放到函数最前面，`event` 会作为函数的最后一个参数
-
-```jsx
-<button onClick={this.handleClick.bind(this, 123, 456)}>点击改变 message</button>
-```
-
-第三种方式（箭头函数）：
-
-- 自动 bind  this （父级的 this）
-- 手动传递参数
-- 参数顺序自己指定，`event` 也需要自己手动传递
-
-```jsx
-<button onClick={(e) => {this.handleClick(e, 123, 456)}}>点击改变 message</button>
-```
-
 ## 表单处理
 
 > 参考文档：https://reactjs.org/docs/forms.html
-
-## 组件
-
-React 允许将代码封装成组件（component），然后像插入普通 HTML 标签一样，在网页中插入这个组件。
-
-### 组件规则注意事项
-
-- 组件类的第一个首字母必须大写
-- 组件类必须有 `render` 方法
-- 组件类必须有且只有一个根节点
-- 组件属性可以在组件的 `props` 获取
-  - 函数需要声明参数：`props`
-  - 类直接通过 `this.props`
-
-### 函数式组件（无状态）
-
-- 名字不能用小写
-  - React 在解析的时候，是以标签的首字母来区分的
-  - 如果首字母是小写则当作 HTML 来解析
-  - 如果首字母是大小则当作组件来解析
-  - 结论：组件首字母必须大写
-
-```jsx
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-
-const element = <Welcome name="Sara" />;
-ReactDOM.render(
-  element,
-  document.getElementById('root')
-);
-```
-
-组件构成：
-
-```jsx
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-
-function App() {
-  return (
-    <div>
-      <Welcome name="Sara" />
-      <Welcome name="Cahal" />
-      <Welcome name="Edite" />
-    </div>
-  );
-}
-
-ReactDOM.render(
-  <App />,
-  document.getElementById('root')
-);
-```
-
-### 抽取组件
-
-```jsx
-function Comment(props) {
-  return (
-    <div className="Comment">
-      <div className="UserInfo">
-        <img className="Avatar"
-          src={props.author.avatarUrl}
-          alt={props.author.name}
-        />
-        <div className="UserInfo-name">
-          {props.author.name}
-        </div>
-      </div>
-      <div className="Comment-text">
-        {props.text}
-      </div>
-      <div className="Comment-date">
-        {formatDate(props.date)}
-      </div>
-    </div>
-  );
-}
-```
-
-
-
-### 类方式组件（有状态）
-
-### class 补充
-
-> 本质就是对 EcmaScript 5 中构造函数的一个语法糖
->
-> 就是让你写构造函数（类）更方便了
-
-- 基本语法
-- `constructor` 构造函数
-- 实例成员
-  - 实例属性
-  - 实例方法
-- 类成员
-  - 静态方法
-  - 静态属性
-
-### class 组件语法
-
-> 在 React 中推荐使用 EcmaScript 6 Class 的方式类定义组件
-
-```jsx
-// class 组件类，必须继承自 React.Component 才是一个组件类，否则就是一个普通类
-// 在组件类中，必须通过 render 渲染函数返回组件模板
-class ShoppingList extends React.Component {
-  render() {
-    return (
-      <div className="shopping-list">
-        <h1>Shopping List for {this.props.name}</h1>
-        <ul>
-          <li>Instagram</li>
-          <li>WhatsApp</li>
-          <li>Oculus</li>
-        </ul>
-      </div>
-    );
-  }
-}
-
-// Example usage: <ShoppingList name="Mark" />
-```
-
-本质：
-
-```javascript
-return React.createElement('div', {className: 'shopping-list'},
-  React.createElement('h1', /* ... h1 children ... */),
-  React.createElement('ul', /* ... ul children ... */)
-);
-```
-
-
-
-### 组件传值 Props
-
-我们可以看一下继承 React.Comonent 后的类的this
-
-![this](./1.png)
-
-- Props 是只读的，不能修改
-
-EcmaScript 5 构造函数：
-
-```javascript
-function Welcome(props) {
-  return <h1>Hello, {props.name}</h1>;
-}
-```
-
-EcmaScript 6 Class：
-
-```jsx
-class Welcome extends React.Component {
-  render() {
-      // 因为实例中有props属性，所以可以这样获取参数
-    return <h1>Hello, {this.props.name},I'm {this.props.b} years old</h1>;
-  }
-}
-// 参数在 组件像写属性那样写就行了
-ReactDOM.render(<Welcome name='Alexander' b='9'/>, app)
-```
-
-### this.props.children
-
-> 参考文档：https://reactjs.org/docs/react-api.html#reactchildren
-
-`this.props` 对象的属性与组件的属性一一对应，但是有一个例外，就是 `this.props.children` 属性。
-
-它表示组件的所有子节点。
-
-`this.props.children` 的值有三种可能：如果当前组件没有子节点，它就是 `undefined`;如果有一个子节点，数据类型是 `object` ；如果有多个子节点，数据类型就是 `array` 。所以，处理 `this.props.children` 的时候要小心。
-
-React 提供一个工具方法 [`React.Children`](https://facebook.github.io/react/docs/top-level-api.html#react.children) 来处理 `this.props.children` 。我们可以用 `React.Children.map` 来遍历子节点，而不用担心 `this.props.children` 的数据类型是 `undefined` 还是 `object`。
-
-### 组件状态 State
-
-> 参考文档：https://reactjs.org/docs/state-and-lifecycle.html
-
-类似于 vue 中的 data 传参（数据驱动视图）
-
-```jsx
-class MyComponent extends React.Component {
-  constructor () {
-    super()
-    // React 组件需要通过手动为组件类添加 state 成员来初始化：ViewModel
-    this.state = {
-        msg: 'Hello MyComponent'
-    }
-  }
-  render() {
-    return (
-      <div>
-        <h1>{this.state.msg}</h1>
-         {/* 把组件类的 this 传递给 handleClick 方法 */}
-        <button onClick={this.handleClick.bind(this)}>改变内容</button>
-         {/* 通过箭头函数调用 */}
-        <button onClick={() => {this.handleClick()}}>改变内容</button>
-      </div>
-    )
-  }
-  handleClick () {
-    // 不能通过 this.state.msg = '' 这样直接重新赋值，这样是改不了的
-    this.setState({
-      msg: 'msg in state has been changed!'
-    })
-  }
-}
-```
-
-
-
-### 组件生命周期
-
-> 参考文档：https://reactjs.org/docs/state-and-lifecycle.html
->
-> 完整生命周期 API：https://reactjs.org/docs/react-component.html#the-component-lifecycle
-
-### PropTypes 类型校验
-
-> 参考文档：https://reactjs.org/docs/typechecking-with-proptypes.html
-
-组件的属性可以接受任意值，字符串、对象、函数等等都可以。有时，我们需要一种机制，验证别人使用组件时，提供的参数是否符合要求。
-
-示例：
-
-```jsx
-import PropTypes from 'prop-types';
-
-class Greeting extends React.Component {
-  render() {
-    return (
-      <h1>Hello, {this.props.name}</h1>
-    );
-  }
-}
-
-Greeting.propTypes = {
-  name: PropTypes.string
-};
-```
-
-### Default Prop Values 
-
-> 参考文档：https://reactjs.org/docs/typechecking-with-proptypes.html#default-prop-values
-
-示例：
-
-```jsx
-class Greeting extends React.Component {
-  render() {
-    return (
-      <h1>Hello, {this.props.name}</h1>
-    );
-  }
-}
-
-// Specifies the default values for props:
-Greeting.defaultProps = {
-  name: 'Stranger'
-};
-
-// Renders "Hello, Stranger":
-ReactDOM.render(
-  <Greeting />,
-  document.getElementById('example')
-);
-```
-
-或者：
-
-```jsx
-class Greeting extends React.Component {
-  static defaultProps = {
-    name: 'stranger'
-  }
-
-  render() {
-    return (
-      <div>Hello, {this.props.name}</div>
-    )
-  }
-}
-```
-
-### React Without ES6
-
-> 参考文档：https://reactjs.org/docs/react-without-es6.html
-
-## 和服务端交互
-
-组件的数据来源，通常是通过 Ajax 请求从服务器获取，可以使用 `componentDidMount` 方法设置 Ajax 请求，等到请求成功，再用 `this.setState` 方法重新渲染 UI 。
-
-
-
-## 获取真实 DOM 节点
-
-> 参考文档：https://reactjs.org/docs/refs-and-the-dom.html
-
-组件并不是真实的 DOM 节点，而是存在于内存之中的一种数据结构，叫做虚拟 DOM （virtual DOM）。只有当它插入文档以后，才会变成真实的 DOM 。根据 React 的设计，所有的 DOM 变动，都先在虚拟 DOM 上发生，然后再将实际发生变动的部分，反映在真实 DOM上，这种算法叫做 [DOM diff](http://calendar.perfplanet.com/2013/diff/) ，它可以极大提高网页的性能表现。
-
-但是，有时需要从组件获取真实 DOM 的节点，这时就要用到 `ref` 属性。
-
-示例：
-
-```jsx
-class CustomTextInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.focusTextInput = this.focusTextInput.bind(this);
-  }
-
-  focusTextInput() {
-    // Explicitly focus the text input using the raw DOM API
-    this.textInput.focus();
-  }
-
-  render() {
-    // Use the `ref` callback to store a reference to the text input DOM
-    // element in an instance field (for example, this.textInput).
-    return (
-      <div>
-        <input
-          type="text"
-          ref={(input) => { this.textInput = input; }} />
-        <input
-          type="button"
-          value="Focus the text input"
-          onClick={this.focusTextInput}
-        />
-      </div>
-    );
-  }
-}
-```
 
 ## TodoMVC
 
