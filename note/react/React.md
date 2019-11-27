@@ -696,6 +696,7 @@ class LoggingButton extends React.Component {
 **示例4（传递参数）**
 
 ```jsx
+// 下面的那个 e 是事件对象，DOM元素绑定事件都有事件对象
 <button onClick={(e) => this.deleteRow(id, e)}>Delete Row</button>
 <button onClick={this.deleteRow.bind(this, id)}>Delete Row</button>
 ```
@@ -741,15 +742,15 @@ class LoggingButton extends React.Component {
 <button onClick={(e) => {this.handleClick(e, 123, 456)}}>点击改变 message</button>
 ```
 
-### 组件状态 State （双工数据传递）
+### 组件状态 State
 
 > 参考文档：https://reactjs.org/docs/state-and-lifecycle.html
 
 通过实验，我们知道 props 属性是只读的，不能改变，但是官方给了我们一个可以读写的属性 `State`
 
-- 数据的双向绑定
+- 用State可以修改组件的数据
 
-  - React 数据的传递本来是单工的，但是这样往往达不到需求，所以我们要实现数据的双向绑定。通过上一点我们知道了 state 属性可以读写，但是，改变了state属性只是改变了数据层面的东西，view 渲染层并没有渲染，所以我们要用到下面的函数进行 view 层的渲染
+  - 通过官方我们知道了 state 属性可以读写，但是，改变了state属性只是改变了数据层面的东西，view 渲染层并没有渲染，所以我们要用到下面的函数进行 view 层的渲染
 
 - SetState 函数
   - 有种拦截器的感觉，设置 state 属性的时候触发渲染事件
@@ -774,7 +775,7 @@ class MyComponent extends React.Component {
             return (
                 <div>
                     <h1>{this.state.msg}</h1>
-                    {/* 把组件类的 this 传递给 handleClick 方法 */}
+                    {/* 用bind方法把组件类的 this 传递给 handleClick */}
                     <button onClick={this.handleClick.bind(this)}>改变内容</button>
                     {/* 通过箭头函数调用 */}
                     <button onClick={() => {this.handleClick()}}>改变内容</button>
@@ -783,6 +784,66 @@ class MyComponent extends React.Component {
         }
     }
 ```
+
+### 数据的双向绑定
+
+类似于 vue 的那种输入框一输入，显示框就显示的那种效果
+
+- 一个输入框（当输入框内容一旦改变，就会触发一个函数，改变states ），这就涉及到如何获取DOM的方式了
+- 一个输出框 同步显示输入框的内容
+
+#### 获取真实 DOM 节点
+
+> 参考文档：https://reactjs.org/docs/refs-and-the-dom.html
+
+如果是获取真实自身DOM元素有三种方式
+
+- 给标签加个id,class 之类的属性，再通过原生的方式查询到DOM
+  - document.querySelector()等等的原生方法
+- 用事件对象，e.target 就是事件源的DOM（如果获取的不是自身事件的元素，此方法就无效了）
+- 官方推荐的 给标签加个 ref 属性
+
+组件并不是真实的 DOM 节点，而是存在于内存之中的一种数据结构，叫做虚拟 DOM （virtual DOM）。只有当它插入文档以后，才会变成真实的 DOM 。根据 React 的设计，所有的 DOM 变动，都先在虚拟 DOM 上发生，然后再将实际发生变动的部分，反映在真实 DOM上，这种算法叫做 [DOM diff](http://calendar.perfplanet.com/2013/diff/) ，它可以极大提高网页的性能表现。
+
+但是，有时需要从组件获取真实 DOM 的节点，这时就要用到 `ref` 属性。
+
+```jsx
+class InputChange extends  React.Component {
+        constructor() {
+            super()
+            this.state = {
+                msg: ''
+            }
+        }
+        change() {
+            //console.log(1)
+            this.setState({
+                // 下面两种被注释的方式都是可以的第一种是给input加个id再找到这个DOM
+                // 第二种是使用事件对象获取 DOM,定义change函数时记得加形参e，用箭头函数调用方法时记得给函数传事件对象，但如果使用bind的方法就直接 onClick=this.change.bind(this)就好了
+                // 未被注释的是官方推荐使用的是，加一个ref属性
+                //msg: document.querySelector('#target').value
+                //msg: e.target.value
+                msg: this.refs.target.value
+            })
+        }
+        render() {
+            return (
+                <div>
+                    <!-- <input id='target' type="text" onInput={() => this.change()}/> -->
+                    <!-- <input type="text" onInput={(e) => this.change(e)}/> -->
+                    <input type="text" onInput={() => this.change()} ref='target'/>
+                    <div>{this.state.msg}</div>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <InputChange/>,
+        document.querySelector('#app')
+    )
+```
+
+
 
 ### 组件生命周期
 
@@ -860,47 +921,6 @@ class Greeting extends React.Component {
 ## 和服务端交互
 
 组件的数据来源，通常是通过 Ajax 请求从服务器获取，可以使用 `componentDidMount` 方法设置 Ajax 请求，等到请求成功，再用 `this.setState` 方法重新渲染 UI 。
-
-## 获取真实 DOM 节点
-
-> 参考文档：https://reactjs.org/docs/refs-and-the-dom.html
-
-组件并不是真实的 DOM 节点，而是存在于内存之中的一种数据结构，叫做虚拟 DOM （virtual DOM）。只有当它插入文档以后，才会变成真实的 DOM 。根据 React 的设计，所有的 DOM 变动，都先在虚拟 DOM 上发生，然后再将实际发生变动的部分，反映在真实 DOM上，这种算法叫做 [DOM diff](http://calendar.perfplanet.com/2013/diff/) ，它可以极大提高网页的性能表现。
-
-但是，有时需要从组件获取真实 DOM 的节点，这时就要用到 `ref` 属性。
-
-示例：
-
-```jsx
-class CustomTextInput extends React.Component {
-  constructor(props) {
-    super(props);
-    this.focusTextInput = this.focusTextInput.bind(this);
-  }
-
-  focusTextInput() {
-    // Explicitly focus the text input using the raw DOM API
-    this.textInput.focus();
-  }
-
-  render() {
-    // Use the `ref` callback to store a reference to the text input DOM
-    // element in an instance field (for example, this.textInput).
-    return (
-      <div>
-        <input
-          type="text"
-          ref={(input) => { this.textInput = input; }} />
-        <input
-          type="button"
-          value="Focus the text input"
-          onClick={this.focusTextInput}
-        />
-      </div>
-    );
-  }
-}
-```
 
 ## 列表渲染
 
