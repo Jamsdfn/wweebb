@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class Life extends React.Component {
+        constructor() {
+            super()
+        }
+        componentWillMount() {
+            console.log(this.props)
+            console.log(document.querySelector('#div1'))
+            console.log('组件挂载前')
+        }
+        componentDidMount() {
+            console.log('---------------------------')
+            console.log(this.props)
+            console.log(document.querySelector('#div1'))
+            console.log('组件挂载后')
+        }
+        render() {
+            return (
+                <div id='div1'>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Life l='1'/>,
+        app
+    )
+</script>
+</body>
+</html>

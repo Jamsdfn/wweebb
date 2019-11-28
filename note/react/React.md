@@ -853,6 +853,161 @@ class InputChange extends  React.Component {
 
 简单来说 react Component 通过定义了几个函数来控制各个阶段的动作，而这些阶段就是组件的生命周期
 
+- componentWillMount 组件挂载前（组件加载前，即DOM元素渲染前）
+  - 属性、状态等数据都可以使用，但是组件（render的DOM）找不到
+
+```jsx
+<div id="app"></div>
+<script type="text/babel">
+    class Life extends React.Component {
+        constructor() {
+            super()
+        }
+        componentWillMount() {
+			console.log(this.porps)// {l: "1"}
+            console.log(document.querySelector("#div1"))//  null
+            console.log('111')// 1111
+        }
+        render() {
+            return (
+                <div id='div1'></div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Life l='1'/>,
+        app
+    )
+</script>
+```
+
+- componentDidMount 组件挂载后
+
+```jsx
+<div id="app"></div>
+<script type="text/babel">
+    class Life extends React.Component {
+        constructor() {
+            super()
+        }
+        componentWillMount() {
+			console.log(this.porps)// {l: "1"}
+            console.log(document.querySelector("#div1"))//  null
+            console.log('组件挂载前')// 组件挂载前
+        }
+        componentDidMount() {
+            console.log('------------------')
+			console.log(this.porps)// {l: "1"}
+            console.log(document.querySelector("#div1"))// <div data-reactroot id="div1"></div>
+            console.log('组件挂载后')// 组件挂载后
+        }
+        render() {
+            return (
+                <div id='div1'></div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Life l='1'/>,
+        app
+    )
+</script>
+```
+
+- componentWillUpdate 组件更新前
+- componentDidUpdate  组件更新后
+
+```jsx
+class Life extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                msg: '11111111'
+            }
+        }
+        componentWillMount() {
+            console.log('组件挂载前')
+        }
+        componentDidMount() {
+            console.log('组件挂载后')
+        }
+        componentDidUpdate() {
+            console.log('组件更新后')
+        }
+        componentWillUpdate() {
+            debugger
+            console.log('组件更新前')
+        }
+        show() {
+            this.setState({
+                msg: Math.random()
+            })
+        }
+        render() {
+            return (
+
+                <div>
+                    <button onClick = {this.show.bind(this)}>点击</button>
+                    <div id='div1'>{this.state.msg}</div>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Life l='1'/>,
+        app
+    )
+```
+
+- componentWillUnmount 组件卸载
+  - 没有DidUnmount，因为组件已经卸载了，没有生命周期了
+  - 重新 ReactDOM.render() 即可完成卸载
+
+### 事件冒泡
+
+在 React 中原生的阻止冒泡事件的方法都没有用
+
+- return false
+- e.stopPropagation()
+- e.cancelBubble = true
+
+其实我们传的事件对象其实不是原生的事件对象，是React封装过的，我们可以用 e.nativeEvent 获取，但是即使获得的原生的事件对象 e.nativeEvent.cancleBubble = true 也不行，要想政治的阻止 React 的是时间冒泡要用 e.nativeEvetn.stopImmediatePropagation()
+
+```jsx
+class Life extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                msg: '11111111'
+            }
+        }
+        show(e) {
+            this.setState({
+                msg: Math.random()
+            })
+            e.nativeEvent.stopImmediatePropagation()
+        }
+        render() {
+            return (
+
+                <div>
+                    <button onClick = {this.show.bind(this)}>点击</button>
+                    <div id='div1'>{this.state.msg}</div>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Life l='1'/>,
+        app
+    )
+    document.onclick = function () {
+        ReactDOM.render(<h1>asdasd</h1>, app)
+    }
+```
+
+
+
 ### PropTypes 类型校验
 
 > 参考文档：https://reactjs.org/docs/typechecking-with-proptypes.html
@@ -920,9 +1075,170 @@ class Greeting extends React.Component {
 }
 ```
 
+## React中的表单处理
+
+> 参考文档：https://reactjs.org/docs/forms.html
+
+表单：放在 form 标签中的就是表单，表单并没什么区别，重点是 input 会和原生的有点不一样。在 React 中分为受控表单和非受控表单，这个现象通常在input中实现。
+
+- 受控表单就把内容锁死了，不能直接通过键盘或鼠标输入直接输入内容。出现一些属性就表面此 input 是受控组件
+  - value `<input type='text' value='aaa'/>`
+  - checked `<input type='checkbox' checked/>`  
+- 但是在实际应用中，可能会有自动填充表单框的需求，这就需要另一些属性
+  - defaultValue  `<input type='text' defaultValue='aaa'/>`
+  - defaultChecked `<input type='checkbox' defaultChecked/>`
+
 ## 和服务端交互
 
+React 本身完全不限制你如何去交互（），如果是angular则必须用 $http，如果是 vue 虽然也不限制但官方推荐使用 vue-resource
+
 组件的数据来源，通常是通过 Ajax 请求从服务器获取，可以使用 `componentDidMount` 方法设置 Ajax 请求，等到请求成功，再用 `this.setState` 方法重新渲染 UI 。
+
+原生写法
+
+```jsx
+class Alex extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                arr: []
+            }
+        }
+        componentWillMount() {
+            this.ajaxToData()
+        }
+        ajaxToData() {
+            let URL = 'http://127.0.0.1:3001/get'
+            let XMLHttp = new XMLHttpRequest()
+            XMLHttp.open('GET', URL)
+            XMLHttp.send()
+            XMLHttp.onload = () => {
+                if (XMLHttp.readyState === 4 && XMLHttp.status === 200) {
+                    //let json = eval(XMLHttp.responseText)
+                    let json = JSON.parse(XMLHttp.responseText)
+                    //console.log(json)
+                    this.setState({
+                        arr: json
+                    })
+                }
+            }
+        }
+        render() {
+            let arrLi = this.state.arr.map((item,index) => {
+                return <li key={index}>{item}</li>
+            })
+            return (
+                <div>
+                    {
+                        // 三目运算符
+                        this.state.arr.length === 0 ?
+                            <div>请求中...</div> :
+                            <ul>
+                                {arrLi}
+                            </ul>
+                    }
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Alex/>,document.querySelector('#app'))
+```
+
+jquery写法
+
+```jsx
+ajaxToData() {
+    // 记得引包
+            var _this = this
+            let URL = 'http://127.0.0.1:3001/get'
+            /*
+            $.ajax({
+                url:URL,
+                dataType: 'json',
+                success(data) {
+                    _this.setState({
+                        arr: data
+                    })
+                }
+            })
+			*/
+            // promise 写法也可以解决$.ajax的 this 指向问题
+            $.ajax({
+                url:URL
+            }).then((res)=>{
+                this.setState({
+                    arr:res
+                })
+            })
+        }
+```
+
+axios写法
+
+```jsx
+ajaxToData() {
+    // 记得引包
+            let URL = 'http://127.0.0.1:3001/get'
+            axios.get(URL).then(res => {
+                // console.log(res)
+                this.setState({
+                    arr: res.data
+                })
+            })
+        }
+```
+
+#### fetch
+
+> MDN https://developer.mozilla.org/zh-CN/docs/Web/API/Fetch_API
+>
+> https://www.cnblogs.com/ddfe/p/5609697.html
+
+Fetch 是一个现代的概念, 等同于 XMLHttpRequest。它提供了许多与XMLHttpRequest相同的功能，但被设计成更具可扩展性和高效性。
+
+Fetch 的核心在于对 HTTP 接口的抽象，包括 `Request`，`Response`，`Headers`，`Body`，以及用于初始化异步请求的 `global fetch`。得益于 JavaScript 实现的这些抽象好的 HTTP 模块，其他接口能够很方便的使用这些功能。
+
+Fetch 是基于 ES6 Promise 实现的，使用方式可以看看上面的两个链接，单纯想使用可以看第二个，原理的话可以看看MDN的那个
+
+因此 fetch 与服务端交互的写法如下
+
+```jsx
+ajaxToData() {
+    // 不用引包 fetch 也是原生的
+    let URL = 'http://127.0.0.1:3001/get'
+    fetch(URL,{
+        method: 'GET'
+    }).then(res => {
+        //console.log(res)
+        res.json(res => {
+            //console.log(res)
+        }).then(res => {
+            //console.log(res)
+            this.setState({
+                arr: res
+            })
+        })
+    })
+}
+// 标准 promise 写法
+ajaxToData() {
+    // 不用引包 fetch 也是原生的
+    let URL = 'http://127.0.0.1:3001/get'
+    fetch(URL,{
+        method: 'GET'
+    }).then(res => {
+        //console.log(res)
+        return res.json()
+    }).then(res => {
+        // console.log(res)
+        this.setState({
+            arr: res
+        })
+    })
+}
+```
+
+
 
 ## 列表渲染
 
@@ -1147,10 +1463,6 @@ ReactDOM.render(
 );
 ```
 
-## 表单处理
-
-> 参考文档：https://reactjs.org/docs/forms.html
-
 ## TodoMVC
 
 TodoMVC是一个类似于备忘录的小示例，是一个开源项目，可以用于各种框架的练手。
@@ -1172,6 +1484,34 @@ npm install
 
 ```shell
 npm install --save babel-standalone react react-dom
+```
+
+
+
+## 问题
+
+关于 render() 的container 问题，为什么下面这段代码不用document.querySeleter("#app")也可以找到根元素，但是一把根元素的标签改成 class 就找不到根元素了，经过尝试只要标签有id 就可以直接向下面那样container的参数直接用根元素id 就可以了，暂时没找到答案
+
+```html
+<div id="app"></div>
+<script type="text/babel">
+    class Life extends React.Component {
+        constructor() {
+            super()
+        }
+        render() {
+            return (
+                <div style={{color: 'red'}}>
+                    1112
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(
+        <Life/>,
+        app
+    )
+</script>
 ```
 
 
