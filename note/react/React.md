@@ -851,6 +851,8 @@ class InputChange extends  React.Component {
 >
 > 完整生命周期 API：https://reactjs.org/docs/react-component.html#the-component-lifecycle
 
+简单来说 react Component 通过定义了几个函数来控制各个阶段的动作，而这些阶段就是组件的生命周期
+
 ### PropTypes 类型校验
 
 > 参考文档：https://reactjs.org/docs/typechecking-with-proptypes.html

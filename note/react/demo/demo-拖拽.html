@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        .dragNode{
+            width: 200px;
+            height: 200px;
+            background: yellowgreen;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class Drag extends  React.Component {
+        constructor() {
+            super()
+            this.state = {
+                needX:0,
+                needY:0
+            }
+            this.disX = 0;
+            this.disY = 0
+        }
+        fnDown(e) {
+            // disXdisY鼠标点击的相对位置（以div左上角为坐标原点）
+            this.disX = e.clientX - e.target.offsetLeft
+            this.disY = e.clientY - e.target.offsetTop
+            //console.log(this.disX,this.disY)
+            document.onmousemove = (e) => this.fnMove(e)
+            document.onmouseup = () => this.fnUp()
+        }
+        fnMove(e) {
+            this.setState({
+                // 鼠标的位置，减去鼠标相对div的位置就是div应该去的位置
+                needX: e.clientX - this.disX,
+                needY: e.clientY - this.disY
+            })
+        }
+        fnUp() {
+            document.onmousemove = null
+            document.onmouseup = null
+        }
+        render() {
+            return (
+                <div className="dragNode" style={{left:this.state.needX,top:this.state.needY}} onMouseDown={(e) => this.fnDown(e)} />
+            )
+        }
+    }
+    ReactDOM.render(
+        <Drag/>,
+        document.querySelector('#app')
+    )
+</script>
+</body>
+</html>
