@@ -1094,7 +1094,7 @@ React 本身完全不限制你如何去交互（），如果是angular则必须�
 
 组件的数据来源，通常是通过 Ajax 请求从服务器获取，可以使用 `componentDidMount` 方法设置 Ajax 请求，等到请求成功，再用 `this.setState` 方法重新渲染 UI 。
 
-原生写法
+**原生写法**
 
 ```jsx
 class Alex extends React.Component {
@@ -1144,7 +1144,7 @@ class Alex extends React.Component {
     ReactDOM.render(<Alex/>,document.querySelector('#app'))
 ```
 
-jquery写法
+**jquery写法**
 
 ```jsx
 ajaxToData() {
@@ -1173,7 +1173,7 @@ ajaxToData() {
         }
 ```
 
-axios写法
+**axios写法**
 
 ```jsx
 ajaxToData() {
@@ -1198,7 +1198,120 @@ Fetch 是一个现代的概念, 等同于 XMLHttpRequest。它提供了许多与
 
 Fetch 的核心在于对 HTTP 接口的抽象，包括 `Request`，`Response`，`Headers`，`Body`，以及用于初始化异步请求的 `global fetch`。得益于 JavaScript 实现的这些抽象好的 HTTP 模块，其他接口能够很方便的使用这些功能。
 
-Fetch 是基于 ES6 Promise 实现的，使用方式可以看看上面的两个链接，单纯想使用可以看第二个，原理的话可以看看MDN的那个
+fetch 交互用的和 ajax 的效果差不多，注意 ie 本身不支持 fetch，基本语法如下
+
+```js
+// GET
+fetch(`http://127.0.0.1:3001/login?user=${user.value}&pass=${pass.value}`,{
+    method: 'GET'
+}).then((res) => {
+    res.json().then(res => {
+        console.log(res)
+    }).catch(()=>{
+        console.log('服务器异常')
+    })
+})
+// 上面的写法还是有点丑陋, 下面用优雅的promise写法写
+fetch(`http://127.0.0.1:3001/login?user=${user.value}&pass=${pass.value}`,{
+    method: 'GET'
+}).then((res) => {
+    // return res.text() 此方法接收的数据是String类型
+    return res.json()// 此方法接收的数据是json 如果不是json则会报错（调用promise 的 reject）
+}).then(res => {
+    console.log(res)
+}).catch(()=>{
+    console.log('服务器异常')
+})
+// POST
+fetch(`http://127.0.0.1:3001/loginPost`,{
+    method: 'POST',
+    headers: {
+        'Content-Type':'application/x-www-form-urlencoded'
+    },
+    body: `user=${user.value}&pass=${pass.value}`
+}).then((res) => {
+    return res.json()
+}).then(res => {
+    console.log(res)
+}).catch(()=>{
+    console.log('服务器异常')
+})
+// 上传图片
+// fl 头像 <input type="file" name="" id="fl"><br>
+document.querySelector('.login').onclick = () => {
+        var fd = new FormData()
+        fd.append('pic', fl.files[0])
+        fetch(`http://127.0.0.1:3001/addPic`,{
+            method: 'POST',
+            body: fd
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            //console.log(res)
+            imgNode.src = res.dataUrl
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+    }
+```
+
+- node搭建服务器部分代码
+
+```js
+const express = require('express')
+const bodyParser = require('body-parser')// 用于解析post urlencoded的
+const multer = require('multer')// 用于解析请求文件的
+const path = require('path')
+const fs = require('fs')
+
+const server = express()
+
+// 把本地的所有资源都变成可访问的静态资源，懒得用 art-template 渲染和一个个去公开HTML了
+server.use('/', express.static('./'))
+server.use(bodyParser.urlencoded({{extended: true}}))// 引入中间件
+server.use(multer({dest:'./img'}).any())// 解析文件的中间件，并把文件放入 img 文件夹
+
+var user = {
+    leo: '111'
+}
+server.get('/login', (req,res) => {
+    if (!user[req.query.user]) {
+        return res.send({ok:0,msg:'用户不存在'})
+    }
+    if (user[req.query.user] !== req.query.pass) {
+        return res.send({ok:0,msg:'密码错误'})
+    }
+    return res.send({ok:1,msg:'登录成功'})
+})
+
+server.post('/loginPost', (req, res) => {
+    if (!user[req.body.user]) {
+        return res.send({ok:0,msg:'用户不存在'})
+    }
+    if (user[req.body.user] !== req.body.pass) {
+        return res.send({ok:0,msg:'密码错误'})
+    }
+    return res.send({ok:1,msg:'登录成功'})
+})
+
+server.use('/addPic', (req,res) => {
+    // console.log(req.files[0])
+    // 把文件
+    var newPath = req.files[0].path + path.parse(req.files[0].originalname).ext
+    fs.rename(req.files[0].path, newPath, (err)=>{
+        if(err){
+            return res.send({ok:0,msg:'写入失败'})
+        }else{
+            return res.send({ok:1,msg:'头像保存成功',dataUrl: newPath})
+        }
+    })
+})
+
+server.listen(3001, function () {
+    console.log('running')
+})
+
+```
 
 因此 fetch 与服务端交互的写法如下
 
@@ -1514,7 +1627,8 @@ npm install --save babel-standalone react react-dom
 </script>
 ```
 
-
+- 解惑
+  - *原因大概是*：**如果dom元素的id名称不和js内置属性或全局变量重名的话，该名称自动成为window对象的属性**，所以可以直接用来操作dom。看网上的说法是，这个是**IE首先支持**，火狐谷歌后面才支持的。不过现在还未形成标准，为了保险，还是不用的好。
 
 
 

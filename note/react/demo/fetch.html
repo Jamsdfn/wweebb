@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+头像 <input type="file" name="" id="fl"><br>
+用户 <input type="text" name="" id="user"><br>
+密码 <input type="text" name="" id="pass"><br>
+<img id="imgNode" src="" alt="">
+<button class="login">登录</button>
+
+<script>
+    document.querySelector('.login').onclick = () => {
+        var fd = new FormData()
+        fd.append('pic', fl.files[0])
+        fetch(`http://127.0.0.1:3001/addPic`,{
+            method: 'POST',
+            body: fd
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            //console.log(res)
+            imgNode.src = res.dataUrl
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+        fetch(`http://127.0.0.1:3001/loginPost`,{
+            method: 'POST',
+            headers: {
+                'Content-Type':'application/x-www-form-urlencoded'
+            },
+            body: `user=${user.value}&pass=${pass.value}`
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            console.log(res)
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+    }
+</script>
+</body>
+</html>
