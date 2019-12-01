@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class Parent extends React.Component {
+        render() {
+            return (
+                <div>
+                    <div>我是父组件</div>
+                    <Child textColor={`rgb(${parseInt(Math.random()*256)},${parseInt(Math.random()*256)},${parseInt(Math.random()*256)})`}/>
+                </div>
+            )
+        }
+    }
+    class Child extends React.Component {
+        render() {
+            return (
+                <div>
+                    <div style={{color:this.props.textColor}}>我是子组件</div>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Parent/>,app)
+</script>
+</body>
+</html>

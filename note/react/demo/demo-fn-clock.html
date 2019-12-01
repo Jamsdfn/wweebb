@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    // 函数的方式做时钟比较简单但是没有组件做的规范
+    function clock() {
+        let c = <span>{new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString()}</span>
+        ReactDOM.render(c,app)
+    }
+    clock()
+    setInterval(clock,1000)
+</script>
+</body>
+</html>

@@ -1006,7 +1006,165 @@ class Life extends React.Component {
     }
 ```
 
+### 组件的嵌套
 
+```jsx
+class Parent extends React.Component {
+    render() {
+        return (
+            <div>
+                <div>我是父组件</div>
+                <Child textColor={`rgb(${parseInt(Math.random()*256)},${parseInt(Math.random()*256)},${parseInt(Math.random()*256)})`}/>
+            </div>
+        )
+    }
+}
+class Child extends React.Component {
+    render() {
+        return (
+            <div>
+                <div style={{color:this.props.textColor}}>我是子组件</div>
+            </div>
+        )
+    }
+}
+ReactDOM.render(<Parent/>,app)
+```
+
+### 父子组件数据通信
+
+父子组件的数据通信分为两种，就是父传子，子传父
+
+**父传子**
+
+用 props 的方式直接传数据
+
+```jsx
+class Child extends React.Component {
+        render() {
+            return (
+                <div>我是子组件 => {this.props.setMsg}</div>
+            )
+        }
+    }
+    class Parent extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                msg: '我是父组件的数据'
+            }
+        }
+        show() {
+            // 因为 setState 会重新渲染，重新渲染后msg变了，所以自组价的 props 也会改变
+            this.setState({
+                msg:'我变了'
+            })
+        }
+        render() {
+            return (
+                <div onClick={this.show.bind(this)}>
+                    我是父组件 => {this.state.msg}
+                    <Child setMsg={this.state.msg}/>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Parent/>,app)
+```
+
+虽然也是用 props 但是用子组件的 state 间接传输数据
+
+- 间接的方式因为是在数据挂载前加载的，所以父组建的state改变了，即使重新渲染了，子组件也没有重新给state赋值，因此子组件数据没有改变，所以不推荐这种写法，推荐用 props 直接传数据，除非像父组件改变子组件不改变就用这种洗发
+
+```jsx
+class Child extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                cMsg: ''
+            }
+        }
+    // 数据挂载前改变 state 这样渲染后的 state 就有数据了
+        componentWillMount() {
+            this.setState({
+                cMsg: this.props.setMsg
+            })
+        }
+        render() {
+            return (
+                <div>我是子组件 => 直接 {this.props.setMsg} => 间接 {this.state.cMsg}</div>
+            )
+        }
+    }
+    class Parent extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                msg: '我是父组件的数据'
+            }
+        }
+        show() {
+            this.setState({
+                msg:'我变了'
+            })
+        }
+        render() {
+            return (
+                <div onClick={this.show.bind(this)}>
+                    我是父组件 => {this.state.msg}
+                    <Child setMsg={this.state.msg}/>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Parent/>,app)
+```
+
+**子传父**
+
+有一点点 jsonp 的感觉，父定义一个函数传给子去调用，函数的this绑定为父组件的 this 用于父组件的 setState
+
+```jsx
+class Child extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            cMsg: '我是子组件的数据'
+        }
+    }
+    componentWillMount() {
+        this.props.getMsg(this.state.cMsg)
+    }
+    render() {
+        return (
+            <div>我是子组件 => {this.state.cMsg}</div>
+        )
+    }
+}
+class Parent extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            pMsg: ''
+        }
+    }
+    // 有点像 jsonp 跨域的感觉
+    getMsg(msg) {
+        this.setState({
+            pMsg: msg
+        })
+    }
+    render() {
+        return (
+            <div>
+                我是父组件 => {this.state.pMsg}
+                <Child getMsg={this.getMsg.bind(this)}/>
+            </div>
+        )
+    }
+}
+ReactDOM.render(<Parent/>,app)
+```
 
 ### PropTypes 类型校验
 
@@ -1350,8 +1508,6 @@ ajaxToData() {
     })
 }
 ```
-
-
 
 ## 列表渲染
 

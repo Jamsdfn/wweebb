@@ -11,6 +11,14 @@ server.use('/', express.static('./'))
 server.use(bodyParser.urlencoded({extended: true}))
 server.use(multer({dest:'./img'}).any())
 
+server.get('/getDate',(req,res) => {
+    var data = 'nok'
+    if (req.query.id === '1') {
+        data = 'ok'
+    }
+    res.send(`${req.query.callback}('${data}')`)
+})
+
 server.get('/get',(req,res) => {
     res.send(['中国','俄罗斯','瑞士'])
 })

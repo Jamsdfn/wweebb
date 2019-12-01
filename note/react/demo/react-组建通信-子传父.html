@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class Child extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                cMsg: '我是子组件的数据'
+            }
+        }
+        componentWillMount() {
+            this.props.getMsg(this.state.cMsg)
+        }
+        render() {
+            return (
+                <div>我是子组件 => {this.state.cMsg}</div>
+            )
+        }
+    }
+    class Parent extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                pMsg: ''
+            }
+        }
+        // 有点像 jsonp 跨域的感觉
+        getMsg(msg) {
+            this.setState({
+                pMsg: msg
+            })
+        }
+        render() {
+            return (
+                <div>
+                    我是父组件 => {this.state.pMsg}
+                    <Child getMsg={this.getMsg.bind(this)}/>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Parent/>,app)
+</script>
+</body>
+</html>
