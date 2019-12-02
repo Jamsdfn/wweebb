@@ -1309,17 +1309,22 @@ ajaxToData() {
     // 记得引包
             var _this = this
             let URL = 'http://127.0.0.1:3001/get'
-            /*
-            $.ajax({
-                url:URL,
-                dataType: 'json',
-                success(data) {
-                    _this.setState({
-                        arr: data
-                    })
-                }
-            })
-			*/
+            // $.ajax({
+            //     url: URL,
+            //     dataType: 'json',
+            //     // success(data) {
+            //     //     _this.setState({
+            //     //         arr: data
+            //     //     })
+            //     // }
+            //     ES5 的写法加 bind 也可以解决 this 问题
+            //     success: function (data) {
+            //         this.setState({
+            //             arr: data
+            //         })
+            //     }.bind(this)
+            // })
+            
             // promise 写法也可以解决$.ajax的 this 指向问题
             $.ajax({
                 url:URL
@@ -1507,6 +1512,101 @@ ajaxToData() {
         })
     })
 }
+```
+
+## 跨域(JSONP使用)
+
+**例子一** 原生 jsonp 写法(本地服务器跨域到百度)
+
+```jsx
+<script>
+    function leo (json) {
+        //console.log(json) 经过分析后 json.g.q 就是内容
+        ul.innerHTML = ''
+        json.g.map((value) => {
+            var oLi = document.createElement('li')
+            oLi.innerText = value.q
+            ul.appendChild(oLi)
+        })
+    }
+</script>
+<script type="text/babel">
+    // 跨域后的不能把回调函数的定义写在这个标签里，因为这个 script 标签 type="text/babel" 不是原生的 script
+    class Search extends React.Component {
+        constructor() {
+            super()
+        }
+        change(e) {
+            //console.log(e.target.value)
+            let oS = document.createElement('script')
+            oS.src = `https://www.baidu.com/sugrec?pre=1&p=3&ie=utf-8&json=1&prod=pc&from=pc_web&sugsid=1450,21118,30211,18560&wd=${e.target.value}&req=2&csor=1&pwd=2&cb=leo&_=1575295812602`
+            oS.id = 'oS'
+            document.head.appendChild(oS)
+            oS.remove()
+        }
+        render() {
+
+            return (
+                <div>
+                    <input type="text" onChange={this.change.bind(this)}/>
+                    <ul id="ul">
+                    </ul>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Search/>,app)
+</script>
+```
+
+**例子二** jquery jsonp写法（也是跨域百度，点击 li 可以进入百度搜索内容）
+
+```jsx
+class Search extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            search: []
+        }
+    }
+    change(e) {
+        $.ajax({
+            url: `https://www.baidu.com/sugrec?pre=1&p=3&ie=utf-8&json=1&prod=pc&from=pc_web&sugsid=1450,21118,30211,18560&wd=${e.target.value}&req=2&csor=1&pwd=2&_=1575295812602`,
+            type: 'GET',
+            jsonp: 'cb',
+            dataType: 'jsonp',
+            success: function (data) {
+                // console.log(data)
+                // 有结果才添加，没结果就清空
+                if ('g' in data) {
+                    let aLi = []
+                    data.g.map((value, index) => {
+                        aLi.push(<li key={index}><a href={`https://www.baidu.com/s?wd=${value.q}&rsv_spt=1&rsv_iqid=0x972233f600001fa2&issp=1&f=3&rsv_bp=1&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&rsv_dl=ts_0&rsv_sug3=2&rsv_sug1=2&rsv_sug7=101&rsv_sug2=1&prefixsug=1&rsp=0&inputT=1396&rsv_sug4=1476`}>{value.q}</a></li>)
+                    })
+                    this.setState({
+                        search: aLi
+                    })
+                } else {
+                    this.setState({
+                        search: []
+                    })
+                }
+            }.bind(this)
+        })
+    }
+    render() {
+
+        return (
+            <div>
+                <input type="text" onChange={this.change.bind(this)}/>
+                <ul id="ul">
+                    {this.state.search}
+                </ul>
+            </div>
+        )
+    }
+}
+ReactDOM.render(<Search/>,app)
 ```
 
 ## 列表渲染

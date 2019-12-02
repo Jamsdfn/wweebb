@@ -18,23 +18,30 @@
                 arr: []
             }
         }
+
         componentDidMount() {
             this.ajaxToData()
         }
+
         ajaxToData() {
-            var _this = this
+            //var _this = this
             let URL = 'http://127.0.0.1:3001/get'
-            /*
-            $.ajax({
-                url:URL,
-                dataType: 'json',
-                success(data) {
-                    _this.setState({
-                        arr: data
-                    })
-                }
-            })
-			*/
+
+            // $.ajax({
+            //     url: URL,
+            //     dataType: 'json',
+            //     // success(data) {
+            //     //     _this.setState({
+            //     //         arr: data
+            //     //     })
+            //     // }
+            //     success: function (data) {
+            //         this.setState({
+            //             arr: data
+            //         })
+            //     }.bind(this)
+            // })
+
             $.ajax({
                 url:URL
             }).then((res)=>{
@@ -43,8 +50,9 @@
                 })
             })
         }
+
         render() {
-            let arrLi = this.state.arr.map((item,index) => {
+            let arrLi = this.state.arr.map((item, index) => {
                 return <li key={index}>{item}</li>
             })
             return (
@@ -61,7 +69,8 @@
             )
         }
     }
-    ReactDOM.render(<Alex/>,document.querySelector('#app'))
+
+    ReactDOM.render(<Alex/>, document.querySelector('#app'))
 </script>
 </body>
 </html>

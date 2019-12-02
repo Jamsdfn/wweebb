@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+    <script src="./bower_components/jquery/jquery.min.js"></script>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    class Search extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                search: []
+            }
+        }
+        change(e) {
+            $.ajax({
+                url: `https://www.baidu.com/sugrec?pre=1&p=3&ie=utf-8&json=1&prod=pc&from=pc_web&sugsid=1450,21118,30211,18560&wd=${e.target.value}&req=2&csor=1&pwd=2&_=1575295812602`,
+                type: 'GET',
+                jsonp: 'cb',
+                dataType: 'jsonp',
+                success: function (data) {
+                    // console.log(data)
+                    if ('g' in data) {
+                        let aLi = []
+                        data.g.map((value, index) => {
+                            aLi.push(<li key={index}><a href={`https://www.baidu.com/s?wd=${value.q}&rsv_spt=1&rsv_iqid=0x972233f600001fa2&issp=1&f=3&rsv_bp=1&rsv_idx=2&ie=utf-8&tn=baiduhome_pg&rsv_enter=1&rsv_dl=ts_0&rsv_sug3=2&rsv_sug1=2&rsv_sug7=101&rsv_sug2=1&prefixsug=1&rsp=0&inputT=1396&rsv_sug4=1476`}>{value.q}</a></li>)
+                        })
+                        this.setState({
+                            search: aLi
+                        })
+                    } else {
+                        this.setState({
+                            search: []
+                        })
+                    }
+                }.bind(this)
+            })
+        }
+        render() {
+            return (
+                <div>
+                    <input type="text" onChange={this.change.bind(this)}/>
+                    <ul id="ul">
+                        {this.state.search}
+                    </ul>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<Search/>,app)
+</script>
+</body>
+</html>
