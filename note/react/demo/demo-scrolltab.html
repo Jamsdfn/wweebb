@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="./bower_components/react/react.js"></script>
+    <script src="./bower_components/react/react-dom.js"></script>
+    <script src="./bower_components/babel/browser.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+        .outBox {
+            width: 400px;
+            overflow: hidden;
+            position: absolute;
+            border: 1px solid #ccc;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+        }
+        .topDiv {
+            width: 100%;
+            height: 300px;
+            float: left;
+            position: relative;
+        }
+        .topDiv .leftClick {
+            position: absolute;
+            z-index: 3;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            cursor: pointer;
+        }
+        .topDiv .rightClick {
+            position: absolute;
+            z-index: 3;
+            right: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            cursor: pointer;
+        }
+        .topDiv ul{
+            height: 100%;
+            position: absolute;
+            left: 0;
+            top: 0;
+            transition: 0.7s;
+        }
+        .topDiv ul li{
+            height: 300px;
+            width: 400px;
+            float: left;
+            overflow: hidden;
+        }
+        .topDiv ul li img{
+            width: 100%;
+            height: 100%;
+            transition: 0.3s;
+        }
+        .centerBox {
+            width: 100%;
+            height: 20px;
+            background-color: pink;
+            float: left;
+            line-height: 20px;
+        }
+        .centerBox .rightBox {
+            float: right;
+        }
+        .centerBox .rightBox span {
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        .centerBox .leftText {
+            margin-left: 10px;
+        }
+        .bottomBox {
+            width: 100%;
+            height: 100px;
+            float: left;
+            position: relative;
+        }
+        .bottomBox .leftClick {
+            position: absolute;
+            z-index: 3;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            cursor: pointer;
+        }
+        .bottomBox .rightClick {
+            position: absolute;
+            z-index: 3;
+            right: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: white;
+            cursor: pointer;
+        }
+        .bottomBox ul {
+            height: 100%;
+            position: absolute;
+            transition: 0.7s;
+        }
+        .bottomBox ul li {
+            width: 90px;
+            height: 90px;
+            border: 5px solid yellowgreen;
+            float: left;
+            background-size: cover;
+            background-position: center center;
+        }
+        .bottomBox ul li.active {
+            border: 5px solid pink;
+            transition: 0.7s;
+        }
+    </style>
+</head>
+<body>
+<div id="app"></div>
+<script type="text/babel">
+    let Json = {
+        pic: ['./img/1.jpg','./img/2.jpg','./img/3.jpg','./img/4.jpg','./img/5.jpg','./img/6.jpg'],
+        text: ['111','211','311','411','511','611']
+
+    }
+    class TopNode extends React.Component {
+        render() {
+            // console.log(this.props.PicUrl)
+            let aLi = this.props.PicUrl.map((value, index) => {
+                return <li key={index}><img style={{transform:`scale(${this.props.iScale})`}} src={value}/></li>
+            })
+            return (
+                <div className="topDiv">
+                    <div className="leftClick" onMouseDown={(e)=>{e.preventDefault()}} onClick={this.props.Lfn}>左</div>
+                    <div className="rightClick" onMouseDown={(e)=>{e.preventDefault()}} onClick={this.props.Rfn}>右</div>
+                    <ul style={{
+                        width: this.props.PicUrl.length*400 + 'px',
+                        left: -400 * this.props.index + 'px'
+                    }}>
+                        {aLi}
+                    </ul>
+                </div>
+            )
+        }
+    }
+    class CenterNode extends React.Component {
+        render() {
+            return (
+                <div className="centerBox">
+                    <span className="leftText">{this.props.text[this.props.index]}</span>
+                    <div className="rightBox">
+                        <span onMouseDown={(e)=>{e.preventDefault()}} onClick={this.props.allFn.big}>大 </span>
+                        <span onMouseDown={(e)=>{e.preventDefault()}} onClick={this.props.allFn.small}>小</span>
+                    </div>
+                </div>
+            )
+        }
+    }
+    class BottomNode extends React.Component {
+        render() {
+            let aLi = this.props.PicUrl.map((value, index) => {
+                return <li onClick={this.props.goFn.bind(null,index)} className={index === this.props.index ? 'active' : ''} key={index} style={{backgroundImage:`url(${value})`}}> </li>
+            })
+            return (
+                <div className="bottomBox">
+                    <div className="leftClick" onMouseDown={(e)=>{e.preventDefault()}}>左</div>
+                    <div className="rightClick" onMouseDown={(e)=>{e.preventDefault()}}>右</div>
+                    <ul style={{
+                        width: this.props.PicUrl.length*100 + 'px',
+                        left: this.props.index > 3 ? (this.props.index - 3) * -100 + 'px': '0px'
+                    }}>
+                        {aLi}
+                    </ul>
+                </div>
+            )
+        }
+    }
+    class MyTab extends React.Component {
+        constructor() {
+            super()
+            this.state = {
+                index: 2,
+                scale: 1
+            }
+        }
+        change(index) {
+            // console.log(index)
+            this.setState({
+                scale: 1,
+                index: index
+            })
+        }
+        LeftFn() {
+            this.setState({
+                scale: 1,
+                index: this.state.index === 0 ? this.props.JsonTo.pic.length - 1 : --this.state.index
+            })
+        }
+        RightFn() {
+            this.setState({
+                scale: 1,
+                index: this.state.index === this.props.JsonTo.pic.length - 1 ? 0 : ++this.state.index
+            })
+        }
+        big() {
+            let maxB = this.state.scale + 0.1
+            maxB >= 2 && (maxB = 2, alert('已经最大了'))
+            this.setState({
+                scale: maxB
+            })
+        }
+        small() {
+            let minB = this.state.scale - 0.1
+            minB <= 0.4 && (minB = 0.4, alert('已经最小了'))
+            this.setState({
+                scale: minB
+            })
+        }
+        render() {
+            /// console.log(this.props.JsonTo)
+            return (
+                <div className="outBox">
+                    <TopNode iScale={this.state.scale} Rfn={this.RightFn.bind(this)} Lfn={this.LeftFn.bind(this)} PicUrl={this.props.JsonTo.pic} index={this.state.index}/>
+                    <CenterNode allFn={{small:this.small.bind(this), big:this.big.bind(this)}} text={this.props.JsonTo.text} index={this.state.index}/>
+                    <BottomNode goFn={this.change.bind(this)} PicUrl={this.props.JsonTo.pic} index={this.state.index}/>
+                </div>
+            )
+        }
+    }
+    ReactDOM.render(<MyTab JsonTo={Json}/>, app)
+</script>
+</body>
+</html>
