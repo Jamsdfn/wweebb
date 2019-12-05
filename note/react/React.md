@@ -129,6 +129,23 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
 
 > https://reactjs.org/docs/hello-world.html
 
+### webpack
+
+除了平常的配置外，还要一些 react 相关的加载器
+
+```shell
+# 如果 webpack 时候出现关于 react-hot-loader 的报错，我们可以下一个 1.3.1 的稳定版本
+npm i -D react react-dom babel-preset-react react-hot-loader
+```
+
+配置：
+
+```js
+
+```
+
+
+
 ### babel-standalone
 
 > 参考文档：https://github.com/babel/babel/tree/master/packages/babel-standalone
