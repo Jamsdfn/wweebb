@@ -592,8 +592,9 @@ npm i -D babel-loader@7.1.5 babel-core babel-preset-env
 ```js
 {
         test: /\.js$/,
+            // 下面那句话是排除查询 node_modules 文件夹 和 include 等效
         // exclude: /node_modules/,
-          //限定查询范围
+          //限定查询范围 限定在配置的路径里
         include: path.join(__dirname, 'src/js'),
         use: [
           {
