@@ -5,7 +5,7 @@ class Leo extends React.Component {
     constructor() {
         super()
         this.state = {
-            msg: 'hello react'
+            msg: '我吐了，webpack 配置真恶心'
         }
     }
     render() {

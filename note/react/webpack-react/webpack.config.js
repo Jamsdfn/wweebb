@@ -1,9 +1,11 @@
 const path = require('path')
 //const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 module.exports = {
-    entry: './src/index.js',
+    entry: [
+        './app/index.js',
+    ],
     output: {
-        path: path.join(__dirname, 'dist'),//必须的属性
+        // path: path.join(__dirname, 'dist'),//必须的属性
         filename: 'bundle.js'//必须属性
     },
     // plugins: [
@@ -11,6 +13,12 @@ module.exports = {
     //         filename: '[name].css'
     //     })
     // ],
+    devServer: {
+        port:3000,
+        open: true,
+        inline: true,
+        contentBase:'./app'
+    },
     module: {
         rules:[
             {
