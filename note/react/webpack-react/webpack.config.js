@@ -2,7 +2,7 @@ const path = require('path')
 //const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 module.exports = {
     entry: [
-        './app/index.js',
+        './tab_demo/index.js',
     ],
     output: {
         // path: path.join(__dirname, 'dist'),//必须的属性
@@ -17,7 +17,7 @@ module.exports = {
         port:3000,
         open: true,
         inline: true,
-        contentBase:'./app'
+        contentBase:'./tab_demo'
     },
     module: {
         rules:[
