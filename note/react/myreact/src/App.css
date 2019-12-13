@@ -1,0 +1,265 @@
+/*公共样式*/
+html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, textarea, th, td, select {
+    margin: 0;
+    padding: 0;
+}
+
+*{box-sizing: border-box;}
+html, body {
+    min-height: 100%;
+}
+
+body {
+    font-family: "Microsoft YaHei";
+    font-size:14px;
+    color:#333;
+}
+h1, h2, h3, h4, h5, h6{font-weight:normal;}
+ul,ol {
+    list-style: none;
+}
+
+img {
+    border: none;
+    vertical-align: middle;
+}
+
+a {
+    text-decoration: none;
+    color: #232323;
+}
+
+table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+input, textarea {
+    outline: none;
+    border: none;
+}
+
+textarea {
+    resize: none;
+    overflow: auto;
+}
+
+.clearfix {
+    zoom: 1;
+}
+
+.clearfix:after {
+    content: ".";
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: block;
+    clear: both;
+    overflow:hidden;
+}
+
+.fl {
+    float: left
+}
+
+.fr {
+    float: right
+}
+
+.tl {
+    text-align: left;
+}
+
+.tc {
+    text-align: center
+}
+
+.tr {
+    text-align: right;
+}
+
+.ellipse {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.inline{
+    display: inline-block;
+    *display: inline;
+    *zoom: 1;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.tab{
+    width: 960px;
+    height: 480px;
+    position: relative;
+    overflow: hidden;
+}
+
+.tab ul {
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transition: 0.3s;
+}
+
+.tab ul li {
+    height: 100%;
+    width: 960px;
+    float: left;
+}
+
+.tab ul li img{
+    width: 100%;
+    height: 100%;
+}
+
+.tab ol{
+    z-index: 20;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 6px;
+}
+
+.tab ol li{
+    float: left;
+    width: 8px;
+    height: 8px;
+    background: white;
+    cursor: pointer;
+    margin: 0 5px;
+    border-radius: 50%;
+    transform: scale(1);
+    transition: 0.3s;
+}
+
+.tab ol li.active {
+    transform: scale(1.5);
+}
+
+.left {
+    width: 50px;
+    height: 100%;
+    z-index: 30;
+    background: rgba(0,0,0,0);
+    position: absolute;
+    left: 0;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.left:hover {
+    background: rgba(0,0,0,0.5);
+}
+
+.left:before {
+    content: '';
+    width: 14px;
+    height: 5px;
+    background: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    transform-origin: left center;
+}
+.left:after {
+    content: '';
+    width: 14px;
+    height: 5px;
+    background: white;
+    position: absolute;
+    left: 50%;
+    top: 49.5%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transform-origin: left center;
+}
+
+.right {
+    width: 50px;
+    height: 100%;
+    z-index: 30;
+    background: rgba(0,0,0,0);
+    position: absolute;
+    right: 0;
+    cursor: pointer;
+    transition: .3s;
+}
+
+.right:hover {
+    background: rgba(0,0,0,0.5);
+}
+
+.right:before {
+    content: '';
+    width: 14px;
+    height: 5px;
+    background: white;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    transform-origin: right center;
+}
+.right:after {
+    content: '';
+    width: 14px;
+    height: 5px;
+    background: white;
+    position: absolute;
+    left: 50%;
+    top: 49.5%;
+    transform: translate(-50%, -50%) rotate(-45deg);
+    transform-origin: right center;
+}
+
+.line{
+    /*width: 100%;*/
+    height: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(255,255,255,0.7);
+    z-index: 50;
+}

@@ -117,19 +117,47 @@ React 拥有较高的性能，代码逻辑非常简单，越来越多的人已�
 ### 安装
 
 - 云端编程环境（在线编辑器：codepen、jsfiddle）
-  - 只用于 demo 测试
 - 脚手架工具：`create-react-app`
-  - 目前不推荐使用
-  - 类似于 `vue-cli`
-  - 集成了 webpack 构建工具等环境
-  - 自动刷新浏览器
-  - 。。。
 - 本地简单开发测试环境（没有模块化支持）
 - 自己手动搭建模块化 webpack 开发环境
 
 > https://reactjs.org/docs/hello-world.html
 
-### webpack
+### babel-standalone
+
+> 参考文档：https://github.com/babel/babel/tree/master/packages/babel-standalone
+
+自己手动调用 babel API 编译执行：
+
+```html
+<script>
+  var input = 'const getMessage = () => "Hello World"; console.log(getMessage())';
+
+  // 调用 Babel 提供的转换 API 完成编译转换，得到结果字符串
+  // 编译过程比较耗时，所以只推荐开发测试使用
+  // 咱们这里使用它的目的是为了简化 react 的学习过程
+  var output = Babel.transform(input, { presets: ['es2015'] }).code;
+  
+  // eval 函数支持动态解析执行 JavaScript 字符串
+  window.eval(output)
+</script>
+```
+
+babel 自动编译执行：
+
+```html
+<!--
+当 babel-standalone 发现 type="text/babel" 类型标签的时候：
+	1. 将 script 标签中的内容转换为浏览器可以识别的 JavaScript
+	2. 使用 eval 执行编译结果代码
+-->
+<script type="text/babel">
+  const getMessage = () => "Hello World";
+  console.log(getMessage())
+</script>
+```
+
+### webpack（自己配置）
 
 除了平常的配置外，还要一些 react 相关的加载器
 
@@ -187,41 +215,58 @@ module.exports = {
 
 ```
 
-### babel-standalone
+### 脚手架
 
-> 参考文档：https://github.com/babel/babel/tree/master/packages/babel-standalone
+说白了就是别人配置好的 webpack ，因为 webpack 配置过于麻烦，各种版本加载器之间未必相互兼容，一配置可能就是一天，很浪费时间（虽然企业开发中通常都是有专门的人配置webpack的）。所以就出现了脚手架。
 
-自己手动调用 babel API 编译执行：
+**安装**
 
-```html
-<script>
-  var input = 'const getMessage = () => "Hello World"; console.log(getMessage())';
-
-  // 调用 Babel 提供的转换 API 完成编译转换，得到结果字符串
-  // 编译过程比较耗时，所以只推荐开发测试使用
-  // 咱们这里使用它的目的是为了简化 react 的学习过程
-  var output = Babel.transform(input, { presets: ['es2015'] }).code;
-  
-  // eval 函数支持动态解析执行 JavaScript 字符串
-  window.eval(output)
-</script>
+```shell
+$ npm i -g create-react-app
+# 安装后可以看看版本号验证一下
+$ create-react-app --version
 ```
 
-babel 自动编译执行：
+**使用**
 
-```html
-<!--
-当 babel-standalone 发现 type="text/babel" 类型标签的时候：
-	1. 将 script 标签中的内容转换为浏览器可以识别的 JavaScript
-	2. 使用 eval 执行编译结果代码
--->
-<script type="text/babel">
-  const getMessage = () => "Hello World";
-  console.log(getMessage())
-</script>
+```shell
+$ create-react-app <project-direactory>
+# 如(名字不要大写)
+$ create-react-app myreact
+# 安装完后就出现，并给出可以直接使用的命令
+# 下面的命令既可以用 yarn 运行又可以用 npm 运行
+# 即 yarn start 可以运行，npm start 也可以运行
+Success! Created myreact at x:\xxx\myreact
+Inside that directory, you can run several commands:
+
+  yarn start
+    Starts the development server.
+
+  yarn build
+    Bundles the app into static files for production.
+
+  yarn test
+    Starts the test runner.
+
+  yarn eject
+    Removes this tool and copies build dependencies, configuration files
+    and scripts into the app directory. If you do this, you can’t go back!
+
+We suggest that you begin by typing:
+
+  cd myreact
+  yarn start
+
+Happy hacking!
 ```
 
+**目录信息**
 
+- public 
+  -  index.html 就是 root html (引入了 index.js)
+- src
+  - app.js 建议所有的组件都放在这里 （汇总组件）
+  - index.js 引入了 app.js （渲染）
 
 ### 初始化及安装依赖
 
@@ -939,7 +984,7 @@ class InputChange extends  React.Component {
 </script>
 ```
 
-- componentDidMount 组件挂载后
+- componentDidMount 组件挂载后（这点有点小坑，请仔细看例子后面的代码）
 
 ```jsx
 <div id="app"></div>
@@ -970,10 +1015,32 @@ class InputChange extends  React.Component {
         app
     )
 </script>
+
+// 关于 componentDidUpdate 一点小问题
+// 进度条 html <div className='line' style={{transition: this.state.transitions + 's',width:this.state.w + '%'}}/> 页面一加载好就让进度条从0加载到100 
+    constructor() {
+        super()
+        this.state = {
+            index: 0,
+            transitions: 0,
+            w: 0,
+            myTimer: null
+        }
+    }
+    componentDidMount(){
+        clearInterval(this.state.myTimer)
+        this.state.myTimer = setTimeout(() => {
+            this.setState({
+                transitions: 0.8,
+                w:100
+            })
+        },0)
+    }
+// 虽然设置了 transition 状态也变了，但是如果不加一个定时器直接setState的话进度条是不会从零通过动画从0变到100的，react会默认吧最终的状态直接显示出来，这是一个小问题
 ```
 
 - componentWillUpdate 组件更新前
-- componentDidUpdate  组件更新后
+- componentDidUpdate  组件更新后（不要在DidUpdate 生命周期中加 setState() 会进入死循环）
 
 ```jsx
 class Life extends React.Component {
