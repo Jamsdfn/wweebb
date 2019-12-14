@@ -1959,6 +1959,36 @@ class Search extends React.Component {
 ReactDOM.render(<Search/>,app)
 ```
 
+## React动画
+
+react 本身并不提供动画，但是我们用原生的 css js 自己写动画，也可以用一些动画插件如 react-transition-group react-motion
+
+### react-transition-group
+
+安装
+
+```shell
+npm i react-transition-group@1.2.1
+```
+
+此处介绍 1.x 版本的，因为和 vue-2.x 动画差不多
+
+使用：
+
+- 那个东西要用动画就用 <CSSTransitionGroup></CSSTransitionGroup>标签包起来
+- 加一个自定义类名 <CSSTransitionGroup transitionName='xxx'>
+  - .xxx-enter{} 进入之前的样式
+  - .xxx-enter-active{} 进入之后的样式
+  - .xxx-leave{} 离开时的样式
+  - .xxx-leave-active{} 离开之后的样式
+- <CSSTransitionGroup transitionName='xxx' transitionEnterTimeout={700} transitionLeaveTimeout={700}>
+  - 当定时器小于上一个小点样式中的transition值时，当过完定时器的时间后直接从那个变换到一半的状态直接变为最终状态
+- 初始动画 给标签加一个属性 transitionAppear={true} transitionAppearTimeout={700}
+
+### react-motion
+
+
+
 ## TodoMVC
 
 TodoMVC是一个类似于备忘录的小示例，是一个开源项目，可以用于各种框架的练手。

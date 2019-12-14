@@ -1,0 +1,32 @@
+.leo {
+    width: 200px;
+    height: 200px;
+    background: #232323;
+}
+.leo-appear{
+    opacity: 0;
+    background: yellow;
+}
+.leo-appear-active{
+    opacity: 1;
+    background: #232323;
+    transition: .7s;
+}
+.leo-enter{
+    opacity:0;
+    margin-left: 300px;
+}
+.leo-enter-active{
+    opacity:1;
+    margin-left: 0;
+    transition: .7s;
+}
+.leo-leave{
+    opacity:1;
+    margin-left: 0;
+}
+.leo-leave-active{
+    opacity:0;
+    margin-left: 300px;
+    transition: .7s;
+}
