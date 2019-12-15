@@ -1,3 +1,48 @@
+html, body, div, ul, li, h1, h2, h3, h4, h5, h6, p, dl, dt, dd, ol, form, input, textarea, th, td, select {
+    margin: 0;
+    padding: 0;
+}
+
+*{box-sizing: border-box;}
+html, body {
+    min-height: 100%;
+}
+
+body {
+    font-family: "Microsoft YaHei";
+    font-size:14px;
+    color:#333;
+}
+h1, h2, h3, h4, h5, h6{font-weight:normal;}
+ul,ol {
+    list-style: none;
+}
+
+img {
+    border: none;
+    vertical-align: middle;
+}
+
+a {
+    text-decoration: none;
+    color: #232323;
+}
+
+table {
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+input, textarea {
+    outline: none;
+    border: none;
+}
+
+textarea {
+    resize: none;
+    overflow: auto;
+}
+
 .leo {
     width: 200px;
     height: 200px;
@@ -29,4 +74,36 @@
     opacity:0;
     margin-left: 300px;
     transition: .7s;
+}
+
+.myTab {
+    width: 200px;
+    height: 40px;
+    border: 1px solid #ccc;
+    text-align: center;
+    line-height: 40px;
+    margin: 50px;
+    position: relative;
+    cursor: pointer;
+}
+.myTab ul {
+    width: 200px;
+    border: 1px solid #ccc;
+    left: -1px;
+    top: 38px;
+    position: absolute;
+    border-bottom: none;
+    overflow: hidden;
+    /*transition: .7s;*/
+}
+.myTab ul li {
+    width: 100%;
+    height: 40px;
+    border-bottom: 1px solid #ccc;
+    cursor: pointer;
+    transition: .7s;
+}
+.myTab ul li:hover {
+    background: skyblue;
+    color: white;
 }

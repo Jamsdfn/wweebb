@@ -1968,7 +1968,7 @@ react 本身并不提供动画，但是我们用原生的 css js 自己写动画
 安装
 
 ```shell
-npm i react-transition-group@1.2.1
+$ npm i react-transition-group@1.2.1
 ```
 
 此处介绍 1.x 版本的，因为和 vue-2.x 动画差不多
@@ -1985,9 +1985,107 @@ npm i react-transition-group@1.2.1
   - 当定时器小于上一个小点样式中的transition值时，当过完定时器的时间后直接从那个变换到一半的状态直接变为最终状态
 - 初始动画 给标签加一个属性 transitionAppear={true} transitionAppearTimeout={700}
 
+```jsx
+import React from 'react'
+import {CSSTransitionGroup} from 'react-transition-group'
+import './Test.css'
+
+class Test extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            v: true,
+            myArr:[]
+        }
+    }
+    click() {
+        this.setState({
+            v: !this.state.v
+        })
+    }
+    render() {
+        let oDiv = [this.state.v ? <div key={0} className='leo'/> : '']
+        return (
+            <div>
+                <button onClick={this.click.bind(this)}>切换</button>
+                <CSSTransitionGroup
+                    transitionName='leo'
+                    transitionEnterTimeout={700}
+                    transitionLeaveTimeout={700}
+                    transitionAppear={true}
+                    transitionAppearTimeout={700}
+                >
+                    {oDiv}
+                </CSSTransitionGroup>
+            </div>
+        )
+    }
+}
+
+export default Test
+
+```
+
 ### react-motion
 
+安装：
 
+```shell
+$ npm i react-motion
+```
+
+使用：
+
+```jsx
+import React from 'react'
+import {Motion, spring} from 'react-motion'
+
+class Reactmotion extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            v: true,
+            start: '中国',
+            myArr: ['中国', '瑞士', '印度', '新西兰']
+        }
+    }
+
+    click() {
+        this.setState({
+            v: !this.state.v
+        })
+    }
+
+    myClick(index) {
+        this.setState({
+            start: this.state.myArr[index]
+        })
+    }
+
+    render() {
+        let aLi = this.state.myArr.map((item, index) => {
+            return <li key={index} onClick={this.myClick.bind(this,index)}>{item}</li>
+        })
+        // 加一个Motion标签，定义一个名字，spring为定时器
+        return (
+            <div>
+                <Motion style={{myLeo:spring(this.state.v ? 161 : 0)}}>
+                    {({myLeo}) =>
+                        <div className='myTab' onClick={this.click.bind(this)}>
+                            {this.state.start}
+                            <ul style={{height:myLeo}}>
+                                {aLi}
+                            </ul>
+                        </div>
+                    }
+                </Motion>
+            </div>
+        )
+    }
+}
+
+export default Reactmotion
+```
 
 ## TodoMVC
 
