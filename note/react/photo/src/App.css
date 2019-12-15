@@ -1,0 +1,81 @@
+*{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+body{
+    background: rgb(40, 40, 41);
+    overflow: hidden;
+}
+
+.myUl > li{
+    width: 340px;
+    height: 416px;
+    background: white;
+    position: absolute;
+    box-shadow: 0 0 15px #ccc;
+    transform-style: preserve-3d;
+}
+
+.myUl > li >.zm {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translateZ(1px);
+}
+
+.myUl > li >.zm > img {
+    width: 285px;
+    height: 192px;
+    position: absolute;
+    left: 50%;
+    top: 93px;
+    transform: translateX(-50%);
+}
+.myUl > li >.zm > .textNode {
+    width: 100%;
+    position: absolute;
+    text-align: center;
+    bottom: 24px;
+    color: #4d544d;
+}
+
+.myUl > li >.bm {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translateZ(-1px) rotateY(180deg);
+    text-align: center;
+}
+
+.myOl {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 38px;
+    z-index: 100;
+}
+
+.myOl li {
+    width: 14px;
+    height: 14px;
+    float: left;
+    background: #007d77;
+    margin: 0 8px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: .7s;
+}
+
+.myOl li.active {
+    transform: scale(1.5) rotateY(180deg);
+}
+
+.myOl li.bactive {
+    transform: scale(1.5) rotateY(360deg);
+    background: yellow;
+}
