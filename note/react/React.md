@@ -2093,7 +2093,7 @@ export default Reactmotion
 
 常用的 react UI 框架
 
-- Material 看了下现在还是函数式组件感觉不怎么好用
+- Material 看了下现在还是函数式组件感觉不怎么好用，对新版本的 react 兼容也不好
 - element 饿了么 自己感觉还行 （类组件）
 - ant 蚂蚁金融 也行（类组件）
 
@@ -2127,6 +2127,114 @@ function App() {
 
 ReactDOM.render(<App />, document.querySelector('#app'));
 ```
+
+## React-Router
+
+router用于SPA（single page application）单页面应用，三大框架都有自己相应的router。能提高用户体验，但是不利于SEO优化
+
+> https://reacttraining.com/react-router/
+
+**安装**
+
+```shell
+npm i react-router-dom
+```
+
+**使用**
+
+```jsx
+import React from 'react';
+import {BrowserRouter as Router,Switch,Route,Link} from "react-router-dom";
+
+import './App.css';
+
+class App extends React.Component {
+    render() {
+        return (
+            <Router>
+                <div>
+                    <Link to="/">首页</Link>
+                    <Link to="/news">新闻</Link>
+                    <Link to="/about">关于我</Link>
+                    {/*
+                    首页的Route加一个exact属性，不然切换Route时，首页的组件不会消失
+                    即严格匹配，因为每一个path都有一个开头都有一个/，都会走一遍/的path
+                    */}
+                    <Route exact path='/' component={Home} />
+                    <Route path='/news'><News/></Route>
+                    <Route path='/about' component={About} />
+                </div>
+            </Router>
+        )
+    }
+}
+
+class Home extends React.Component {
+    render() {
+        return (
+            <div>首页</div>
+        )
+    }
+}
+class News extends React.Component {
+    render() {
+        return (
+            <div>新闻</div>
+        )
+    }
+}
+class About extends React.Component {
+    render() {
+        return (
+            <div>关于我</div>
+        )
+    }
+}
+export default App;
+
+```
+
+### 多路径匹配一个Route
+
+```jsx
+class News extends React.Component {
+    render() {
+        return (
+            <div>
+                <ul>
+                    {/*想要用这种方式节省记路由的时间的话，前面Route 引组件只能用单标签的方式引，用双标签的话Props是没有参数的*/}
+                    <li><Link to={`${this.props.match.url}football`}>足球</Link></li>
+                    <li><Link to='/news/basketball'>篮球</Link></li>
+                    <li><Link to='/news/running'>跑步</Link></li>
+                </ul>
+                {/*<Route path='/news/:变量名' component={Sport} />*/}
+                <Route path='/news/:path' component={Sport} />
+            </div>
+        )
+    }
+}
+
+class Sport extends React.Component {
+    render() {
+        let a = ''
+        // this.props.match.params = {你给Route标签中冒号后面的变量名: Link冒号对应位置的值}
+        if (this.props.match.params.path === 'football') {
+            a = '我是足球'
+        }
+        else if (this.props.match.params.path === 'basketball') {
+            a = '我是篮球'
+        }
+        else if (this.props.match.params.path === 'running') {
+            a = '我是跑步'
+        }
+        return (
+            <div>{a}</div>
+        )
+    }
+}
+```
+
+
 
 ## TodoMVC
 
