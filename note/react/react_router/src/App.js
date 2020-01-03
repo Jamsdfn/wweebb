@@ -8,70 +8,57 @@ class App extends React.Component {
         return (
             <Router>
                 <div>
-                    <Link to="/">首页</Link>
-                    <Link to="/news">新闻</Link>
-                    <Link to="/about">关于我</Link>
-                    {/*
-                    首页的Route加一个exact属性，不然切换Route时，首页的组件不会消失
-                    即严格匹配，因为每一个path都有一个开头都有一个/，都会走一遍/的path
-                    */}
-                    <Route exact path='/' component={Home} />
-                    <Route path='/news' component={News} />
-                    <Route path='/about' component={About} />
+                    <Link to="/001">文章1</Link>
+                    <Link to="/002">文章2</Link>
+                    <Link to="/003">文章3</Link>
+                    <Route path='/:id' component={Book} />
                 </div>
             </Router>
         )
     }
 }
 
-class Home extends React.Component {
-    render() {
-        return (
-            <div>首页</div>
-        )
+class Book extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            msg: ''
+        }
     }
-}
-class News extends React.Component {
+    componentDidMount() {
+        fetch(`http://127.0.0.1:3001/book?id=${this.props.match.params.id}`,{
+            method: 'GET'
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            this.setState({
+                msg: res.data
+            })
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+    }
+    componentDidUpdate() {
+        fetch(`http://127.0.0.1:3001/book?id=${this.props.match.params.id}`,{
+            method: 'GET'
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            this.setState({
+                msg: res.data
+            })
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+    }
     render() {
-        console.log(this.props)
         return (
             <div>
-                <ul>
-                    {/*想要用这种方式节省记路由的时间的话，前面Route 引组件只能用单标签的方式引，用双标签的话Props是没有参数的*/}
-                    <li><Link to={`${this.props.match.url}/football`}>足球</Link></li>
-                    <li><Link to='/news/basketball'>篮球</Link></li>
-                    <li><Link to='/news/running'>跑步</Link></li>
-                </ul>
-                {/*<Route path='/news/:变量名' component={Sport} />*/}
-                <Route path='/news/:path' component={Sport} />
+                {this.state.msg}
             </div>
         )
     }
 }
-class About extends React.Component {
-    render() {
-        return (
-            <div>关于我</div>
-        )
-    }
-}
-class Sport extends React.Component {
-    render() {
-        console.log(this.props)
-        let a = ''
-        // this.props.match.params = {你给Route:后面的变量名：传过来的路径}
-        if (this.props.match.params.path === 'football') {
-            a = '我是足球'
-        }
-        else if (this.props.match.params.path === 'basketball') {
-            a = '我是篮球'
-        }
-        else if (this.props.match.params.path === 'running') {
-            a = '我是跑步'
-        }
-        return (
-            <div>{a}</div>
-        )
-    }
-}
+
+
 export default App;

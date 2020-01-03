@@ -268,6 +268,15 @@ Happy hacking!
   - app.js 建议所有的组件都放在这里 （汇总组件）
   - index.js 引入了 app.js （渲染）
 
+```shell
+# 开发模式
+$ npm start
+# 生成模式（自动打包）
+$ npm run build
+```
+
+
+
 ### 初始化及安装依赖
 
 ```Shell
@@ -2232,9 +2241,265 @@ class Sport extends React.Component {
         )
     }
 }
+/*
+如果是箭头函数（函数式的组件）想用 match 直接传参就可以了，如果是普通函数想调用match 也是直接传参
+
+const App = ({match}) => {}
+
+function App(match){}
+
+*/
 ```
 
+**注**：可能会出现的面试题，router 能否无限自我调用
 
+只要避免无限回调就可以
+
+```jsx
+class App extends React.Component {
+    render() {
+        return (
+            <Router>
+                <div>
+                    <Link to="/index">首页</Link>
+                    <Link to="/news">新闻</Link>
+                    <Link to="/about">关于我</Link>
+                    <Route path='/:link' component={App2} />
+                </div>
+            </Router>
+        )
+    }
+}
+
+class App2 extends React.Component {
+    render() {
+        return (
+            <div>
+                <Router>
+                    <div>
+                        <Link to={`${this.props.match.url}/index`}>首页</Link>
+                        <Link to={`${this.props.match.url}/news`}>新闻</Link>
+                        <Link to={`${this.props.match.url}/about`}>关于我</Link>
+                        <Route path={`${this.props.match.url}/:name`} component={App2} />
+                    </div>
+                </Router>
+            </div>
+        )
+    }
+}
+
+```
+
+### Route 前后台交互
+
+```jsx
+class App extends React.Component {
+    render() {
+        return (
+            <Router>
+                <div>
+                    <Link to="/001">文章1</Link>
+                    <Link to="/002">文章2</Link>
+                    <Link to="/003">文章3</Link>
+                    <Route path='/:id' component={Book} />
+                </div>
+            </Router>
+        )
+    }
+}
+
+class Book extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            msg: ''
+        }
+    }
+    componentDidMount() {
+        fetch(`http://127.0.0.1:3001/book?id=${this.props.match.params.id}`,{
+            method: 'GET'
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            this.setState({
+                msg: res.data
+            })
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+    }
+    componentDidUpdate() {
+        fetch(`http://127.0.0.1:3001/book?id=${this.props.match.params.id}`,{
+            method: 'GET'
+        }).then((res) => {
+            return res.json()
+        }).then(res => {
+            this.setState({
+                msg: res.data
+            })
+        }).catch(()=>{
+            console.log('服务器异常')
+        })
+    }
+    render() {
+        return (
+            <div>
+                {this.state.msg}
+            </div>
+        )
+    }
+}
+
+```
+
+后台代码
+
+```js
+const express = require('express')
+const server = express()
+
+var book = ['001的内容','002的内容','003的内容']
+
+server.use('/book',(req,res) => {
+    res.setHeader('Access-Control-Allow-Origin','*')
+    if (req.query.id === '001') {
+        res.send({ok:1,data:book[0]})
+    } else if (req.query.id === '002') {
+        res.send({ok:1,data:book[1]})
+    } else if (req.query.id === '003') {
+        res.send({ok:1,data:book[2]})
+    } else {
+        res.send({ok:0})
+    }
+})
+
+server.listen(3001,() => {
+    console.log('server is running...')
+})
+```
+
+## Redux
+
+> 中文翻译：https://www.redux.org.cn/
+>
+> 官网(en):  https://redux.js.org/
+
+Redux 是 JavaScript 状态容器，提供可预测化的状态管理。 (如果你需要一个 WordPress 框架，请查看 [Redux Framework](https://reduxframework.com/)。)
+
+可以让你构建一致化的应用，运行于不同的环境（客户端、服务器、原生应用），并且易于测试。不仅于此，它还提供 超爽的开发体验，比如有一个[时间旅行调试器可以编辑后实时预览](https://github.com/gaearon/redux-devtools)。
+
+Redux 除了和 [React](https://facebook.github.io/react/) 一起用外，还支持其它界面库。 它体小精悍（只有2kB，包括依赖）。
+
+其实就是一个状态管理器，类似于 vue 的 vuex。
+
+通常我们组件间传数据我们通常是通过state存，props传，但是当组件一多，像找到数据的源头就可能很头疼，所以不如组件就是组件，数据就是数据，互不干扰（数组与组件分离）。感觉有点像全局变量和局部变量的感觉。
+
+大概操作流程：action 操作 reducer 函数里的 state (数据)，把数据保存在store，store是外界唯一能和action交流的地方，action操作数据后页面响应的改变
+
+### Action
+
+**Action** 是把数据从应用（译者注：这里之所以不叫 view 是因为这些数据有可能是服务器响应，用户输入或其它非 view 的数据 ）传到 store 的有效载荷。它是 store 数据的**唯一**来源。一般来说你会通过 [`store.dispatch()`](https://www.redux.org.cn/docs/api/Store.html#dispatch) 将 action 传到 store。
+
+### Reducer
+
+**Reducers** 指定了应用状态的变化如何响应 [actions](https://www.redux.org.cn/docs/basics/Actions.html) 并发送到 store 的，记住 actions 只是描述了*有事情发生了*这一事实，并没有描述应用如何更新 state。
+
+### Store
+
+在前面的章节中，我们学会了使用 [action](https://www.redux.org.cn/docs/basics/Actions.html) 来描述“发生了什么”，和使用 [reducers](https://www.redux.org.cn/docs/basics/Reducers.html) 来根据 action 更新 state 的用法。
+
+**Store** 就是把它们联系到一起的对象。Store 有以下职责：
+
+- 维持应用的 state；
+- 提供 [`getState()`](https://www.redux.org.cn/docs/api/Store.html#getState) 方法获取 state；
+- 提供 [`dispatch(action)`](https://www.redux.org.cn/docs/api/Store.html#dispatch) 方法更新 state；
+- 通过 [`subscribe(listener)`](https://www.redux.org.cn/docs/api/Store.html#subscribe) 注册监听器;
+- 通过 [`subscribe(listener)`](https://www.redux.org.cn/docs/api/Store.html#subscribe) 返回的函数注销监听器。
+
+再次强调一下 **Redux 应用只有一个单一的 store**。当需要拆分数据处理逻辑时，你应该使用 [reducer 组合](https://www.redux.org.cn/docs/basics/Reducers.html#splitting-reducers) 而不是创建多个 store。
+
+store 生成的对象有几个方法
+
+- replaceReducer() 因为store只能有一个更换一个数据源
+- dispatch() 与 action 交流的函数，dispatch找到action，action控制state
+- getState() 获取状态（数据）
+- subscribe() 重新渲染就是代替了 setState 
+
+**原生例子**
+
+src/App （创建数据源，读取、修改数据）
+
+```jsx
+import React from 'react';
+import counter from './Reducers'
+import {createStore} from 'redux'
+import './App.css';
+
+let store = createStore(counter)
+
+class App extends React.Component {
+    add() {
+        // 就是action.type 设置成了add
+        store.dispatch({
+            type: 'add'
+        })
+    }
+    sub() {
+        store.dispatch({
+            type: 'sub'
+        })
+    }
+    render() {
+        return (
+            <div>
+                <button onClick={this.sub.bind(this)}>-</button>
+                <span>{store.getState()}</span>
+                <button onClick={this.add.bind(this)}>+</button>
+            </div>
+        )
+    }
+}
+// 因为store要用subscribe方法监听render才可以重新渲染，并且一个项目只能有一个store，而render方法在同目录的index中，所以要把store也传回过去
+export {App,store};
+
+```
+
+src/index （监听render以达到重新渲染的目的）
+
+```jsx
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import {App,store} from './App';
+import * as serviceWorker from './serviceWorker';
+
+
+function render() {
+    ReactDOM.render(<App />, document.getElementById('root'));
+}
+render()
+// 因为我们要监听render,所以我们想把ReactDOM.render 放入一个函数中方便监听
+store.subscribe(render)
+
+serviceWorker.unregister();
+
+```
+
+Reducers/index （reducer函数，定义如何操作数据）
+
+```jsx
+export default function counter(state=0,action) {
+    if (action.type === 'add') {
+        console.log('add')
+        return  ++state
+    } else if (action.type === 'sub') {
+        console.log('sub')
+        return --state
+    } else {
+        return state
+    }
+}
+```
 
 ## TodoMVC
 
