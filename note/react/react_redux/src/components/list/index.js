@@ -9,10 +9,11 @@ class List extends React.Component {
     }
     render() {
         let {value} = this.props
+        //console.log(value)
         let aLi = value.map((item,index)=>{
             return <li key={index} onClick={this.remove.bind(this,index)}>{item}</li>
         })
-        console.log(value)
+        // console.log(value)
         return (
             <div>
                 <ul>

@@ -2416,7 +2416,15 @@ Redux 除了和 [React](https://facebook.github.io/react/) 一起用外，还支
 - 通过 [`subscribe(listener)`](https://www.redux.org.cn/docs/api/Store.html#subscribe) 注册监听器;
 - 通过 [`subscribe(listener)`](https://www.redux.org.cn/docs/api/Store.html#subscribe) 返回的函数注销监听器。
 
-再次强调一下 **Redux 应用只有一个单一的 store**。当需要拆分数据处理逻辑时，你应该使用 [reducer 组合](https://www.redux.org.cn/docs/basics/Reducers.html#splitting-reducers) 而不是创建多个 store。
+**注：**再次强调一下 **Redux 应用只有一个单一的 store**。当需要拆分数据处理逻辑时，你应该使用 [reducer 组合](https://www.redux.org.cn/docs/basics/Reducers.html#splitting-reducers) 而不是创建多个 store。
+
+```js
+// 因为一个项目通常使用一个redux的store,因为多个store要多次监听，过于消耗性能，所以通常把store的常见写在一个js文件中，用的时候直接引就可以了,这样就不用传参传来传去
+import {createStore} from 'redux'
+import Reducer from './Reducer'
+let store = createStore(Reducer)
+export default store
+```
 
 store 生成的对象有几个方法
 
@@ -2473,7 +2481,7 @@ import './index.css';
 import {App,store} from './App';
 import * as serviceWorker from './serviceWorker';
 
-
+// 如果store独立出了一个文件，我们就额可以直接import store，不用通过App总组件把 store传出来
 function render() {
     ReactDOM.render(<App />, document.getElementById('root'));
 }
@@ -2488,6 +2496,7 @@ serviceWorker.unregister();
 Reducers/index （reducer函数，定义如何操作数据）
 
 ```jsx
+// 这种写法是不推荐的，通常数据和函数是剥离开的
 export default function counter(state=0,action) {
     if (action.type === 'add') {
         console.log('add')
@@ -2498,6 +2507,218 @@ export default function counter(state=0,action) {
     } else {
         return state
     }
+}
+
+// 推荐写法（我所看的教学视频推荐的写法，我有点不认同）
+import {counterInit,TabInit} from './initState'
+import {add,remove} from './initFn'
+import createReducer from './createReducer'
+
+export default createReducer(counterInit,{'add':add,'remove':remove})
+
+// Reducers/createReducer
+// 为了简化
+function createReducer(init,json){
+    //console.log(init)
+    return function reducer(state=init,action) {
+        if (json[action.type]) {
+            return json[action.type](state,action)
+        }else{
+            return state
+        }
+    }
+}
+
+export default createReducer
+
+// Reducers/initFn.js
+// counter函数
+
+function add(state,action) {
+    return state.concat([action.text])
+}
+
+function remove(state,action) {
+    state.splice(action.index,1)
+    return state
+}
+
+export {add,remove}
+// Reducers/initState.js
+// counter 数据
+
+export const counterInit = ['a','b']
+
+// xxx 数据
+export const TabInit = {a:['tab','sky']}
+```
+
+但是我还是觉得没有必要吧createReducer也提出一个独立的文件，这样万一出错了会很乱,文件太多也不好找，不如就把createReducer文件去掉
+
+```jsx
+import {counterInit,TabInit} from './initState'
+import {add,remove} from './initFn'
+function reducer(state=counterInit,action) {
+    let json = {'add':add,'remove':remove}
+    if (json[action.type]) {
+        return  json[action.type](state,action)
+    } else {
+        return state
+    }
+}
+export default reducer
+
+
+// Reducers/initFn.js
+// counter函数
+
+function add(state,action) {
+    return state.concat([action.text])
+}
+
+function remove(state,action) {
+    state.splice(action.index,1)
+    return state
+}
+
+export {add,remove}
+// Reducers/initState.js
+// counter 数据
+
+export const counterInit = ['a','b']
+
+// xxx 数据
+export const TabInit = {a:['tab','sky']}
+```
+
+### combineReducers
+
+通常开发是多人合作开发的，但是store只能有一个，不肯能引多个reducer，大家都操作同一个reducer过于麻烦，因此redux提供了个combineReducers。简单地说combineReducers就是帮我们合并用的。
+
+基于 Redux 的应用程序中最常见的 state 结构是一个简单的 JavaScript 对象，它最外层的每个 key 中拥有特定域的数据。类似地，给这种 state 结构写 reducer 的方式是分拆成多个 reducer，拆分之后的 reducer 都是相同的结构（state, action），并且每个函数独立负责管理该特定切片 state 的更新。多个拆分之后的 reducer 可以响应一个 action，在需要的情况下独立的更新他们自己的切片 state，最后组合成新的 state。
+
+./Reducers/combine.js
+
+```jsx
+import {combineReducers} from 'redux'
+// 下面两个都是reducer函数
+import Counter from './Counter'
+import List from './List'
+
+export default combineReducers({
+    Counter,
+    List
+})
+```
+
+App.js
+
+```jsx
+import React from 'react';
+import Reducer from './Reducers/combine'
+import {createStore} from 'redux'
+import List from './components/list'
+import Counter from './components/counter'
+
+let store = createStore(Reducer)
+// console.log(store.getState())
+class App extends React.Component {
+    add(v) {
+        store.dispatch({type:'addLi',text:v})
+    }
+    render() {
+        return (
+            <div>
+                <Counter
+                    value={store.getState().Counter}
+                    onAdd={()=>store.dispatch({type:'add'})}
+                    onSub={()=>store.dispatch({type:'sub'})}
+                />
+                <hr/>
+                <hr/>
+                <List
+                    value={store.getState().List}
+                    add={this.add.bind(this)}
+                    store={store}
+                />
+            </div>
+        )
+    }
+}
+
+export {App,store};
+```
+
+**注**: combineReducers只帮我们合并了reducer,getState()时候多了个键值对（store.getState().Counter才拿到Coutner的state）,**要避免action出现同名的type**。
+
+执行combineReducer后，因为每一个reducer是独立的，所以state也是独立互不干扰的，但是action是共用的（因为store.dispatch()方法没变），所以如果同名会共同触发事件
+
+### applyMiddleware
+
+中间件，数据渲染的中间环节的操作，也可以用来当做拦截器
+
+```jsx
+import {createStore,applyMiddleware} from 'redux'
+import Reducer from './Reducers/combine'
+let store = createStore(Reducer,applyMiddleware(fn))
+
+function fn() {
+    return function (dispatch) {
+        return function (action) {
+            if (action.text === 'aaa') {
+                console.log('非法输入')
+                action.text = '***'
+                dispatch(action)
+            }else{
+                dispatch(action)
+            }
+        }
+    }
+}
+
+export default store
+```
+
+#### redux-thunk
+
+可以用来强化 dispatch 变成异步action
+
+安装：
+
+```shell
+$ npm i redux-thunk
+```
+
+使用：
+
+applyMiddleware(thunk,fn)
+
+```js
+import {createStore,applyMiddleware} from 'redux'
+import thunk from 'redux-thunk'
+import Reducer from './Reducers/combine'
+let store = createStore(Reducer,applyMiddleware(thunk,fn))
+
+function fn() {
+    return function (dispatch) {
+        return function (action) {
+            if (action.text === 'aaa') {
+                console.log('非法输入')
+                action.text = '***'
+                dispatch(action)
+            }else{
+                dispatch(action)
+            }
+        }
+    }
+}
+
+export default store
+// 用到 dispatch 就可以加一个异步完成的回调函数了
+click() {
+    store.dispatch(function (dispatch) {
+        setTimeout(function(){dispatch({type:'add'})},1000)
+    })
 }
 ```
 
@@ -2528,7 +2749,7 @@ npm install --save babel-standalone react react-dom
 
 关于 render() 的container 问题，为什么下面这段代码不用document.querySeleter("#app")也可以找到根元素，但是一把根元素的标签改成 class 就找不到根元素了，经过尝试只要标签有id 就可以直接向下面那样container的参数直接用根元素id 就可以了，暂时没找到答案
 
-```html
+```jsx
 <div id="app"></div>
 <script type="text/babel">
     class Life extends React.Component {
