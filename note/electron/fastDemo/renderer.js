@@ -4,3 +4,44 @@
 // `nodeIntegration` is turned off. Use `preload.js` to
 // selectively enable features needed in the rendering
 // process.
+const ipc = require('electron').ipcRenderer
+const fs = require('fs')
+
+function winClose() {
+    ipc.send('window-close')
+}
+function getProcessInfo() {
+    console.log('cpu',process.getCPUUsage())
+    // console.log('env',process.env)
+    console.log('arc',process.arch)
+}
+const dragwrapper = document.querySelector('#holder')
+// console.log(dragwrapper)
+dragwrapper.addEventListener('drop',(e)=>{
+    e.preventDefault()
+    e.stopPropagation()
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+        const path = files[0].path
+        // console.log('path:' + path)
+        console.log(fs.readFileSync(path).toString())
+    }
+})
+dragwrapper.addEventListener('dragover',(e)=>{
+    e.preventDefault()
+    e.stopPropagation()
+})
+
+// webview
+const wb = document.querySelector('#wb')
+const loading = document.querySelector('#loading')
+const loadstart = () => {
+    loading.innerText = 'loading...'
+}
+
+const loadstop = () => {
+    loading.innerText = ''
+}
+
+wb.addEventListener('did-start-loading', loadstart)
+wb.addEventListener('did-stop-loading', loadstop)

@@ -173,7 +173,7 @@ $ git clone https://github.com/electron/electron-quick-start
 安装项目依赖
 
 ```shell
-$ npm i
+$ npm install
 ```
 
 启动项目
@@ -205,6 +205,19 @@ Electron 运行 `package.json` 的 `main` 脚本的进程被称为**主进程**�
 > #### 题外话：进程间通讯
 >
 > Electron为主进程（ main process）和渲染器进程（renderer processes）通信提供了多种实现方式，如可以使用[`ipcRenderer`](https://electronjs.org/docs/api/ipc-renderer) 和 [`ipcMain`](https://electronjs.org/docs/api/ipc-main)模块发送消息，使用 [remote](https://electronjs.org/docs/api/remote)模块进行RPC方式通信。 这里也有一个常见问题解答：[web页面间如何共享数据](https://electronjs.org/docs/faq#how-to-share-data-between-web-pages)。
+
+#### 渲染进程debug
+
+在 `npm start` 后直接 `ctrl+shift+i` 就可以打开像chrome浏览器一样的开发者模式了
+
+#### 主进程debug
+
+如果想主程序debug的话，就要改一下命令行指令，加上 `--inspect=[port]`，我们要改变 package.json 文件的 script ,把
+`"start":"electron ."`改成 `"start":"electron --inspect=[port] ."`。
+
+然后打开Chrome浏览器 输入`chrome://inspect`，点击configure按钮添加ip `localhost:[port]`
+
+重启npm start 就可以在remote target中看到要监视的主进程了，我们点击inspect `ctrl+p` 输入main.js 就可以看到主进程了，可以加断点debug了
 
 ### 使用 Electron 的 API
 
@@ -271,3 +284,149 @@ const S3 = require('aws-sdk/clients/s3')Copy
 有一个非常重要的提示: 原生Node.js模块 (即指，需要编译源码过后才能被使用的模块) 需要在编译后才能和Electron一起使用。
 
 绝大多数的Node.js模块都*不*是原生的， 在650000个模块中只有400是原生的。 当然了，如果你的确需要原生模块，可以在这里查询[如何重新为Electron编译原生模块](https://electronjs.org/docs/tutorial/using-native-node-modules)(很简单)。
+
+## app常用事件
+
+> https://electronjs.org/docs/all
+
+app.on
+
+- ready: 当 Electron 完成初始化时被触发
+- window-all-close：所有窗口关闭
+- before-quit：在应用程序开始关闭窗口之前触发
+- will-quit：当所有窗口都已关闭并且应用程序将退出时触发
+- quit:在应用程序退出时触发
+
+**webContents**
+
+new BrowserWindow().webContents.on
+
+- did-finish-load: 导航完成时触发，即选项卡的旋转器将停止旋转，并指派`onload`事件后。
+- dom-ready: 一个框架中的文本加载完成后触发该事件。(所有dom加载完后触发)
+
+## 进程对象
+
+> https://electronjs.org/docs/api/process
+
+官方文档比较详细的阐述了process对象的属性和方法，其实这个对象是主要那本机信息的，通常用于根据电脑配置的不同对用户进行不同的操作或者给用户一些提示。有需要就看官方文档，这里就不展开陈述了。
+
+## File对象
+
+> https://electronjs.org/docs/api/file-object
+
+DOM的文件接口提供了关于原生文件的抽象，以便用户可以直接使用HTML5文件API处理原生文件。 Electron已经向 `文件` 接口添加了一个 `path` 属性, 在文件系统上暴露出文件的真实路径
+
+官方示例：获取拖拽到app上的文件的真实路径
+
+```html
+<div id="holder">
+  Drag your file here
+</div>
+
+<script>
+  document.addEventListener('drop', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    for (const f of e.dataTransfer.files) {
+      console.log('File(s) you dragged here: ', f.path)
+    }
+  });
+  document.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+  });
+</script>
+```
+
+获得了真是路径后，因为electron是基于node的，所以就可以对文件进行操作了。
+
+**例子**：读取文件内容并在控制台打印
+
+```html
+    <div id="holder" style="background:#ccc;width:100%;height:400px">
+        <h2>File对象</h2>
+        <span>往这里拖文件</span>
+    </div>
+<script>
+const dragwrapper = document.querySelector('#holder')
+// console.log(dragwrapper)
+dragwrapper.addEventListener('drop',(e)=>{
+    e.preventDefault()
+    e.stopPropagation()
+    const files = e.dataTransfer.files
+    if (files && files.length > 0) {
+        const path = files[0].path
+        // console.log('path:' + path)
+        // 读出文件内容
+        console.log(fs.readFileSync(path).toString())
+    }
+})
+dragwrapper.addEventListener('dragover',(e)=>{
+    e.preventDefault()
+    e.stopPropagation()
+})
+</script>
+```
+
+## webview 标签
+
+> https://electronjs.org/docs/api/webview-tag
+
+在一个独立的 frame 和进程里显示外部 web 内容。
+
+进程: [Renderer](https://electronjs.org/docs/glossary#renderer-process)
+
+使用 `webview` 标签在Electron 应用中嵌入 "外来" 内容 (如 网页)。外来"内容包含在 `webview` 容器中。 应用中的嵌入页面可以控制外来内容的布局和重绘。
+
+与 `iframe` 不同, `webview` 在与应用程序不同的进程中运行。它与您的网页没有相同的权限, 应用程序和嵌入内容之间的所有交互都将是异步的。 这将保证你的应用对于嵌入的内容的安全性。 **注意:** 从宿主页上调用 webview 的方法大多数都需要对主进程进行同步调用。
+
+**实例**
+
+若要在应用程序中嵌入网页, 请将 `webview` 标签添加到应用程序的被嵌入页面中 (这是将显示外来内容的应用程序页)。 在最简单的例子中, `webview` 标签包括网页的 `src` 和控制 `webview` 容器外观的 css 样式:
+
+```html
+<webview id="foo" src="https://www.github.com/" style="display:inline-flex; width:100%; height:480px"></webview>
+```
+
+**注**：当electron版本大于等于5后webview是默认禁止的，要想使用，就要在设置中打开
+
+```js
+mainWindow = new BrowserWindow({
+        width: 800,
+        height: 600,
+    // 无边框设置
+        // frame:false,
+        webPreferences: {
+            preload: path.join(__dirname, 'preload.js'),
+            // 允许在原生js中使用nodejs
+            nodeIntegration: true,
+            // 运行webview标签
+            webviewTag:true
+        }
+    })
+```
+
+如果要以任何方式控制外来内容, 则可以写用于侦听 `webview` 事件的 JavaScript, 并使用 `webview` 方法响应这些事件。 下面是包含两个事件侦听器的示例代码: 一个侦听网页开始加载, 另一个用于网页停止加载, 并在加载时显示 "loading..." 消息:
+
+```html
+<script>
+  onload = () => {
+    const webview = document.querySelector('webview')
+    const indicator = document.querySelector('.indicator')
+
+    const loadstart = () => {
+      indicator.innerText = 'loading...'
+    }
+
+    const loadstop = () => {
+      indicator.innerText = ''
+    }
+
+    webview.addEventListener('did-start-loading', loadstart)
+    webview.addEventListener('did-stop-loading', loadstop)
+  }
+</script>
+```
+
+**注**：这个webview功能很多，我们看文档实现想要的功能，比如给网页注入js。
