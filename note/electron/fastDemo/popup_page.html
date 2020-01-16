@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h2>子窗口</h2>
+    <div style="background: #ccc;width: 100px;height: 100px"></div>
+    <button onclick="sub2Parent()">向父窗口传递信息</button>
+</body>
+<script>
+    function sub2Parent() {
+        window.opener.postMessage({
+            type:1,
+            msg:'来自子窗口的信息'
+        })
+    }
+</script>
+</html>

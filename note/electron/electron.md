@@ -206,7 +206,7 @@ Electron 运行 `package.json` 的 `main` 脚本的进程被称为**主进程**�
 >
 > Electron为主进程（ main process）和渲染器进程（renderer processes）通信提供了多种实现方式，如可以使用[`ipcRenderer`](https://electronjs.org/docs/api/ipc-renderer) 和 [`ipcMain`](https://electronjs.org/docs/api/ipc-main)模块发送消息，使用 [remote](https://electronjs.org/docs/api/remote)模块进行RPC方式通信。 这里也有一个常见问题解答：[web页面间如何共享数据](https://electronjs.org/docs/faq#how-to-share-data-between-web-pages)。
 
-#### 渲染进程debug
+#### 渲染器进程debug
 
 在 `npm start` 后直接 `ctrl+shift+i` 就可以打开像chrome浏览器一样的开发者模式了
 
@@ -284,6 +284,14 @@ const S3 = require('aws-sdk/clients/s3')Copy
 有一个非常重要的提示: 原生Node.js模块 (即指，需要编译源码过后才能被使用的模块) 需要在编译后才能和Electron一起使用。
 
 绝大多数的Node.js模块都*不*是原生的， 在650000个模块中只有400是原生的。 当然了，如果你的确需要原生模块，可以在这里查询[如何重新为Electron编译原生模块](https://electronjs.org/docs/tutorial/using-native-node-modules)(很简单)。
+
+## BrowerWindow
+
+> https://electronjs.org/docs/api/browser-window
+
+创建和控制浏览器窗口
+
+关于窗口的设置都可以看看这个官方文档，挺详细的，根据需求使用api就好了。
 
 ## app常用事件
 
@@ -429,4 +437,340 @@ mainWindow = new BrowserWindow({
 </script>
 ```
 
-**注**：这个webview功能很多，我们看文档实现想要的功能，比如给网页注入js。
+**注**：这个webview功能很多，我们可以看文档实现想要的功能，比如给网页注入js。
+
+## window.open
+
+> https://electronjs.org/docs/api/window-open
+
+打开一个新的electron窗口，内容为open参数中的url地址的渲染内容。
+
+当调用 `window.open` 以在网页中创建新窗口时，将为`url`创建一个新的[BrowserWindow](https://electronjs.org/docs/api/browser-window) 实例，并返回一个代理至 `window.open` 以让页面对其进行有限的控制。
+
+该代理具有有限的标准功能，与传统网页兼容。要完全控制新窗口，你应该直接创建一个`BrowserWindow`。
+
+默认情况下, 新创建的 `BrowserWindow` 将继承父窗口的选项。若要重写继承的选项, 可以在 `features` 字符串中设置它们。
+
+ **window.open(url[, frameName\][, features])**
+
+- `url` String
+- `frameName` String（可选）
+- `features` String（可选）
+
+Returns [`BrowserWindowProxy`](https://electronjs.org/docs/api/browser-window-proxy) - 创建一个新窗口，并返回一个 `BrowserWindowProxy` 类的实例。
+
+`features` 字符串遵循标准浏览器的格式，但每个 feature 必须是`BrowserWindow` 选项中的字段。 These are the features you can set via `features` string: `zoomFactor`, `nodeIntegration`, `preload`, `javascript`, `contextIsolation`, `webviewTag`.
+
+例如：
+
+```javascript
+window.open('https://github.com', '_blank', 'nodeIntegration=no')
+```
+
+**注意：**
+
+- 如果在父窗口中禁用了 Node integration, 则在打开的 `window` 中将始终被禁用。
+- 如果在父窗口中启用了上下文隔离, 则在打开的 `window` 中将始终被启用。
+- 父窗口禁用 Javascript，打开的 `window` 中将被始终禁用
+- `features` 中给定的非标准特性 (不由 Chromium 或 Electron 处理) 将被传递到 `additionalFeatures` 参数中的任何已注册 `webContent` 的 `new-window` 事件处理程序。
+
+### brower-window-proxy
+
+> 操纵子浏览器窗口
+
+进程: 渲染进程
+
+使用 `window.open` 创建一个新窗口时会返回一个 `BrowserWindowProxy`对象，并提供一个有限功能的子窗口.
+
+- 实例方法
+
+	+ `BrowserWindowProxy` 对象具有以下实例方法:
+
+- win.blur()
+
+	+ 将焦点从子窗口中移除.
+
+- win.close()
+
+	+ 不调用卸载事件，便关闭了子窗口。
+
+- win.eval(code)
+
+	+ `code` String
+
+	Eval子窗口中的代码
+
+- win.focus()
+
+	+ 聚焦子窗口(即窗口置顶)
+
+- win.print()
+
+	+ 调用子窗口上的打印对话框
+
+- win.postMessage(message, targetOrigin)
+
+	+ `message` any
+	+ `targetOrigin` String
+
+	调通过指定位置或用`*`来代替不明位置，向子窗口发送信息
+	
+
+**除了这些方法,子窗口还可以无特性和使用单一方法来实现 `window.opener` 对象.**
+
+- 实例属性
+
+	+ `BrowserWindowProxy` 对象具有以下实例属性:
+
+- win.closed
+
+	+ 在子窗口关闭后设置为 true 的 `Boolean`。
+
+## dialog
+
+> https://electronjs.org/docs/api/dialog
+
+显示用于**打开和保存文件**、警报等的本机系统对话框。
+
+An example of showing a dialog to select multiple files:
+
+```javascript
+const { dialog } = require('electron')
+console.log(dialog.showOpenDialog({ properties: ['openFile', 'multiSelections'] }))Copy
+```
+
+这个对话框是从Electron的主线程上打开的。如果要使用渲染器进程中的对话框对象, 可以使用remote来获得:
+
+```javascript
+const { dialog } = require('electron').remote
+console.log(dialog)
+```
+
+详细使用方法参考官方文档。
+
+## 定制快捷键功能
+
+> https://electronjs.org/docs/api/global-shortcut
+
+字面意思，就是定制快捷键的功能
+
+`globalShortcut` 模块可以在操作系统中注册/注销全局快捷键, 以便可以为操作定制各种快捷键。
+
+### 快捷键（Accelerator）
+
+> 定义键盘快捷键。
+
+快捷键可以包含多个功能键和一个键码的字符串，由符号`+`结合，用来定义你应用中的键盘快捷键
+
+示例：
+
+- `CommandOrControl+A`
+- `CommandOrControl+Shift+Z`
+
+快捷方式使用 [`register`](https://electronjs.org/docs/api/global-shortcut#globalshortcutregisteraccelerator-callback) 方法在 [`globalShortcut`](https://electronjs.org/docs/api/global-shortcut) 模块中注册, 即:
+
+```javascript
+const { app, globalShortcut } = require('electron')
+
+app.on('ready', () => {
+  // Register a 'CommandOrControl+Y' shortcut listener.
+  globalShortcut.register('CommandOrControl+Y', () => {
+    // Do stuff when Y and either Command/Control is pressed.
+  })
+})Copy
+```
+
+**跨平台提醒**
+
+在 Linux 和 Windows 上, `Command` 键没有任何效果, 所以使用 `CommandOrControl`表述, macOS 是 `Command` ，在 Linux 和 Windows 上是`Control`。
+
+使用 `Alt` 代替`Option`. `Option` 键只在 macOS 系统上存在, 而 `Alt` 键在任何系统上都有效.
+
+`Super`键是指 Windows 和 Linux 系统上的 `Windows` 键，但在 macOS 里为 `Cmd` 键.
+
+**可用的功能键**
+
+- `Command` (缩写为`Cmd`)
+- `Control` (缩写为`Ctrl`)
+- `CommandOrControl` (缩写为 `CmdOrCtrl`)
+- `Alt`
+- `Option`
+- `AltGr`
+- `Shift`
+- `Super`
+
+**可用的普通按键**
+
+- `0` 到 `9`
+- `A` 到 `Z`
+- `F1` 到 `F24`
+- 类似`~`, `!`, `@`, `#`, `$`的标点符号
+- `Plus`
+- `Space`
+- `Tab`
+- `大写锁定（Capslock）`
+- `数字锁定（Numlock）`
+- `滚动锁定`
+- `Backspace`
+- `Delete`
+- `Insert`
+- `Return` (等同于 `Enter`)
+- `Up`, `Down`, `Left` and `Right`
+- `Home` 和 `End`
+- `PageUp` 和 `PageDown`
+- `Escape` (缩写为 `Esc`)
+- `VolumeUp`, `VolumeDown` 和 `VolumeMute`
+- `MediaNextTrack`、`MediaPreviousTrack`、`MediaStop` 和 `MediaPlayPause`
+- `PrintScreen`
+- 小键盘按键
+  - `num1`-`num9` -数字1-数字9
+  - `numdec` - 小数点
+  - `numadd` - 加号
+  - `numsub` - 减号
+  - `nummult` - 乘号
+  - `numdiv` - 除号
+
+### 定制功能
+
+**注意:** 快捷方式是全局的; 即使应用程序没有键盘焦点, 它也仍然在持续监听键盘事件。 在应用程序模块发出 `ready` 事件之前, 不应使用此模块。
+
+```javascript
+const { app, globalShortcut } = require('electron')
+
+app.on('ready', () => {
+  // 注册一个 'CommandOrControl+X' 的全局快捷键
+  const ret = globalShortcut.register('CommandOrControl+X', () => {
+    console.log('CommandOrControl+X is pressed')
+  })
+
+  if (!ret) {
+    console.log('registration failed')
+  }
+
+  // 检查快捷键是否注册成功
+  console.log(globalShortcut.isRegistered('CommandOrControl+X'))
+})
+
+app.on('will-quit', () => {
+  // 注销快捷键
+  globalShortcut.unregister('CommandOrControl+X')
+
+  // 注销所有快捷键
+  globalShortcut.unregisterAll()
+})Copy
+```
+
+**方法**
+
+`globalShortcut` 模块具有以下方法:
+
+**globalShortcut.register(accelerator, callback)**
+
+- `accelerator` [Accelerator](https://electronjs.org/docs/api/accelerator)
+- `callback` Function
+
+Returns `Boolean` - Whether or not the shortcut was registered successfully.
+
+注册指定的 `accelerator` 为全局快捷键。当用户按下该注册的快捷键时, 将调用 `callback`回调函数。
+
+如果指定的快捷键已经被其他应用程序注册掉, 调用会默默失败。 该特性由操作系统定义，因为操作系统不希望多个程序的全局快捷键互相冲突。
+
+在 macOS 10.14 Mojave 下面，如果 app 没有被授权为[可信任使用的客户端](https://developer.apple.com/library/archive/documentation/Accessibility/Conceptual/AccessibilityMacOSX/OSXAXTestingApps.html)，那么下列快捷键会注册失败：
+
+- "Media Play/Pause"
+- "Media Next Track"
+- "Media Previous Track"
+- "Media Stop"
+
+**globalShortcut.registerAll(accelerators, callback)**
+
+- `accelerators` String[] - an array of [Accelerator](https://electronjs.org/docs/api/accelerator)s.
+- `callback` Function
+
+Registers a global shortcut of all `accelerator` items in `accelerators`. The `callback` is called when any of the registered shortcuts are pressed by the user.
+
+When a given accelerator is already taken by other applications, this call will silently fail. 该特性由操作系统定义，因为操作系统不希望多个程序的全局快捷键互相冲突。
+
+在 macOS 10.14 Mojave 下面，如果 app 没有被授权为[可信任使用的客户端](https://developer.apple.com/library/archive/documentation/Accessibility/Conceptual/AccessibilityMacOSX/OSXAXTestingApps.html)，那么下列快捷键会注册失败：
+
+- "Media Play/Pause"
+- "Media Next Track"
+- "Media Previous Track"
+- "Media Stop"
+
+**globalShortcut.isRegistered(accelerator)**
+
+- `accelerator` [Accelerator](https://electronjs.org/docs/api/accelerator)
+
+Returns `Boolean` - 表示 `accelerator` 全局快捷键是否注册成功
+
+当快捷键已经被其他应用程序注册时, 此调用将返回 `false`。 该特性由操作系统定义，因为操作系统不希望多个程序的全局快捷键互相冲突。
+
+**globalShortcut.unregister(accelerator)**
+
+- `accelerator` [Accelerator](https://electronjs.org/docs/api/accelerator)
+
+注销 `accelerator` 的全局快捷键。
+
+**globalShortcut.unregisterAll()**
+
+注销所有的全局快捷键（清空该应用程序的全局快捷键）。
+
+## 主进程与渲染器进程的通信
+
+### ipcMain
+
+> https://electronjs.org/docs/api/ipc-main
+
+从主进程到渲染进程的异步通信。
+
+下面是在渲染和主进程之间发送和处理消息的一个例子：（同名则相互通信；主进程中需要event才能给渲染器进程进行发送，而渲染器可以直接send发送）
+
+```javascript
+// 在主进程中.
+const { ipcMain } = require('electron')
+ipcMain.on('asynchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+  event.reply('asynchronous-reply', 'pong')
+})
+
+ipcMain.on('synchronous-message', (event, arg) => {
+  console.log(arg) // prints "ping"
+    // 同步sendSunc的方法才能这样发送
+  event.returnValue = 'pong'
+})
+//在渲染器进程 (网页) 中。
+const { ipcRenderer } = require('electron')
+console.log(ipcRenderer.sendSync('synchronous-message', 'ping')) // prints "pong"
+
+ipcRenderer.on('asynchronous-reply', (event, arg) => {
+  console.log(arg) // prints "pong"
+})
+ipcRenderer.send('asynchronous-message', 'ping')
+```
+
+### ipcRenderer
+
+> https://electronjs.org/docs/api/ipc-renderer
+
+从渲染器进程到主进程的异步通信。
+
+## menu
+
+> https://electronjs.org/docs/api/menu
+
+设置原生应用菜单和上下文菜单（就是右键点击的菜单）
+
+### menuItem
+
+> https://electronjs.org/docs/api/menu-item
+
+原生菜单的菜单项，因为功能有点多，详细情况还是参考官方文档
+
+**menu 使用**
+
+
+
+## 注意
+
+Electron的主线程才能用的功能。如果在渲染器进程中想使用的话, 就要引入 remote ，这个remote就包含了主进程中所有的功能。详细解释参见上文 **主进程和渲染器进程** 一节的题外话。

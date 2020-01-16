@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow, ipcMain} = require('electron')
+const {app, BrowserWindow} = require('electron')
 const path = require('path')
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -11,21 +11,10 @@ function createWindow() {
     mainWindow = new BrowserWindow({
         width: 800,
         height: 600,
-        // frame:false,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
-            // 允许在原生js中使用nodejs
-            nodeIntegration: true,
-            // 运行webview标签
-            webviewTag:true
+            nodeIntegration: true
         }
-    })
-
-    mainWindow.webContents.on('did-finish-load',()=>{
-        console.log('did-finish-load')
-    })
-    mainWindow.webContents.on('dom-ready',()=>{
-        console.log('dom-ready')
     })
 
     // and load the index.html of the app.
@@ -39,35 +28,40 @@ function createWindow() {
         // Dereference the window object, usually you would store windows
         // in an array if your app supports multi windows, this is the time
         // when you should delete the corresponding element.
-        console.log('=====colsed')
         mainWindow = null
     })
-}
+    //
+    // setTimeout(() => {
+    //     const template = [
+    //         {label: '第一个菜单项目'},
+    //         {label: '第二个菜单项目'},
+    //         {role: 'undo'},
+    //         {type: 'separator'},
+    //         {label: '第三个菜单项目'},
+    //         {label: '第四个菜单项目'},
+    //     ]
+    //     const menu = Menu.buildFromTemplate(template)
+    //     Menu.setApplicationMenu(menu)
+    //     menu.popup()
+    // }, 5000)
 
-ipcMain.on('window-close',()=>{
-    mainWindow.close()
-})
+}
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.on('ready', () => {
-    console.log('====ready')
-    createWindow()
-})
+app.on('ready', createWindow)
 
 // Quit when all windows are closed.
 app.on('window-all-closed', function () {
     // On macOS it is common for applications and their menu bar
     // to stay active until the user quits explicitly with Cmd + Q
-    console.log('=====window-all-close')
     if (process.platform !== 'darwin') app.quit()
 })
 
 app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
-    console.log('=========activate')
     if (mainWindow === null) createWindow()
 })
 
