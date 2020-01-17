@@ -221,7 +221,84 @@ yrm use taobao
 
 ### 快速搭建 electron+vue 应用
 
+先全局装一下 vue-cli 这个脚手架
 
+```shell
+$ npm install vue-cli -g
+```
+
+创建工程
+
+```shell
+$ vue init simulatedgreg/electron-vue project-name
+```
+
+进入工程
+
+```shell
+$ cd project-name
+```
+
+安装依赖
+
+```shell
+$ yarn
+```
+
+启动开发模式
+
+```shell
+$ yarn dev
+```
+
+可能会出现的问题
+
+问题一：如果脚手架配置是选择使用node-sass
+
+Windows 无法编辑 node-sass
+
+解决方案
+
+```shell
+npm i -g node-gyp
+npm i -g -production windows-build-tools
+```
+
+问题二：使用electron-vue出现Webpack ReferenceError: process is not defined
+
+> https://blog.csdn.net/Gabriel_wei/article/details/92785089
+
+解决
+简单粗暴，不知道会不会有什么影响，直接将报错文件index.ejs的一句话删掉这段代码去掉
+
+```html
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>electron-vue-start</title>
+    <% if (htmlWebpackPlugin.options.nodeModules) { %>
+      <!-- Add `node_modules/` to global paths so `require` works properly in development -->
+      <script>
+        require('module').globalPaths.push('<%= htmlWebpackPlugin.options.nodeModules.replace(/\\/g, '\\\\') %>')
+      </script>
+    <% } %>
+  </head>
+  <body>
+    <div id="app"></div>
+-------------Delete from------------------
+    <!-- Set `__static` path to static files in production -->
+    <% if (!process.browser) { %>
+      <script>
+        if (process.env.NODE_ENV !== 'development') window.__static = require('path').join(__dirname, '/static').replace(/\\/g, '\\\\')
+      </script>
+    <% } %>
+
+    <!-- webpack builds are automatically injected -->
+------------Delete to-------------------
+  </body>
+</html>
+```
 
 ## Electron 应用架构
 
