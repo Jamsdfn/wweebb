@@ -188,6 +188,9 @@ $ npm start
 
 ```shell
 $ git clone --depth 1 --single-branch --branch master https://github.com/electron-react-boilerplate/electron-react-boilerplate.git your-project-name
+
+# 我自己清理了一下，下次可以直接用这个干净的
+$ git clone https://github.com/Jamsdfn/electron-react-start.git
 ```
 
 进入工程安装依赖(因为yarn服务器在国外，所以我们通常都要翻墙)
