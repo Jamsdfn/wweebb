@@ -182,6 +182,44 @@ $ npm install
 $ npm start
 ```
 
+### 快速搭建 electron+react 应用
+
+先从 github 上下载搭建好的框架
+
+```shell
+$ git clone --depth 1 --single-branch --branch master https://github.com/electron-react-boilerplate/electron-react-boilerplate.git your-project-name
+```
+
+进入工程安装依赖(因为yarn服务器在国外，所以我们通常都要翻墙)
+
+```shell
+$ yarn
+```
+
+启动开发者模式
+
+```shell
+$ yarn dev
+```
+
+注意：如果不翻墙可以安装yrm并切换镜像
+
+```shell
+$ npm install yrm -g
+
+# 查看所有镜像
+yrm ls
+
+#切换镜像
+yrm use taobao
+```
+
+
+
+### 快速搭建 electron+vue 应用
+
+
+
 ## Electron 应用架构
 
 在我们深入了解Electron的API之前，我们需要探讨一下在Electron中可能遇到的两种进程类型。 它们是完全不同的，因此理解它们非常重要。
@@ -767,9 +805,108 @@ ipcRenderer.send('asynchronous-message', 'ping')
 
 原生菜单的菜单项，因为功能有点多，详细情况还是参考官方文档
 
-**menu 使用**
+**注：**官方文档里的那个什么角色，是直译，翻译的问题，其实就是 role 差不多是功能的意思，就是官方给我们的功能，不用自己编程click事件
 
+**menu 使用** (点击鼠标右键出菜单)
 
+```js
+const {remote} = require('electron')
+
+const {Menu, MenuItem} = remote
+
+function openMenu() {
+    const template = [
+        // json 格式设置菜单项
+        {label:'Exit',role:'quit'},
+        {label: '第一个菜单项目', submenu: [
+            {label: 'redo',role:'redo',accelerator:'CommandOrControl+E'},
+            {label: '子菜单2111111111111111',role:'undo',accelerator:'CommandOrControl+Q'}
+        ]},
+        {label: '点击测试', click: () => {
+            console.log('点击事件触发了')
+        }},
+        {label: '重写', role:'redo'},
+        {label: '撤销', role:'undo'},
+        {label: '旅游', type: 'checkbox', checked: true},
+        {label: '吃', type: 'checkbox', checked: true},
+        {label: '逛街', type: 'checkbox', checked: false},
+        // new MenuItem格式设置菜单 option和json格式的菜单是一样的
+        new MenuItem({label: '这是MenuItem生成的菜单', click: () => {
+            console.log('这是MenuItem生成的菜单')
+        }})
+    ]
+    const menu = Menu.buildFromTemplate(template)
+    // 下面的方法就是把应用程序顶头的菜单栏也改了，不加这句就可以不改的
+    // 注意 菜单的快捷键只有加了下面那句话，也就是变成了顶头的菜单栏才会生效
+    Menu.setApplicationMenu(menu)
+    menu.popup()
+}
+
+document.querySelector('html').onmousedown = function (e) {
+    // 鼠标右键出菜单
+    if (e.button === 2) {
+        openMenu()
+    }
+}
+```
+
+## net
+
+> https://electronjs.org/docs/api/net
+
+使用Chromium的原生网络库发出HTTP / HTTPS请求
+
+`net` 模块是一个发送 HTTP(S) 请求的客户端API。 它类似于Node.js的[HTTP](https://nodejs.org/api/http.html) 和 [HTTPS](https://nodejs.org/api/https.html) 模块 ，但它使用的是Chromium原生网络库来替代Node.js的实现，提供更好的网络代理支持。
+
+下面是一个非详尽的列表, 用于说明为什么使用 `net` 模块而不是原生Node. js 模块:
+
+- 系统代理配置的自动管理, 支持 wpad 协议和代理 pac 配置文件。
+- HTTPS 请求的自动隧道。
+- 支持使用basic、digest、NTLM、Kerberos 或协商身份验证方案对代理进行身份验证。
+- 支持传输监控代理: 类似于Fiddler代理，用于访问控制和监视。
+
+The API components (including classes, methods, properties and event names) are similar to those used in Node.js.
+
+Example usage:
+
+```javascript
+const { app } = require('electron')
+app.on('ready', () => {
+  const { net } = require('electron')
+  const request = const request = net.request({
+  method: 'GET',
+  protocol: 'https:',
+  hostname: 'github.com',
+  port: 443,
+  path: '/'
+})
+  request.on('response', (response) => {
+    console.log(`STATUS: ${response.statusCode}`)
+    console.log(`HEADERS: ${JSON.stringify(response.headers)}`)
+    response.on('data', (chunk) => {
+      console.log(`BODY: ${chunk}`)
+    })
+    response.on('end', () => {
+      console.log('No more data in response.')
+    })
+  })
+  request.end()
+})Copy
+```
+
+只有在应用程序发出 `ready` 事件之后, 才能使用 `net` API。尝试在 `ready` 事件之前使用该模块将抛出一个错误。
+
+**方法**
+
+`net` 模块具有以下方法:
+
+- net.request(options)
+
+	+ `options` (ClientRequestConstructorOptions | String) - The `ClientRequest` constructor options.
+
+  返回 [`ClientRequest`](https://electronjs.org/docs/api/client-request)
+
+  使用 `options` 创建 [`ClientRequest`](https://electronjs.org/docs/api/client-request) 实例, 这些选项直接转发到 `ClientRequest` 的构造函数。 `net.request` 方法将根据 `options` 对象中的指定协议方案, 去发送安全和不安全的 HTTP 请求（ both secure and insecure HTTP requests）。
 
 ## 注意
 
