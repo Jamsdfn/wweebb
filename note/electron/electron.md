@@ -217,7 +217,15 @@ yrm ls
 yrm use taobao
 ```
 
+#### 应用程序打包
 
+```shell
+$ yarn package
+```
+
+如果出现非github下载的问题则试一下吧electron-updater和electron-builder更新到最新版
+
+若果出现下载问题翻个墙打包就好了
 
 ### 快速搭建 electron+vue 应用
 
@@ -299,6 +307,14 @@ npm i -g -production windows-build-tools
   </body>
 </html>
 ```
+
+#### 应用程序打包
+
+```shell
+$ yarn build
+```
+
+能翻墙就翻墙，能解决大部分问题
 
 ## Electron 应用架构
 
@@ -991,3 +1007,112 @@ app.on('ready', () => {
 ## 注意
 
 Electron的主线程才能用的功能。如果在渲染器进程中想使用的话, 就要引入 remote ，这个remote就包含了主进程中所有的功能。详细解释参见上文 **主进程和渲染器进程** 一节的题外话。
+
+# 设置命令行使用代理
+
+有些翻墙软件只让浏览器代理，不能进行全局代理，如果要想让命令行也使用代理，那么就要设置
+
+```shell
+# 设置命令行代理
+$ set https_proxy=http://127.0.0.1:[代理的端口号]
+$ set http_proxy=http://127.0.0.1:[代理的端口号]
+# 取消代理
+$ set http_proxy=
+# 查看代理
+$ set http_proxy
+```
+
+# 打包后如何生成安装文件
+
+- windows  
+  - 简单的方法就是在应用打包后把生成的 win-unpacked 压缩成ZIP,再用NSIS的ZIP转压缩包功能直接生成就可以了，或者参考 https://segmentfault.com/a/1190000016707052 进行一步步安装
+
+### NSIS新建脚本
+
+点击软件左上角文件->选择新建脚本(向导)
+![图片描述](./2.png)
+![图片描述](./3.png)
+
+到应用程序信息这里 填写的应用程序名称必须和你package.json里面配置的一样 否则你有自动更新的时候会安装一个另一个程序!
+![图片描述](./4.png)
+这里选择图标就行了
+![图片描述](./5.png)
+
+这里暂时默认就行了 后面出一个文章详细介绍这里
+![图片描述](./6.png)
+
+![图片描述](./7.png)
+
+![图片描述](./8.png)
+![图片描述](./9.png)
+![图片描述](./10.png)
+
+`F:\lee\project3\build\win-unpacked\project3.exe`
+主程序就是 buildwin-unpacked的exe文件
+![图片描述](./11.png)
+
+![图片描述](./12.png)
+![图片描述](./13.png)
+
+`选择 F:\lee\project3\build\win-unpacked`
+![图片描述](./14.png)
+
+![图片描述](./15.png)
+![图片描述](./16.png)
+![图片描述](./17.png)
+![图片描述](./18.png)
+![图片描述](./19.png)
+
+### 编译脚本
+
+终于到了编译脚本了 如果按照上面的步骤执行 到这步会自动编译并且运行 如果没有自动编译点击顶部菜单栏的编译按钮
+
+编译过程可能稍微有点长1-3分钟吧 编译完成之后会运行安装程序看能不能成功
+
+## 友情提示
+
+### 杀软报毒
+
+electron做的软件会被某流氓杀软报毒 没办法解决 在这里给出一个解决办法
+安装程序检测360是否运行 如果在运行就禁止安装
+其中使用到一个dll插件 (FindProcDLL.dll)
+官方下载地址:[http://nsis.sourceforge.net/F...](http://nsis.sourceforge.net/FindProcDLL_plug-in)
+作者提供的下载地址:[https://pan.baidu.com/s/1EpJa...](https://pan.baidu.com/s/1EpJaSaE86Ern7EVZRxxn1A)
+
+下载完毕之后 放到`NSIS`目录下的 `VNISEdit\Plugins` 目录中
+如果不知道目录 那就在桌面 右击VNISEdit 编译环境 选择打开所在目录 就可以看到了
+
+在脚本最后加一句
+编译完成后会后些方法:
+一个是`un.onInit` ->卸载程序
+一个是`un.onUninstSuccess` -> 卸载成功提示
+`.onInit` 安装程序初始化
+
+```
+# 检测360杀毒软件是否在运行
+Function .onInit
+FindProcDLL::FindProc "360tray.exe"
+   Pop $R0
+   IntCmp $R0 1 0 no_run
+   MessageBox MB_ICONSTOP "安装程序检测到360流氓软件正在运行，请退出程序后重试!"
+   Quit
+   no_run:
+FunctionEnd
+```
+
+由于我电脑没有装360 所以我使用qq 来做演示
+
+```
+# 检测qq是否在运行
+Function .onInit
+FindProcDLL::FindProc "QQ.exe"
+   Pop $R0
+   IntCmp $R0 1 0 no_run
+   MessageBox MB_ICONSTOP "安装程序检测到qq流氓软件正在运行，请退出程序后重试!"
+   Quit
+   no_run:
+FunctionEnd
+```
+
+![图片描述](https://segmentfault.com/img/bVbigv6?w=417&h=176)
+
