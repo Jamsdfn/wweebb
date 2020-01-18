@@ -1030,15 +1030,20 @@ $ set http_proxy
 ### NSIS新建脚本
 
 点击软件左上角文件->选择新建脚本(向导)
+
 ![图片描述](./2.png)
 ![图片描述](./3.png)
 
 到应用程序信息这里 填写的应用程序名称必须和你package.json里面配置的一样 否则你有自动更新的时候会安装一个另一个程序!
+
 ![图片描述](./4.png)
+
 这里选择图标就行了
+
 ![图片描述](./5.png)
 
 这里暂时默认就行了 后面出一个文章详细介绍这里
+
 ![图片描述](./6.png)
 
 ![图片描述](./7.png)
@@ -1048,13 +1053,16 @@ $ set http_proxy
 ![图片描述](./10.png)
 
 `F:\lee\project3\build\win-unpacked\project3.exe`
+
 主程序就是 buildwin-unpacked的exe文件
+
 ![图片描述](./11.png)
 
 ![图片描述](./12.png)
 ![图片描述](./13.png)
 
 `选择 F:\lee\project3\build\win-unpacked`
+
 ![图片描述](./14.png)
 
 ![图片描述](./15.png)
