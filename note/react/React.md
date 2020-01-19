@@ -600,6 +600,12 @@ function Comment(props) {
 }
 ```
 
+#### HOOK
+
+说道函数式组件就要提到HOOK,具体详情请看electron那个 md demo 的文档
+
+> https://github.com/Jamsdfn/wweebb/blob/master/note/electron/ERMD-demo/README.md#react-hooks
+
 ### 类方式组件
 
 ### class 补充
