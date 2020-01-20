@@ -1,6 +1,13 @@
-// This file is required by the index.html file and will
-// be executed in the renderer process for that window.
-// No Node.js APIs are available in this process because
-// `nodeIntegration` is turned off. Use `preload.js` to
-// selectively enable features needed in the rendering
-// process.
+const { ipcRenderer } = require('electron')
+
+window.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('#node-version').innerHTML = process.versions.node
+    document.querySelector('#send').addEventListener('click', () => {
+        ipcRenderer.send('message', 'hello from renderer')
+    })
+    ipcRenderer.on('reply', (event, msg) => {
+        document.querySelector('#msg').innerHTML = msg
+    })
+})
+
+

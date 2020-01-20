@@ -132,6 +132,20 @@ app.on('activate', () => {
 // 也可以拆分成几个文件，然后用 require 导入。
 ```
 
+#### 监视main.js
+
+用 nodemon 监视 main.js的变化，省去每次修改main.js 都要重启一遍
+
+为了更节省一些时间，省去在命令行输入的时间，我们要修改一下package.json 文件，把script的start改成下面那样
+
+```json
+"scripts": {
+    "start": "nodemon --watch main.js --exec \"electron .\""
+  }
+```
+
+## 
+
 ### 编写你的index.html
 
 ```html
@@ -1004,11 +1018,30 @@ app.on('ready', () => {
 
   使用 `options` 创建 [`ClientRequest`](https://electronjs.org/docs/api/client-request) 实例, 这些选项直接转发到 `ClientRequest` 的构造函数。 `net.request` 方法将根据 `options` 对象中的指定协议方案, 去发送安全和不安全的 HTTP 请求（ both secure and insecure HTTP requests）。
 
+## DEVTRON
+
+一个官方的调试插件，你面有一些挺有用的功能，比如看IPC注册的时间
+
+**安装**
+
+```shell
+$ npm install --save-dev devtron
+```
+
+**使用**
+
+```js
+// 在 app.on('ready') 方法内加入下面的代码
+require('devtron').install()
+```
+
 ## 注意
 
 Electron的主线程才能用的功能。如果在渲染器进程中想使用的话, 就要引入 remote ，这个remote就包含了主进程中所有的功能。详细解释参见上文 **主进程和渲染器进程** 一节的题外话。
 
-# 设置命令行使用代理
+# 题外话
+
+## 设置命令行使用代理
 
 有些翻墙软件只让浏览器代理，不能进行全局代理，如果要想让命令行也使用代理，那么就要设置
 
@@ -1022,7 +1055,7 @@ $ set http_proxy=
 $ set http_proxy
 ```
 
-# 打包后如何生成安装文件
+## 打包后如何生成安装文件
 
 - windows  
   - 简单的方法就是在应用打包后把生成的 win-unpacked 压缩成ZIP,再用NSIS的ZIP转压缩包功能直接生成就可以了，或者参考 https://segmentfault.com/a/1190000016707052 进行一步步安装

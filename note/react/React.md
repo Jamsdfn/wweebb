@@ -2108,7 +2108,7 @@ export default Reactmotion
 
 常用的 react UI 框架
 
-- Material 看了下现在还是函数式组件感觉不怎么好用，对新版本的 react 兼容也不好
+- Material 是函数式组件习惯 HOOK 的可以用这个组件
 - element 饿了么 自己感觉还行 （类组件）
 - ant 蚂蚁金融 也行（类组件）
 
