@@ -1,5 +1,53 @@
 # MarkDown-Demo
 
+## concurrently
+
+可以用这个插件在一个命令行同时运行两个命令
+
+安装
+
+```shell
+$ npm i -D  concurrently
+```
+
+使用
+
+```js
+// 如果是全局安装的 concurrently 
+concurrently "命令1" "命令2"
+// 如果是在项目中安装，则在script中加上
+"key": "concurrently \"命令1\" \"命令2\""
+```
+
+## wait-on
+
+wait-on是跨平台的命令行实用程序，它将等待文件，端口，套接字和http（s）资源变得可用之后再执行另一条指令
+
+安装
+
+```shell
+$ npm i -D wait-on
+```
+
+使用
+
+```js
+wait-on xxx && 命令
+// 如 wait-on http://localhost:3000 && electron .
+```
+
+## cross-env
+
+运行跨平台设置和使用环境变量的脚本，因为不同平台的脚本运行的时对环境变量的语法是不一样的，而cross-env就解决了这个跨平台的问题
+
+```json
+"scripts": {
+    "dev": "concurrently \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none npm start\""
+},
+```
+
+上面的代码就是为了解决 BROWSER=none 这个环境变量问题的，在此项目中就是为了防止每次运行开发环境都在浏览器中弹出react
+
 ## React Hooks
 
 *Hook* 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。即让react更适合函数式编程。
@@ -111,8 +159,9 @@
   
 - 控制 useEffect 的执行
   
+
 ​	useEffect 第二个参数可以是个数组（可选），当数组内元素发生变化时则会再执行一遍回调函数，如果我们加上第二个参数且不改变其数组元素则组件只会在渲染是执行一次
-  
+
 ```jsx
   const DogShow = () => {
     const [url, setUrl] = useState('')
@@ -141,8 +190,8 @@
          
       )
   }
-  ```
-  
+```
+
   **注：**第二个参数是可选参数，如果不使用则当state改变时都会触发
 
 ### 自定义 Hook

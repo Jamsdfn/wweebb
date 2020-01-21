@@ -66,4 +66,57 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
   npx nodemon --version
   ```
 
-  
+
+
+
+## 工具
+
+### concurrently
+
+可以用这个插件在一个命令行同时运行两个命令
+
+安装
+
+```shell
+$ npm i -D  concurrently
+```
+
+使用
+
+```js
+// 如果是全局安装的 concurrently 
+concurrently "命令1" "命令2"
+// 如果是在项目中安装，则在script中加上
+"key": "concurrently \"命令1\" \"命令2\""
+```
+
+### wait-on
+
+wait-on是跨平台的命令行实用程序，它将等待文件，端口，套接字和http（s）资源变得可用之后再执行另一条指令
+
+安装
+
+```shell
+$ npm i -D wait-on
+```
+
+使用
+
+```js
+wait-on xxx && 命令
+// 如 wait-on http://localhost:3000 && electron .
+```
+
+### cross-env
+
+运行跨平台设置和使用环境变量的脚本，因为不同平台的脚本运行的时对环境变量的语法是不一样的，而cross-env就解决了这个跨平台的问题
+
+```json
+"scripts": {
+    "dev": "concurrently \"wait-on http://localhost:3000 && electron .\" \"cross-env BROWSER=none npm start\""
+},
+```
+
+上面的代码就是为了解决 BROWSER=none 这个环境变量问题的
+
+## 
