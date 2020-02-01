@@ -48,6 +48,30 @@ wait-on xxx && 命令
 
 上面的代码就是为了解决 BROWSER=none 这个环境变量问题的，在此项目中就是为了防止每次运行开发环境都在浏览器中弹出react
 
+## Fontawesome 5.x
+
+react-Fontawesome
+
+> https://github.com/FortAwesome/react-fontawesome
+
+```shell
+$ npm i --save @fortawesome/fontawesome-svg-core
+$ npm i --save @fortawesome/free-solid-svg-icons
+$ npm i --save @fortawesome/react-fontawesome
+```
+
+使用
+
+```jsx
+import ReactDOM from 'react-dom'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+
+const element = <FontAwesomeIcon icon={faCoffee} />
+
+ReactDOM.render(element, document.body)
+```
+
 ## React Hooks
 
 *Hook* 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。即让react更适合函数式编程。
@@ -194,6 +218,63 @@ wait-on xxx && 命令
 
   **注：**第二个参数是可选参数，如果不使用则当state改变时都会触发
 
+### Ref Hook
+
+通俗解释就是：因为 setState 是对组件的重新渲染，所以如果在组件内定义一个变量，在每次渲染后都会回到初始值，而这个Ref Hook 就可以在整个组件的生命周期中保留渲染前的值。
+
+**例一**：保留变量
+
+```jsx
+import React, { useState,useEffect,useRef } from 'react'
+
+const FileSearch = ({ title, onFileSearch }) => {
+  const [inputActive, setInputActive] = useState(false)
+  const [value, setValue] = useState('')
+
+  const closeSearch = (e) => {
+    e.preventDefault()
+    setInputActive(false)
+    setValue('')
+  }
+  
+  let number = useRef(1)
+  number.current++
+  console.log(number.current)
+
+  return (
+    <div className='alert alert-primary'>
+            <div className='row'>
+              <input
+                type="text"
+                className='form-control col-8'
+                value={value}
+                onChange={(e) => { setValue(e.target.value) }}
+              />
+    </div>
+  )
+}
+```
+
+**例二**：既然叫Ref那个也就是用来获取DOM元素的
+
+```jsx
+function TextInputWithFocusButton() {
+  const inputEl = useRef(null);
+  const onButtonClick = () => {
+    // `current` 指向已挂载到 DOM 上的文本输入元素
+    inputEl.current.focus();
+  };
+  return (
+    <>
+      <input ref={inputEl} type="text" />
+      <button onClick={onButtonClick}>Focus the input</button>
+    </>
+  );
+}
+```
+
+
+
 ### 自定义 Hook
 
 通过自定义 Hook，可以将组件逻辑提取到可重用的函数中。（命名规定要以use开头）
@@ -300,4 +381,28 @@ export default CatShowWithHook
 **其他Hook**
 
 > https://zh-hans.reactjs.org/docs/hooks-reference.html
+
+## React PropTypes
+
+用来进行数据类型检测的工具，如果不符合规范，会抛出一个异常
+
+```jsx
+import PropTypes from 'prop-types';
+
+class Greeting extends React.Component {
+  render() {
+    return (
+      <h1>Hello {this.props.title}, {this.props.name}</h1>
+    );
+  }
+}
+// 定义数据类型
+Greeting.propTypes = {
+  name: PropTypes.string
+};
+// 也可以用以下方式添加默认值
+Greeting.defaultProps = {
+  title: '我的云文档'
+}
+```
 
