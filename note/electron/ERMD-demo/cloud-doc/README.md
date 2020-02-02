@@ -60,3 +60,39 @@ const defaultFiles = [
 ]
 ```
 
+## TabList组件属性
+
+```jsx
+<TabList
+    files={openedTabs}
+    activedId={activeFileId}
+    unsavedIds={unsavedFiles}
+    onTabClick={tabClick}
+    onCloseTab={tabClose}
+/>
+```
+
+## 在项目中使用sass预处理器
+
+```shell
+$ npm i node-sass
+```
+
+安装之后直接引入sass文件 `import './xxx.scss'` 就可以了
+
+## id
+
+用 uuid 插件生成 uuid
+
+```shell
+$ npm i uuid
+```
+
+使用
+
+```jsx
+// x为uuid的版本（不是module是版本，就是识别的版本）
+import uuidv4 from 'uuid/v4'
+const newID = uuidv4()
+```
+

@@ -12,9 +12,13 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const enterPressed = useKeyPress(13)
   const escPressed = useKeyPress(27)
 
-  const closeEdit = () => {
+  const closeEdit = (editItem) => {
     setEditStatus(false)
     setValue('')
+
+    if (editItem.isNew) {
+      onFileDelete(editItem.id)
+    }
   }
 
   useEffect(() => {
@@ -32,16 +36,25 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     //   // 清除事件的注册，防止多次按按键多次注册
     //   document.removeEventListener('keyup', handleInputEvent)
     // }
-    if (enterPressed && editStatus) {
-      const editItem = files.find(file => file.id === editStatus)
+    const editItem = files.find(file => file.id === editStatus)
+    if (enterPressed && editStatus && value.trim() !== '') {
       onSaveEdit(editItem.id, value)
       setEditStatus(false)
     }
     if (escPressed && editStatus) {
-      closeEdit()
+      closeEdit(editItem)
     }
   })
   
+  useEffect(() => {
+    const newFile = files.find(file => file.isNew)
+    // console.log(newFile)
+    if(newFile) {
+      setEditStatus(newFile.id)
+      setValue(newFile.title)
+    }
+  },[files])
+
   useEffect(() => {
     if (editStatus) {
       node.current.focus()
@@ -57,7 +70,7 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
               className='row no-gutters list-group-item bg-light d-flex align-items-center file-item'
               key={file.id}
             >
-              {(file.id !== editStatus) &&
+              {((file.id !== editStatus) && !file.isNew) &&
                 <>
                   <span className='col-2'>
                     <FontAwesomeIcon
@@ -91,18 +104,19 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
                 </>
               }
               {
-                (file.id === editStatus) &&
+                ((file.id === editStatus) || file.isNew) &&
                 <>
                   <input
                     type="text"
-                    className='form-control col-10 search'
+                    className='form-control col-10 search pl-2'
                     value={value}
                     ref={node}
+                    placeholder="请输入文件名称"
                     onChange={(e) => { setValue(e.target.value) }}
                   />
                   <button
                     className='icon-button search col-2'
-                    onClick={closeEdit}
+                    onClick={() => {closeEdit(file)}}
                   >
                     <FontAwesomeIcon title='关闭' icon={faTimes} />
                   </button>

@@ -22,7 +22,7 @@ BottomBtn.propTypes = {
   text: PropTypes.string,
   colorClass: PropTypes.string,
   onBtnClick: PropTypes.func,
-  icon: PropTypes.element.isRequired
+  icon: PropTypes.object.isRequired
 }
 
 BottomBtn.defaultProps = {

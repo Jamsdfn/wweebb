@@ -66,7 +66,10 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
   npx nodemon --version
   ```
 
+## CSS3
 
+- vh单位，视窗高度的百分比
+- vw单位，视窗宽度的百分比
 
 
 ## 工具
@@ -119,4 +122,41 @@ wait-on xxx && 命令
 
 上面的代码就是为了解决 BROWSER=none 这个环境变量问题的
 
-## 
+### classnames
+
+一个帮我们拼接className的插件
+
+```shell
+$ npm i classnames
+```
+
+使用
+
+```jsx
+const fClassName = classNames({
+    'nav-link': true,
+    'active': file.id === activeId
+})
+// 这样fClassName 就是拼接好的class字符串，file.id===activeId 则class加上active，为false就不添加
+```
+
+### uuid
+
+用 uuid 插件生成 uuid
+
+```shell
+$ npm i uuid
+```
+
+使用
+
+```jsx
+// *为uuid的版本（不是module是版本，就是识别的版本）
+import uuidv* from 'uuid/v*'
+const newID = uuidv4()
+```
+
+
+
+
+

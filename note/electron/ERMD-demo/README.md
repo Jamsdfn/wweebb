@@ -72,6 +72,24 @@ const element = <FontAwesomeIcon icon={faCoffee} />
 ReactDOM.render(element, document.body)
 ```
 
+## classnames
+
+一个帮我们拼接className的插件
+
+```shell
+$ npm i classnames
+```
+
+使用
+
+```jsx
+const fClassName = classNames({
+    'nav-link': true,
+    'active': file.id === activeId
+})
+// 这样fClassName 就是拼接好的class字符串，file.id===activeId 则class加上active，为false就不添加
+```
+
 ## React Hooks
 
 *Hook* 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。即让react更适合函数式编程。
