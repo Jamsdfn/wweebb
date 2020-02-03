@@ -90,6 +90,66 @@ const fClassName = classNames({
 // 这样fClassName 就是拼接好的class字符串，file.id===activeId 则class加上active，为false就不添加
 ```
 
+## 使用CommonJS规范的问题
+
+要想在 create-react-app 的环境下使用CommonJS的规范引入NodeJS的核心模块
+
+```jsx
+// const fs = require('fs') require前加一个window就好了
+const fs = window.require('fs')
+```
+
+因为在 create-react-app 的环境下使用webpack打包的，它会把require当成一个用户自定义的function直接打包，在前面加一个window就可以避免webpack直接打包。在node环境下使用CommonJS的规范引入核心模块
+
+## electron-store
+
+一个简单的数据持久化的方案，是一个插件，不用装数据库（其实就是把数据存在了一个JSON 文件中，存放在了app.getPath('userData')中）
+
+> userData https://www.electronjs.org/docs/api/app#appgetpathname
+
+```shell
+$ npm i electron-store
+```
+
+使用
+
+```jsx
+const Store = window.require('electron-store')
+const store = new Store()
+store.set('name', 'viking')
+store.get('name')
+store.delete('name')
+```
+
+也可以像MongoDB那样定义一个Schema 然后按规则存数据，详情看官方文档
+
+> https://www.npmjs.com/package/electron-store
+
+```jsx
+const Store = require('electron-store');
+ 
+const schema = {
+    foo: {
+        type: 'number',
+        maximum: 100,
+        minimum: 1,
+        default: 50
+    },
+    bar: {
+        type: 'string',
+        format: 'url'
+    }
+};
+ 
+const store = new Store({schema});
+ 
+console.log(store.get('foo'));
+//=> 50
+ 
+store.set('foo', '1');
+// [Error: Config schema violation: `foo` should be number]
+```
+
 ## React Hooks
 
 *Hook* 是 React 16.8 的新增特性。它可以让你在不编写 class 的情况下使用 state 以及其他的 React 特性。即让react更适合函数式编程。

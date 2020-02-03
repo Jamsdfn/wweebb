@@ -1,6 +1,6 @@
 //modules
 import React, { useState } from 'react'
-import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
+import { faPlus, faFileImport, faSave } from '@fortawesome/free-solid-svg-icons'
 import uuidv4 from 'uuid/v4'
 //style
 import './App.css'
@@ -15,14 +15,52 @@ import SimpleMDE from 'react-simplemde-editor'
 //static file
 import defaultFiles from './utils/defaultFiles'
 import { flattenArr, objToArr } from './utils/helper'
+import fileHelper from './utils/fileHelper'
+// reuqire nodeJS modules
+const fs = window.require('fs')
+const path = window.require('path')
+const { remote } = window.require('electron')
+const Store = window.require('electron-store')
+
+
+//fileDate Storage
+const fileStore = new Store({ 'name': 'Files Data' })
+const saveFilesToStore = (files) => {
+  // 我们只存一些重要的信息就行了，不用素有文件信息都存进去
+  const filesStoreObj = objToArr(files).reduce((result, file) => {
+    const { id, path, title, createAt } = file
+    result[id] = {
+      id,
+      path,
+      title,
+      createAt
+    }
+    return result
+  }, {})
+  fileStore.set('files', filesStoreObj)
+}
+
+const checkfile = (files) => {
+  const list = objToArr(files).reduce((result, file) => {
+    if (fs.existsSync(file.path)) {
+      result[file.id] = file
+    }
+    return result
+  }, {})
+  fileStore.set('files', list)
+  return list
+}
+
 
 function App() {
   //state
-  const [files, setFiles] = useState(flattenArr(defaultFiles))
+  const [files, setFiles] = useState(checkfile(fileStore.get('files')))
   const [activeFileID, setActiveFileID] = useState('')
   const [openedFileIDs, setOpenedFileIDs] = useState([])
   const [unsaveFileIDs, setUnsaveFileIDs] = useState([])
   const [searchFiles, setSearchFiles] = useState([])
+  //location
+  const savedLocation = path.join(remote.app.getAppPath(), 'doc')
   //files
   const filesArr = objToArr(files)
   const openedFiles = openedFileIDs.map(openID => {
@@ -43,6 +81,14 @@ function App() {
   //business logic function
   const fileClick = (fileID) => {
     setActiveFileID(fileID)
+    const currentFile = files[fileID]
+    if (!currentFile.isLoaded) {
+      fileHelper.readFile(currentFile.path)
+        .then((data) => {
+          const newFile = { ...files[fileID], body: data, isLoaded: true }
+          setFiles({ ...files, [fileID]: newFile })
+        })
+    }
     if (!openedFileIDs.includes(fileID)) {
       // 用扩展运算符... 把数组展开然后加一项
       setOpenedFileIDs([...openedFileIDs, fileID])
@@ -76,16 +122,30 @@ function App() {
   }
 
   const deleteFile = (id) => {
-    delete files[id]
-    setFiles(files)
-    const tabsWitout = openedFileIDs.filter(fileID => fileID !== id)
-    setOpenedFileIDs(tabsWitout)
-    if (id === activeFileID && tabsWitout.length > 0) {
-      setActiveFileID(tabsWitout[0])
+    if (files[id].isNew) {
+      // delete files[id]
+      // 用delete语句删除项的话，如果直接传files，那么因为obj引用没改变，react认为state并没有改变，所以不会重新render
+      //setFiles({... files})
+
+      // 用解构和rest语法进行删除，相当于提了一项出来，剩下了给afterDelete
+      const {[id]:value, ...afterDelete} = files
+      setFiles(afterDelete)
+    } else {
+      fileHelper.deleteFile(files[id].path)
+        .then(() => {
+          const {[id]:value, ...afterDelete} = files
+          setFiles(afterDelete)
+          saveFilesToStore(afterDelete)
+          const tabsWitout = openedFileIDs.filter(fileID => fileID !== id)
+          setOpenedFileIDs(tabsWitout)
+          if (id === activeFileID && tabsWitout.length > 0) {
+            setActiveFileID(tabsWitout[0])
+          }
+        })
     }
   }
 
-  const updateFileName = (id, title) => {
+  const updateFileName = (id, title, isNew) => {
     // const newFiles = files.map(file => {
     //   if (file.id === id) {
     //     file.title = title
@@ -93,8 +153,25 @@ function App() {
     //   }
     //   return file
     // })
-    const modifiedFile = { ...files[id], title, isNew: false }
-    setFiles({ ...files, [id]: modifiedFile })
+    const oldPath = path.join(savedLocation, `${ files[id].title }.md`)
+    const newPath = path.join(savedLocation, `${ title }.md`)
+    const modifiedFile = { ...files[id], title, isNew: false, path: newPath }
+    const newFiles = { ...files, [id]: modifiedFile }
+    const fileContent = files[id].body
+
+    if (isNew) {
+      fileHelper.writeFile(newPath, fileContent)
+        .then(() => {
+          setFiles(newFiles)
+          saveFilesToStore(newFiles)
+        })
+    } else {
+      fileHelper.renameFile(oldPath, newPath)
+        .then(() => {
+          setFiles(newFiles)
+          saveFilesToStore(newFiles)
+        })
+    }
   }
 
   const fileSearch = (keyword) => {
@@ -103,25 +180,30 @@ function App() {
   }
 
   const createNewFile = () => {
-    // const newFiles = [
-    //   ...files,
-    //   {
-    //     id: uuidv4(),
-    //     title: '',
-    //     body: '## 新建文档',
-    //     createAt: new Date().getTime(),
-    //     isNew: true
-    //   }
-    // ]
-    const newID = uuidv4()
-    const newFile = {
-      id: newID,
-      title: '',
-      body: '',
-      createAt: new Date().getTime(),
-      isNew: true
+    let flag = false
+    objToArr(files).map((file) => {
+      if (file.isNew) {
+        flag = true
+      }
+    })
+    if (!flag) {
+      const newID = uuidv4()
+      const newFile = {
+        id: newID,
+        title: '',
+        body: '## 新建文档',
+        createAt: new Date().getTime(),
+        isNew: true
+      }
+      setFiles({ ...files, [newID]: newFile })
     }
-    setFiles({...files, [newID]: newFile})
+  }
+
+  const saveCurrentFile = () => {
+    fileHelper.writeFile(path.join(savedLocation, `${ activeFile.title }.md`), activeFile.body)
+      .then(() => {
+        setUnsaveFileIDs(unsaveFileIDs.filter(id => id !== activeFile.id))
+      })
   }
 
   //flag
@@ -186,6 +268,12 @@ function App() {
                 options={{
                   minHeight: '475px'
                 }}
+              />
+              <BottomBtn
+                icon={faSave}
+                text='保存'
+                colorClass='btn-danger'
+                onBtnClick={saveCurrentFile}
               />
             </>
           }
