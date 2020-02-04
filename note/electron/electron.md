@@ -455,11 +455,20 @@ app.on
 
 **webContents**
 
-new BrowserWindow().webContents.on
+**new BrowserWindow().webContents.on**
 
 - did-finish-load: 导航完成时触发，即选项卡的旋转器将停止旋转，并指派`onload`事件后。
 - dom-ready: 一个框架中的文本加载完成后触发该事件。(所有dom加载完后触发)
 
+**browserWindow.webContents.send()**
+
+每个渲染进程都对应一个web页面，即BrowserWindow对象， 此BrowserWindow对象是在主进程中创建的。
+
+那么，主进程向渲染进程中发送消息时，调用webContents.send方法的window对象，就是此渲染进程所对应的web页面对象！！！
+
+具体来说，在主进程中向page1发送消息，就是page1.webContents.send()
+
+在主进程中向page2发送消息，就是page2.webContents.send()
 ## 进程对象
 
 > https://electronjs.org/docs/api/process

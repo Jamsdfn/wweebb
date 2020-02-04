@@ -1,5 +1,5 @@
 //modules
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { faPlus, faFileImport, faSave } from '@fortawesome/free-solid-svg-icons'
 import uuidv4 from 'uuid/v4'
 //style
@@ -13,18 +13,19 @@ import BottomBtn from './components/BottomBtn'
 import TabList from './components/TabList'
 import SimpleMDE from 'react-simplemde-editor'
 //static file
-import defaultFiles from './utils/defaultFiles'
-import { flattenArr, objToArr } from './utils/helper'
+import { objToArr, flattenArr } from './utils/helper'
 import fileHelper from './utils/fileHelper'
+import useIpcRenderer from './hooks/useIpcRenderer'
 // reuqire nodeJS modules
 const fs = window.require('fs')
 const path = window.require('path')
-const { remote } = window.require('electron')
+const { remote, ipcRenderer } = window.require('electron')
 const Store = window.require('electron-store')
 
 
 //fileDate Storage
 const fileStore = new Store({ 'name': 'Files Data' })
+const settingsStore = new Store({name: 'Settings'})
 const saveFilesToStore = (files) => {
   // 我们只存一些重要的信息就行了，不用素有文件信息都存进去
   const filesStoreObj = objToArr(files).reduce((result, file) => {
@@ -60,7 +61,7 @@ function App() {
   const [unsaveFileIDs, setUnsaveFileIDs] = useState([])
   const [searchFiles, setSearchFiles] = useState([])
   //location
-  const savedLocation = path.join(remote.app.getAppPath(), 'doc')
+  const savedLocation = settingsStore.get('saveFileLocation') || path.join(remote.app.getAppPath(), 'doc')
   //files
   const filesArr = objToArr(files)
   const openedFiles = openedFileIDs.map(openID => {
@@ -111,13 +112,15 @@ function App() {
   }
 
   const fileChange = (id, value) => {
-    // 把值更新到file数组中，不用疑惑为什么直接就保存在file中，因为只有保存了才持久化，所以这个数组可以随便改
-    // const newFiles = updateFile(id, 'body', value)
-    // setFiles(newFiles)
-    const newFile = { ...files[id], body: value }
-    setFiles({ ...files, [id]: newFile })
-    if (!unsaveFileIDs.includes(id)) {
-      setUnsaveFileIDs([...unsaveFileIDs, id])
+    if (value !== files[id].body) {
+      // 把值更新到file数组中，不用疑惑为什么直接就保存在file中，因为只有保存了才持久化，所以这个数组可以随便改
+      // const newFiles = updateFile(id, 'body', value)
+      // setFiles(newFiles)
+      const newFile = { ...files[id], body: value }
+      setFiles({ ...files, [id]: newFile })
+      if (!unsaveFileIDs.includes(id)) {
+        setUnsaveFileIDs([...unsaveFileIDs, id])
+      }
     }
   }
 
@@ -128,12 +131,12 @@ function App() {
       //setFiles({... files})
 
       // 用解构和rest语法进行删除，相当于提了一项出来，剩下了给afterDelete
-      const {[id]:value, ...afterDelete} = files
+      const { [id]: value, ...afterDelete } = files
       setFiles(afterDelete)
     } else {
       fileHelper.deleteFile(files[id].path)
         .then(() => {
-          const {[id]:value, ...afterDelete} = files
+          const { [id]: value, ...afterDelete } = files
           setFiles(afterDelete)
           saveFilesToStore(afterDelete)
           const tabsWitout = openedFileIDs.filter(fileID => fileID !== id)
@@ -153,8 +156,8 @@ function App() {
     //   }
     //   return file
     // })
-    const oldPath = path.join(savedLocation, `${ files[id].title }.md`)
-    const newPath = path.join(savedLocation, `${ title }.md`)
+    const oldPath = files[id].path
+    const newPath = isNew ? path.join(savedLocation, `${ title }.md`) : path.join(path.dirname(files[id].path), `${ title }.md`)
     const modifiedFile = { ...files[id], title, isNew: false, path: newPath }
     const newFiles = { ...files, [id]: modifiedFile }
     const fileContent = files[id].body
@@ -200,15 +203,68 @@ function App() {
   }
 
   const saveCurrentFile = () => {
-    fileHelper.writeFile(path.join(savedLocation, `${ activeFile.title }.md`), activeFile.body)
+    // console.log(activeFile)
+    if(activeFile){
+      fileHelper.writeFile(activeFile.path, activeFile.body)
       .then(() => {
         setUnsaveFileIDs(unsaveFileIDs.filter(id => id !== activeFile.id))
+      })
+    }
+    
+  }
+
+  const importFiles = () => {
+    remote.dialog.showOpenDialog({
+      title: '选择要导入的 Markdown 文件',
+      properties: ['openFile', 'multiSelections'],
+      filters: [
+        { name: 'Markdown files', extensions: ['md'] }
+      ]
+    })
+      .then((pathObj) => {
+        if (Array.isArray(pathObj.filePaths)) {
+          // 把已有的文件过滤掉
+          const filteredPaths = pathObj.filePaths.filter(path => {
+            const alreadyAdded = Object.values(files).find(file => {
+              return file.path === path
+            })
+            return !alreadyAdded
+          })
+          // 扩展文件信息
+          const importFilesArr = filteredPaths.map(paths => {
+            return {
+              id: uuidv4(),
+              title: path.basename(paths, path.extname(paths)),
+              path: paths,
+              createAt: new Date().getTime()
+            }
+          })
+          // console.log(importFilesArr)
+          // 把数组转为 flatten 数组
+          const newFiles = { ...files, ...flattenArr(importFilesArr) }
+          // console.log(newFiles)
+          // setState 并且持久化
+          setFiles(newFiles)
+          saveFilesToStore(newFiles)
+          if (importFilesArr.length > 0) {
+            remote.dialog.showMessageBox({
+              type: 'info',
+              title: '提示',
+              message: `成功导入了${ importFilesArr.length }个文件`
+            })
+          }
+        }
       })
   }
 
   //flag
   let fileListArr = (searchFiles.length > 0) ? searchFiles : filesArr
-
+  //effect
+  useIpcRenderer({
+    'create-new-file': createNewFile,
+    'import-file': importFiles,
+    'save-edit-file': saveCurrentFile,
+  })
   //render
   return (
     <div className="App container-fluid px-0">
@@ -238,7 +294,7 @@ function App() {
                 icon={faFileImport}
                 text='导入'
                 colorClass='btn-success'
-                onBtnClick={() => { }}
+                onBtnClick={importFiles}
               />
             </div>
           </div>
@@ -268,12 +324,6 @@ function App() {
                 options={{
                   minHeight: '475px'
                 }}
-              />
-              <BottomBtn
-                icon={faSave}
-                text='保存'
-                colorClass='btn-danger'
-                onBtnClick={saveCurrentFile}
               />
             </>
           }

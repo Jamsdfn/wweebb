@@ -1,13 +1,19 @@
+//modules
 import React, { useState, useEffect, useRef } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faEdit, faTrash, faTimes } from '@fortawesome/free-solid-svg-icons'
+import { faTimes } from '@fortawesome/free-solid-svg-icons'
 import { faMarkdown } from '@fortawesome/free-brands-svg-icons'
 import PropTypes from 'prop-types'
 import useKeyPress from '../hooks/useKeyPress'
+import useContextMenu from '../hooks/useContextMenu'
+import { getParentNode } from '../utils/helper'
+
+
 
 const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
   const [editStatus, setEditStatus] = useState(false)
   const [value, setValue] = useState('')
+  const [sameNameFlag, setSameNameFlag] = useState(false)
   const node = useRef(null)
   const enterPressed = useKeyPress(13)
   const escPressed = useKeyPress(27)
@@ -20,6 +26,39 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
       onFileDelete(editItem.id)
     }
   }
+
+  const clickedItem = useContextMenu([
+    {
+      label: '打开',
+      click: () => {
+        const partentElement = getParentNode(clickedItem.current, 'file-item')
+        if (partentElement) {
+          onFileClick(partentElement.dataset.id)
+        }
+      }
+    },
+    {
+      label: '重命名',
+      click: () => {
+        const partentElement = getParentNode(clickedItem.current, 'file-item')
+        if (partentElement) {
+          setEditStatus(partentElement.dataset.id);
+          setValue(partentElement.dataset.title);
+        }
+        
+      }
+    },
+    {
+      label: '删除',
+      click: () => {
+        const partentElement = getParentNode(clickedItem.current, 'file-item')
+        if (partentElement) {
+          onFileDelete(partentElement.dataset.id)
+        }
+      }
+    }
+  ], '.file-list', [files])
+
 
   useEffect(() => {
     // const handleInputEvent = (e) => {
@@ -37,29 +76,41 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
     //   document.removeEventListener('keyup', handleInputEvent)
     // }
     const editItem = files.find(file => file.id === editStatus)
+    let flag = false
     if (enterPressed && editStatus && value.trim() !== '') {
-      onSaveEdit(editItem.id, value, editItem.isNew)
-      setEditStatus(false)
+      files.map((file => {
+        if (file.title === value) {
+          flag = true
+        }
+      }))
+      if (!flag) {
+        onSaveEdit(editItem.id, value, editItem.isNew)
+        setEditStatus(false)
+        setSameNameFlag(false)
+      } else {
+        setSameNameFlag(true)
+      }
     }
     if (escPressed && editStatus) {
       closeEdit(editItem)
+      setSameNameFlag(false)
     }
   })
-  
+
   useEffect(() => {
     const newFile = files.find(file => file.isNew)
     // console.log(newFile)
-    if(newFile) {
+    if (newFile) {
       setEditStatus(newFile.id)
       setValue(newFile.title)
     }
-  },[files])
+  }, [files])
 
   useEffect(() => {
     if (editStatus) {
       node.current.focus()
     }
-  },[editStatus])
+  }, [editStatus])
 
   return (
     <ul className='file-list list-group list-group-flush'>
@@ -69,10 +120,12 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
             <li
               className='row no-gutters list-group-item bg-light d-flex align-items-center file-item'
               key={file.id}
+              data-id={file.id}
+              data-title={file.title}
             >
               {((file.id !== editStatus) && !file.isNew) &&
                 <>
-                  <span className='col-2'>
+                  <span className='col-2 ml-2'>
                     <FontAwesomeIcon
                       icon={faMarkdown}
                     />
@@ -83,24 +136,6 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
                   >
                     {file.title}
                   </span>
-                  <button
-                    className='icon-button col-1 mr-3'
-                    onClick={() => { setEditStatus(file.id); setValue(file.title); }}
-                  >
-                    <FontAwesomeIcon
-                      title='编辑'
-                      icon={faEdit}
-                    />
-                  </button>
-                  <button
-                    className='icon-button col-1'
-                    onClick={() => { onFileDelete(file.id) }}
-                  >
-                    <FontAwesomeIcon
-                      title='删除'
-                      icon={faTrash}
-                    />
-                  </button>
                 </>
               }
               {
@@ -116,11 +151,17 @@ const FileList = ({ files, onFileClick, onSaveEdit, onFileDelete }) => {
                   />
                   <button
                     className='icon-button search col-2'
-                    onClick={() => {closeEdit(file)}}
+                    onClick={() => { closeEdit(file) }}
                   >
                     <FontAwesomeIcon title='关闭' icon={faTimes} />
                   </button>
                 </>
+              }
+              {
+                (file.id === editStatus && sameNameFlag) &&
+                <div className="mt-2 mb-0 warnning alert alert-warning" role="alert">
+                  <strong>警告！</strong>已存在同名文件
+                </div>
               }
             </li>
           )

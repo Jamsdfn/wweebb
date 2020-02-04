@@ -47,3 +47,7 @@
 .CodeMirror {
   border-bottom-left-radius:0 !important;
 }
+
+.warnning {
+  width: 100%;
+}
