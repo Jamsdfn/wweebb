@@ -21,7 +21,14 @@ const fs = window.require('fs')
 const path = window.require('path')
 const { remote, ipcRenderer } = window.require('electron')
 const Store = window.require('electron-store')
+const request = require('request')
 
+request({
+	url: 'http://127.0.0.1:3001/sts',
+}, function (err, response, body) {
+		var data = JSON.parse(body);
+		console.log(data)
+});
 
 //fileDate Storage
 const fileStore = new Store({ 'name': 'Files Data' })
