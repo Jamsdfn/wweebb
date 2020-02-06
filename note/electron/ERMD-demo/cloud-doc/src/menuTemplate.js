@@ -1,4 +1,6 @@
-module.exports = (app, shell, ipcMain) =>{
+module.exports = (app, shell, ipcMain, settingsStore) =>{
+  const cosIsConfig = ['accessId', 'accessKey', 'bucket', 'region'].every(key => settingsStore.get(key))
+  let enableAutoSync = settingsStore.get('enableAutoSync')
   let template = [
     {
       label: '文件',
@@ -27,12 +29,6 @@ module.exports = (app, shell, ipcMain) =>{
           accelerator: 'CmdOrCtrl+O',
           click: (menuItem, browserWindow, event) => {
             browserWindow.webContents.send('import-file')
-          }
-        }, {
-          label: '设置',
-          accelerator: 'Command+,',
-          click: () => {
-            ipcMain.emit('open-setting-window')
           }
         }
       ]
@@ -66,6 +62,38 @@ module.exports = (app, shell, ipcMain) =>{
           label: '全选',
           accelerator: 'CmdOrCtrl+A',
           role: 'selectall'
+        }
+      ]
+    },
+    {
+      label: '云同步',
+      submenu: [
+        {
+          label: '设置',
+          accelerator: 'Command+,',
+          click: () => {
+            ipcMain.emit('open-setting-window')
+          }
+        }, {
+          label: '自动同步',
+          type: 'checkbox',
+          enabled: cosIsConfig,
+          checked: enableAutoSync,
+          click: () => {
+            settingsStore.set('enableAutoSync', !enableAutoSync)
+          }
+        }, {
+          label: '全部同步至云端',
+          enabled: cosIsConfig,
+          click: () => {
+            ipcMain.emit('upload-all-to-cos')
+          }
+        }, {
+          label: '从云端下载至本地',
+          enabled: cosIsConfig,
+          click: () => {
+
+          }
         }
       ]
     },
@@ -149,7 +177,7 @@ module.exports = (app, shell, ipcMain) =>{
           label: '设置',
           accelerator: 'Command+,',
           click: () => {
-  
+            ipcMain.emit('open-setting-window')
           }
         }, {
           label: '服务',

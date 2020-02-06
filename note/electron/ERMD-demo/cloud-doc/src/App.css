@@ -51,3 +51,14 @@
 .warnning {
   width: 100%;
 }
+
+.sync-status {
+  font-size: 12px;
+  color: #959694;
+  position: absolute;
+  bottom: 12px;
+  left: 10px;
+}
+.CodeMirror-scroll {
+  height: 475px !important;
+}

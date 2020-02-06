@@ -1,30 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>设置</title>
   <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="./settings.css">
 </head>
+
 <body>
-  <div class="container mt-4">
-    <h5>设置</h5>
-    <div>
-      <div class="form-froup">
-        <label for="exampleInputPassword1">选择文件存储位置</label>
-        <div class="input-group mb-2">
-          <input type="text" id='saved-file-location' class="form-control" placeholder="当前存储地址" readonly>
-          <div class="input-group-append">
-            <button class="btn btn-outline-primary" type="buttom" id="select-new-location">选择新的位置</button>
+  <div class="container mt-2">
+    <div class="settings-form">
+      <ul class="nav nav-tabs">
+        <li class="nav-item">
+          <a class="nav-link active" href="#" data-tab='#config-file-location'>选择文件存储位置</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#" data-tab='#cos-sync-params'>腾讯云同步</a>
+        </li>
+      </ul>
+      <div id='config-file-location' class="config-area mt-4">
+        <div class="form-froup">
+          <label for="exampleInputPassword1">选择文件存储位置</label>
+          <div class="input-group mb-2">
+            <input type="text" id='saved-file-location' class="form-control" placeholder="当前存储地址" readonly>
+            <div class="input-group-append">
+              <button class="btn btn-outline-primary" type="buttom" id="select-new-location">选择新的位置</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id='cos-sync-params' class="config-area mt-4">
+        <div class="form-group row">
+          <label for="accessId" class="col-3 col-form-label">SecretId</label>
+          <div class="col-9">
+            <input type="text" class="form-control" id='accessId'>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="accessKey" class="col-3 col-form-label">SecretKey</label>
+          <div class="col-9">
+            <input type="text" class="form-control" id='accessKey'>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="bucket" class="col-3 col-form-label">Bucket</label>
+          <div class="col-9">
+            <input type="text" class="form-control" id='bucket'>
+          </div>
+        </div>
+        <div class="form-group row">
+          <label for="region" class="col-3 col-form-label">Region</label>
+          <div class="col-9">
+            <input type="text" class="form-control" id='region'>
           </div>
         </div>
       </div>
       <button id="settings-form" class="btn btn-primary">保存</button>
-    </form>
-  </div>
-  <script>
-    require('./settings.js')
-  </script>
+    </div>
+    <script>
+      require('./settings.js')
+    </script>
 </body>
+
 </html>
