@@ -92,7 +92,7 @@ module.exports = (app, shell, ipcMain, settingsStore) =>{
           label: '从云端下载至本地',
           enabled: cosIsConfig,
           click: () => {
-
+            ipcMain.emit('download-all-to-local')
           }
         }
       ]

@@ -1,11 +1,8 @@
 const COS = require('cos-nodejs-sdk-v5')
 const fs = require('fs')
-const request = require('request')
 
 class cosManager {
   constructor(accesstId, accessKey, bucket, region) {
-    // 在开发阶段我们用临时密钥就可以了
-    // TODO: 根据用户自己添加的密钥，在设置界面可以加一个添加密钥功能(添加的值放入store中)，用于上传用户自己的bucket
     this.cos = new COS({
       SecretId: accesstId,
       SecretKey: accessKey
@@ -29,6 +26,21 @@ class cosManager {
     // });
     this.bucket = bucket
     this.region = region
+  }
+
+  renameFile(oldkey, newkey, path) {
+    return new Promise((resolve, reject) => {
+      this.deleteFile(oldkey)
+        .then((data) => {
+          return this.uploadFIle(newkey, path)
+        })
+        .then((data) => {
+          resolve(data)
+        })
+        .catch(err => {
+          reject(err)
+        })
+    })
   }
 
   uploadFIle(key, localFilePath) {
@@ -108,6 +120,22 @@ class cosManager {
       });
     })
   }
+  getAllStat() {
+    return new Promise((resolve, reject) => {
+      this.cos.getBucket({
+        Bucket: this.bucket, /* 必须 */
+        Region: this.region,    /* 必须 */
+      }, function (err, data) {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(data.Contents)
+        }
+      })
+    })
+  }
+
 }
+
 
 module.exports = cosManager

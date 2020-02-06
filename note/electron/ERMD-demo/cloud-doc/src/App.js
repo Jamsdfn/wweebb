@@ -1,6 +1,6 @@
 //modules
-import React, { useState, useEffect } from 'react'
-import { faPlus, faFileImport, faSave } from '@fortawesome/free-solid-svg-icons'
+import React, { useState } from 'react'
+import { faPlus, faFileImport } from '@fortawesome/free-solid-svg-icons'
 import uuidv4 from 'uuid/v4'
 //style
 import './App.css'
@@ -62,11 +62,12 @@ const checkfile = (files) => {
 
 function App() {
   //state
-  const [files, setFiles] = useState(checkfile(fileStore.get('files')))
+  const [files, setFiles] = useState(checkfile(fileStore.get('files') || {}) || {})
   const [activeFileID, setActiveFileID] = useState('')
   const [openedFileIDs, setOpenedFileIDs] = useState([])
   const [unsaveFileIDs, setUnsaveFileIDs] = useState([])
   const [searchFiles, setSearchFiles] = useState([])
+  const [ isLoading, setLoading ] = useState(false)
   //location
   const savedLocation = settingsStore.get('saveFileLocation') || path.join(remote.app.getAppPath(), 'doc')
   //files
@@ -148,6 +149,11 @@ function App() {
     } else {
       fileHelper.deleteFile(files[id].path)
         .then(() => {
+          if (getAutoSync()) {
+            ipcRenderer.send('delete-file', {
+              key: `${files[id].title}.md`
+            })
+          }
           const { [id]: value, ...afterDelete } = files
           setFiles(afterDelete)
           saveFilesToStore(afterDelete)
@@ -183,6 +189,13 @@ function App() {
     } else {
       fileHelper.renameFile(oldPath, newPath)
         .then(() => {
+          if (getAutoSync()) {
+            ipcRenderer.send('rename-file', {
+              oldkey: `${files[id].title}.md`,
+              newkey: `${title}.md`,
+              path: newPath
+            })
+          }
           setFiles(newFiles)
           saveFilesToStore(newFiles)
         })
@@ -301,6 +314,49 @@ function App() {
       })
   }
 
+  const filesUploaded = () => {
+    const newFiles = objToArr(files).reduce((result, file) => {
+      const currentTime = new Date().getTime()
+      result[file.id] = {
+        ...files[file.id],
+        isSynced: true,
+        updateAt: currentTime
+      }
+      return result
+    }, {})
+    setFiles(newFiles)
+    saveFilesToStore(newFiles)
+  }
+
+  const downloadedAllFiles = (event, message) => {
+      // const newID = uuidv4()
+      // const newFile = {
+      //   id: newID,
+      //   title: '',
+      //   body: '## 新建文档',
+      //   createAt: new Date().getTime(),
+      //   isNew: true
+      // }
+      // setFiles({ ...files, [newID]: newFile })
+    const currentTime = new Date().getTime()
+    let newFiles = files
+    message.titleArr.forEach(value => {
+      const newID = uuidv4()
+      const newFile = {
+        id: newID,
+        title: value,
+        createAt: currentTime,
+        isSynced: true,
+        updateAt: currentTime,
+        path: path.join(settingsStore.get('saveFileLocation'), `${value}.md`)
+      }
+      // setFiles({ ...files, [newID]: newFile })
+      newFiles = { ...newFiles, [newID]: newFile }
+    })
+    setFiles(newFiles)
+    saveFilesToStore(newFiles)
+  }
+
   //flag
   let fileListArr = (searchFiles.length > 0) ? searchFiles : filesArr
   //effect
@@ -310,11 +366,14 @@ function App() {
     'save-edit-file': saveCurrentFile,
     'active-file-uploaded': activeFileUploaded,
     'file-downloaded': activeFileDownloaded,
+    'loading-status': (message, status) => { setLoading(status)},
+    'files-uploaded': filesUploaded,
+    'downloaded-all-files': downloadedAllFiles
   })
   //render
   return (
     <div className="App container-fluid px-0">
-      <Loader />
+      { isLoading && <Loader />}
       <div className="row no-gutters">
         <div className="col-3 left-panel">
           <FileSearch

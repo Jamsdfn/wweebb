@@ -1850,6 +1850,91 @@ Proxy 可以理解成，在目标对象之前架设一层“拦截”，外界�
 
 如有还有问题，可以参考本文档参考书籍 http://es6.ruanyifeng.com/
 
+#### Pomise.all的使用
+
+**Promise.all可以将多个Promise实例包装成一个新的Promise实例。同时，成功和失败的返回值是不同的，成功的时候返回的是一个结果数组，而失败的时候则返回最先被reject失败状态的值。**
+
+具体代码如下：
+
+
+
+```jsx
+let p1 = new Promise((resolve, reject) => {
+  resolve('成功了')
+})
+
+let p2 = new Promise((resolve, reject) => {
+  resolve('success')
+})
+
+let p3 = Promse.reject('失败')
+
+Promise.all([p1, p2]).then((result) => {
+  console.log(result)               //['成功了', 'success']
+}).catch((error) => {
+  console.log(error)
+})
+
+Promise.all([p1,p3,p2]).then((result) => {
+  console.log(result)
+}).catch((error) => {
+  console.log(error)      // 失败了，打出 '失败'
+})
+```
+
+Promse.all在处理多个异步处理时非常有用，比如说一个页面上需要等两个或多个ajax的数据回来以后才正常显示，在此之前只显示loading图标。
+
+代码模拟：
+
+
+
+```dart
+let wake = (time) => {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      resolve(`${time / 1000}秒后醒来`)
+    }, time)
+  })
+}
+
+let p1 = wake(3000)
+let p2 = wake(2000)
+
+Promise.all([p1, p2]).then((result) => {
+  console.log(result)       // [ '3秒后醒来', '2秒后醒来' ]
+}).catch((error) => {
+  console.log(error)
+})
+```
+
+**需要特别注意的是，Promise.all获得的成功结果的数组里面的数据顺序和Promise.all接收到的数组顺序是一致的，即p1的结果在前，即便p1的结果获取的比p2要晚。这带来了一个绝大的好处：在前端开发请求数据的过程中，偶尔会遇到发送多个请求并根据请求顺序获取和使用数据的场景，使用Promise.all毫无疑问可以解决这个问题。**
+
+#### Promise.race的使用
+
+顾名思义，Promse.race就是赛跑的意思，意思就是说，Promise.race([p1, p2, p3])里面哪个结果获得的快，就返回那个结果，不管结果本身是成功状态还是失败状态。
+
+```jsx
+let p1 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    resolve('success')
+  },1000)
+})
+
+let p2 = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    reject('failed')
+  }, 500)
+})
+
+Promise.race([p1, p2]).then((result) => {
+  console.log(result)
+}).catch((error) => {
+  console.log(error)  // 打开的是 'failed'
+})
+```
+
+原理是挺简单的，但是在实际运用中还没有想到什么的使用场景会使用到。
+
 ### Iterator 和 for...of 循环
 
 JavaScript 原有的表示“集合”的数据结构，主要是数组（`Array`）和对象（`Object`），ES6 又添加了`Map`和`Set`。这样就有了四种数据集合，用户还可以组合使用它们，定义自己的数据结构，比如数组的成员是`Map`，`Map`的成员是对象。这样就需要一种统一的接口机制，来处理所有不同的数据结构。
