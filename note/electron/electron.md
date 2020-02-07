@@ -1044,9 +1044,287 @@ $ npm install --save-dev devtron
 require('devtron').install()
 ```
 
+## 打包（electron-builder）
+
+以下方法基于 create-react-app + electron 建立的工程
+
+> 文档： https://www.electron.build/
+
+选择 electron-builder 打包electron应用
+
+```shell
+npm i electron-builder -D
+```
+
+添加配置文件
+
+```json
+// 在package.json 文件的最顶层（第一个括号里）添加配置
+{
+    // 静态资源加载不出来的问题，因为create-react-app打包出来的是绝对路径
+    "homepage":"./",
+    "build": {
+    "appId": "cloudDoc",
+    "productName": "腾讯云文档",
+    "copyright": "Copyright © 2019 ${author}",
+    // 解决 Application entry file "build\electron.js" in the 错误
+    "extends": null,
+    // electron-builder的pack命令是把build文件默认为安装包才需要的，因此pack之后生成的文件读不到build目录下的文件，因此即使pack成功也显示不出内容(render process)，因此要加files这个字段
+    //但是如果加了这个字段，那么就不换走默认的打包程序，要我们自己吧所有需要打包的都列出来
+    "files": [
+      // create-react-app 中 webpack 打包好的文件路径
+      "build/**/*",
+      "node_modules/**/*",
+      "settins/**/*",
+      "package.json",
+      "main.js",
+        // 下面三个是在 mian.js 里面用的，create-react-app是打包不到的，所有要引
+      "./src/menuTemplate.js",
+      "./src/AppWindow.js",
+      "./src/utils/cosManager.js"
+    ],
+     // 以下为安装包需要的信息
+        // 静态文件路径（icon信息）
+    "directories": {
+      "buildResources": "assets"
+    },
+      // macOS
+    "mac": {
+        // 安装目录
+      "category": "public.app-category.productivity",
+        // 安装包的名字
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+        "background": "assets/appdmg.png",
+        "icon": "assets/icon.icns",
+        "iconSize": 100,
+        "contents": [
+            {
+                "x":380,
+                "y":280,
+                "type": "link",
+                "path": "/Applications"
+            },{
+                "x": 110,
+                "y": 280,
+                "type": "file"
+            }
+        ],
+        "window": {
+            "width":500,
+            "height":500
+        }
+    },
+    "win": {
+        "target": [
+            "nsis"
+        ],
+        "icon": "assets/icon.ico",
+        "artifactName": "${productName}-Web-Setup-${version}.${ext}",
+        "publisherName": "Jamsdfn"
+    },
+    "nsis": {
+        // 是否运行自定义安装路径
+        "allowToChangeInstallationDirectory": true,
+        // 是否一键安装
+        "oneClick": false,
+        // 是否安装所以用户都可使用的应用（一台win机可以有多个User账号）
+        "perMachine": false
+    }
+    // 以上为安装包需要的信息
+  },
+	"author": {
+        "name": "Jamsdfn",
+        "email": "jamsdfn_du@163.com"
+      },
+	"repository": "https://github.com/Jamsdfn/wweebb/tree/master/note/electron/ERMD-demo/cloud-doc",
+    "script": {
+        // 直接打包出一个安装好的文件夹
+        "pack": "electron-builder --dir",
+        // 打包一个安装包
+    	"dist": "electron-builder",
+    	// 这个prepack意思是在pack前先运行一个build命令，
+    	"prepack": "npm run build"
+        // 在xxx命令运行完后运行yyy
+        //"afterxxx": "npm run yyy"
+	}
+}
+
+  
+```
+
+配置好之后
+
+```shell
+# 如果 package.json script中没加了prepack字段，分先后运行下面指令
+$ npm run build
+#如果 package.json script中加了prepack字段，直接pack就好了
+$ npm run pack
+# 安装包配置配置好之后，build 之后，运行命令生成安装包
+$ npm run dist
+```
+
+> 生成的安装包就可以直接安装了，如果想更细化安装配置可以看文档
+>
+> https://www.electron.build/generated/nsisoptions
+
+如果懒得在json文件配置，pack后，参照本文最后使用可视化配置安装文件工具（NSIS）生成安装包。
+
+### 优化打包后的体积
+
+#### 前端优化（render）
+
+​	如果想给打包出来的文件压缩体积，可以像**build之后**，修改一下package.json 文件，**把webpack build了的dependencies 移动到 devDependencies**。
+
+​	因为 webpack build了且 pack 打包的文件中体积最大的就是 app.asar 文件，而 asar 文件是 electron 的压缩文件，其中体积最大的就是 node_modules，而这个依赖文件夹中只含 dependencies 的依赖，因此减少dependencies 的项就可以大大减小 pack 打包后的体积。
+
+​	原本 dependencies 的依赖的功能都被build到静态js文件中，把这些依赖放入开发依赖中pack也不会对应用功能产生影响。
+
+**注**：**只能把 能被build到的依赖 移走，不能被build到的依赖要留下！**如react环境中使用 window.require('') 引入的文件都是不被webpack打包的，这些不能被移走
+
+#### electron优化 (main)
+
+​	可以自己配置 webpack，然后打包到静态文件，之后把 electron 的 main.js 中的引入的依赖或者自己写的一些工具文件也提出去，然后在 pack 的配置项的 files 中把main.js和其相关引入文件都去掉了。
+
+​	通常把 main.js 直接打包到build/mian 中，如果直接pack会报错，因为原始main.js的依赖没了，所以要在build加上 extraMetadata 项，修改electron的入口文件路径
+
+```json
+"build": {
+    "appId": "cloudDoc",
+    "productName": "腾讯云文档",
+    "copyright": "Copyright © 2019 ${author}",
+    "extends": null,
+    "files": [
+      "build/**/*",
+      "node_modules/**/*",
+      "settins/**/*",
+      "package.json"
+        // 把mian和main相关的文件都可以去掉了
+    ],
+    // 修改electron的入口文件
+    "extraMetadata": {
+        "main": "./build/main.js"
+    }
+}
+```
+
+### 自动发布(更新)
+
+> https://www.electron.build/configuration/publish
+
+**开发者发布**
+
+选择一个供开发者发布应用的网站[Bintray](https://www.electron.build/configuration/publish#bintrayoptions), [Generic Server](https://www.electron.build/configuration/publish#genericserveroptions), [GitHub](https://www.electron.build/configuration/publish#githuboptions), [S3](https://www.electron.build/configuration/publish#s3options), [Spaces](https://www.electron.build/configuration/publish#spacesoptions) or [Snap Store](https://www.electron.build/configuration/publish#snapstoreoptions)
+
+注意更新上传（fetch）的 version 版本号，下载的用户会自动判断是否有新版本提示用户下载
+
+```js
+"build": {
+    "publish": ["github"]
+}
+```
+
+每次新版本的发布都加一个release，把安装包放入 release 中，package.json 加一个 script，这样electron-builder每次 dist 都会执行多一条命令，把打包好的文件发布一条release
+
+```json
+"script": {
+    "release": "cross-env GH_TOKEN=xxxxxx electron-builder",
+    "prelease": "npm run build"
+}
+```
+
+github 新建一个 token 供开发者发布 release（如何新建可以百度谷歌），新建好后把token的值放入指令中
+
+设置后，每次 release 都会往 github 上 publish一条release，然后登进 github 打开项目。
+
+​	点击github项目中的 release 。进入界面就会有一条状态为 Draft 的 release，点进这条 draft release 然后 点击 edit draft 的按钮，根据需求edit一下，其实就是填一下发布更新的内容，然后滚到最后点publish按钮（执行 dist 命令之后就会把安装包上传了，所以可以直接publish了），那么draft release 就会变成 latest release，就成功发布了。
+
+**用户应用加入自动更新功能**
+
+安装 electron-updater `npm i electron-updater -D`
+
+在main.js 中引入依赖，在下载的生命周期中，每个时刻都会 emit 一个事件可以看看文档
+
+> https://www.electron.build/auto-update
+
+```js
+const {autoUpdater} = require('electron-updater')
+
+app.on('ready',() => {
+    autoUpdater.autoDownload = false
+    autoUpdater.checkForUpdatesAndNotify()
+    autoUpdater.on('error', (err) => {
+        dialog.showErrorBox('Error', error == null ? 'unknown' : (error.status))
+    })
+    autoUpdater.on('update-available', () => {
+        dialog.showMessageBox ({
+        	type: 'info',
+        	title: '应用有新的版本',
+        	message: '发现新版本，是否现在更新？',
+        	button: ['是', '否']
+    	}, (btnIndex) => {
+    		if (btnIndex === 0) {
+                autoUpdater.downloadUpdate()
+            }
+		})
+    })
+    autoUpdater.on('update-not-available', () => {
+        
+    })
+    // ... 应用程序
+})
+```
+
+autoUpdater 是继承 emit的类，因此可以给程序发emit让程序响应事件
+
+**开发过程中测试自动更新**
+
+在项目根目录创建一个文件 `dev-app-update.yml`
+
+```yml
+owner: githubID
+repo: githubRepository
+provider: github
+```
+
+```js
+// main 文件中
+const {autoUpdater} = require('electron-updater')
+
+app.on('ready',() => {
+    if (isDev) {
+        autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
+    }
+    autoUpdater.autoDownload = false
+    autoUpdater.checkForUpdatesAndNotify()
+    autoUpdater.on('error', (err) => {
+        dialog.showErrorBox('Error', error == null ? 'unknown' : (error.status))
+    })
+    autoUpdater.on('update-available', () => {
+        dialog.showMessageBox ({
+        	type: 'info',
+        	title: '应用有新的版本',
+        	message: '发现新版本，是否现在更新？',
+        	button: ['是', '否']
+    	}, (btnIndex) => {
+    		if (btnIndex === 0) {
+                autoUpdater.downloadUpdate()
+            }
+		})
+    })
+    autoUpdater.on('update-not-available', () => {
+        
+    })
+    // ... 应用程序
+})
+```
+
+
+
 ## 注意
 
-Electron的主线程才能用的功能。如果在渲染器进程中想使用的话, 就要引入 remote ，这个remote就包含了主进程中所有的功能。详细解释参见上文 **主进程和渲染器进程** 一节的题外话。
+​	Electron的主线程才能用的功能。如果在渲染器进程中想使用的话, 就要引入 remote ，这个remote就包含了主进程中所有的功能。详细解释参见上文 **主进程和渲染器进程** 一节的题外话。
 
 # 题外话
 
@@ -1064,7 +1342,7 @@ $ set http_proxy=
 $ set http_proxy
 ```
 
-## 打包后如何生成安装文件
+## 可视化生成安装文件
 
 - windows  
   - 简单的方法就是在应用打包后把生成的 win-unpacked 压缩成ZIP,再用NSIS的ZIP转压缩包功能直接生成就可以了，或者参考 https://segmentfault.com/a/1190000016707052 进行一步步安装

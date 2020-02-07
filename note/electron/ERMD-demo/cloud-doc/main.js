@@ -1,7 +1,7 @@
 const { app, Menu, shell, ipcMain, dialog } = require('electron')
 const isDev = require('electron-is-dev')
 const defaultMenu = require('./src/menuTemplate')
-const AppWindow = require('./src/AppWinodw')
+const AppWindow = require('./src/AppWindow')
 const path = require('path')
 const Store = require('electron-store')
 const cosManager = require('./src/utils/cosManager')
@@ -31,7 +31,7 @@ app.on('ready', () => {
     width: 1024,
     height: 680,
   }
-  const urlLocation = isDev ? 'http://localhost:3000' : 'dummyurl'
+  const urlLocation = isDev ? 'http://localhost:3000' : `file://${path.join(__dirname, 'build/index.html')}`
   mainWindow = new AppWindow(mainWindowConfig, urlLocation)
   // mainWindow.loadURL(urlLocation)
   mainWindow.on('closed', () => {

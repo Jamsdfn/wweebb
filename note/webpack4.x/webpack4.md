@@ -827,5 +827,21 @@ $('#center').click(() => {
 
 ```
 
+## 问题
+
+服务端用 `path.join(__dirname)`可能会有问题`__dirname` ,可能会变成服务端的 '/'  导致output文件的位置变成根目录而不是Node.js 中`__dirname` 的当前目录。
+
+**解决**
+
+配置文件加一项
+
+```js
+node: 
+    __dirname: false
+},
+```
+
+这样 `__dirname` 的值就会是 webpack 编译文件的绝对路径了
+
 
 
