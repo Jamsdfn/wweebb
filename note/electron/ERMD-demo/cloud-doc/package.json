@@ -101,22 +101,23 @@
         }
       ],
       "window": {
-          "width":500,
-          "height":500
+        "width": 500,
+        "height": 500
       }
     },
     "win": {
-        "target": [
-            "msi", "nsis"
-        ],
-        "icon": "assets/icon.ico",
-        "artifactName": "${productName}-Setup-${version}.${ext}",
-        "publisherName": "Jamsdfn"
+      "target": [
+        "msi",
+        "nsis"
+      ],
+      "icon": "assets/icon.ico",
+      "artifactName": "${productName}-Setup-${version}.${ext}",
+      "publisherName": "Jamsdfn"
     },
     "nsis": {
-        "allowToChangeInstallationDirectory": true,
-        "oneClick": false,
-        "perMachine": false
-      }
+      "allowToChangeInstallationDirectory": true,
+      "oneClick": false,
+      "perMachine": false
+    }
   }
 }
