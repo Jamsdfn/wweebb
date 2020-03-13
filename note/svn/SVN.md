@@ -106,15 +106,13 @@ $ svn update
 
    4. 需要提交代码 (其它人更新即可)
 
-## 添加忽略
-
-类似git 的.gitignore
-
 ## 图形化界面SVN
 
 比如conerstone。注意xcode建的项目data结尾的文件夹都不要提交，那是记录xcode状态的文件而已。
 
 ![](./1.png)
+
+用xcode新建项目的时候直接用checkout创建项目也是可以的。不过对svn支持的不太好，但是对git支持的挺不错的。
 
 ## 常见问题
 
