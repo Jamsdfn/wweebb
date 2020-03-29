@@ -71,6 +71,21 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 - vh单位，视窗高度的百分比
 - vw单位，视窗宽度的百分比
 
+## 数组
+
+Array.prototype.sort()
+
+```js
+
+var a = [1,2,5,3]
+a.sort((forward,next) => {
+    // 如果返回值小于零则为first second 不改变位置，如果大于零则改变位置
+    //return forward-next // 升序
+    return next-forward// 降序
+})
+```
+
+
 
 ## 工具
 
