@@ -101,6 +101,10 @@ const fs = window.require('fs')
 
 因为在 create-react-app 的环境下使用webpack打包的，它会把require当成一个用户自定义的function直接打包，在前面加一个window就可以避免webpack直接打包。在node环境下使用CommonJS的规范引入核心模块
 
+## MarkDown 编辑器
+
+> 用的SimpleMDE https://github.com/sparksuite/simplemde-markdown-editor
+
 ## electron-store
 
 一个简单的数据持久化的方案，是一个插件，不用装数据库（其实就是把数据存在了一个JSON 文件中，存放在了app.getPath('userData')中）

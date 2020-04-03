@@ -17,5 +17,5 @@ server.on('request',function () {
 
 //启动服务器，绑定端口号
 server.listen(3000,function () {
-    console.log('服务器启动成功')
+    console.log('running...')
 })

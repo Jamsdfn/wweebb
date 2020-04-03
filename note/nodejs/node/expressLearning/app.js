@@ -10,7 +10,7 @@ app.get('/', function (req, res) {
     .get('/about', function (req, res) {
         res.send("我是express")
     })
-    .get('/login', function (req, res) {
+    .use('/login', function (req, res) {
         res.send(`
         <!DOCTYPE html>
         <html lang="zh-CN">
