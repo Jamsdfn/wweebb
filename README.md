@@ -95,13 +95,13 @@ a.sort((forward,next) => {
 
 4、只要“&&”前面是true，无论“&&”后面是true还是false，结果都将返“&&”后面的值;
 
-A: 1&&3 => 3  => 3&&1 = >1
+A: 1&&3&&1 = >1
 
-B:1&&2 => 2 => 2&&3  =>3
+B:1&&2&&3  =>3
 
-C:1||0=> 1  =>  1||3  =>1
+C:1||0||3  =>1
 
-D:0||1=>  1  =>  1||2  =>1
+D:0||1||2  =>1
 
 ## 回流和重绘
 
@@ -125,7 +125,7 @@ repaint：如果只是改变某个元素的背景色、文 字颜色、边框颜
 
 **4：激活伪类，如:hover**
 
-**5：操作class属性**
+**5：一些class属性的改变**
 
 **6：脚本操作DOM**
 
@@ -247,6 +247,39 @@ for(i=0;i<10;i++){
 　　一系列关于windowHeight的操作.......
 
 }
+
+## 宏任务与微任务
+
+宏任务一般是：包括整体代码script，setTimeout，setInterval。
+
+微任务：Promise，process.nextTick。
+
+setTimeout 和 setInterval 这连个宏异步任务，指向后是放到任务队列的最后，要比微任务后，因此当指向异步任务的时候无论位置如何，先执行Promise这一类异步任务在执行宏的异步任务
+
+```js
+// 定时器任务属于宏任务，并且需要先在任务队列等待，等到同步任务执行完，执行栈清空，才会在任务队列中按顺序选任务进去
+setTimeout(() => console.log('a'));//4. 打印a
+ 
+//Promise 属于异步微任务，在本轮同步任务结束之前执行
+Promise.resolve().then(
+    // 1. 打印 b
+   () => console.log('b')  //
+ ).then(
+    // 箭头函数的resolve传递的参数作为下一个then的参数
+   () => Promise.resolve('c').then(
+     // 执行箭头函数
+     (data) => {
+        // 把定时器任务也放入任务队列中等待，在第一个定时器之后
+       setTimeout(() => console.log('d')); //5. 打印d
+       // 2.打印 f
+       console.log('f');
+       // 此时返回的 数据作为下一个then的参数
+       return data;
+     }
+   )
+ ).then(data => console.log(data)); // 3.打印 c
+// 打印顺序 bfcad 
+```
 
 ## MVC和MVVM
 
@@ -469,8 +502,6 @@ function shallowEqual(objA: mixed, objB: mixed): boolean {
 
 +0 === -0; // js 打印true
 NaN === NaN; // js 打印false
-1
-2
 我们希望上述的判断结果，+0和-0为false，NaN与NaN为true，这时候可以用这种方式
 
 1/+0 // 结果为Infinity
@@ -577,6 +608,60 @@ handleClick() {
 
 function Component：写纯函数组件非常简洁优雅，官方也推荐这种写法。但是，这并不代表纯函数组件是性能最好的组件写法。
 在内部被包装成了一个只有render方法的StatelessComponent组件，在所有情况下都会更新。后来出了Hook来管理组件是否更新。我也在electron的note中的项目中专门讲了React Hook的用法，其实就是使用Effect来判断需要更新组件，把那些改变的的state或者prop放入effect的第二个参数的数组中就可以了。数组中任何一个变量的改变都会更新Fnction Component组件
+
+### 虚拟DOM
+
+其实就是dom树的一个映射，一个dom封装成一个类，标签属性就是类的属性，这个类里也有属性指向子类。根据dom tree 一层套一层，最终形成虚拟dom
+
+```js
+function createElement(type, props, children) {
+    return new Element(type, props, children)
+}
+class Element{
+    constructor(type, props, children){
+        this.type = type;// 标签的 tag
+        this.props = props;// 标签的属性
+        this.children = children // 子标签
+    }
+}
+
+let virtualDom1 = createElement('ul', {class: 'list'}, [
+    createElement('li', {class: 'item'}, ['a']),
+    createElement('li', {class: 'item'}, ['b']),
+    createElement('li', {class: 'item'}, ['c']),
+])
+let virtualDom2 = createElement('ul', {class: 'list'}, [
+    createElement('li', {class: 'item'}, ['1']),
+    createElement('li', {class: 'item'}, ['2']),
+    createElement('li', {class: 'item'}, ['3']),
+])
+let el = render(virtualDom);
+renderDom(el, window.root);
+let patchs = diff(virtualDom1, virtualDom2);
+```
+
+### diff 算法
+
+三种策略 tree diff、component diff、element diff
+
+![](./4.png)
+
+**tree diff** 
+
+- 就是对比，对虚拟dom进行深度便利，一个一个节点对比可如果没有了就直接把该节点以及其所有子孙节点全部删除。如果某节点改变了，那么是先删掉就的节点，在把新的节点及其子节点一个一个加上。
+
+**component diff** 
+
+- 如果是同一类组件那么先根据shouldComponentUpdate函数判断是否更新组件，如果是则，直接那么按照virtual DOM 的 tree diff的原策略继续遍历，否则直接返回
+- 如果是不同类的逐渐，直接整个节点及其子孙节点替换为新逐渐
+
+**Element diff**
+
+- 如果是同一层级（有同一个父节点，即兄弟节点），那么如果改变了，那么根据变动会对element进行插入 移动 和 删除这三个方法的操作。
+- 如果按照tree diff策略那么会进行大量的dom操作，因为只要是改变位置都会删掉旧的节点创建新的节点，因此在element diff 中给每一个element都加了key，就是为了方便重用dom减少回流的性能损耗
+- 因此对element diff 的操作过程是先对列表组件加key，然后遍历确定要删除和新增的，然后把删除的直接删掉，然后创建新的节点，最后根据新的位置移动到相应的位置。加了key就是为了重用dom，减少对dom操作，从而提升性能。
+
+![](./5.png)
 
 ## 工具
 
