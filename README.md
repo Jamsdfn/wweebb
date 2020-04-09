@@ -70,6 +70,65 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 
 - vh单位，视窗高度的百分比
 - vw单位，视窗宽度的百分比
+- rem 相对于根字体大小（html）的单位，比如可以设置 1rem=50px
+-  em 相对于父级的font-size，比如font-size：16px（浏览器默认），则2em=32px
+
+## flex
+
+阮一峰老师的教程，写的十分详尽http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html
+
+## js new
+
+1. 创建一个空对象
+2. 连接原型链
+3. 绑定this
+4. 返回新对象
+
+```js
+function create(){
+    // 1. 创建空对象
+    let obj = new Object();
+    // 2. 链接原型
+    let con = [].shift.call(arguments) 
+    obj.__proto__ = con.prototype
+    // 3. 绑定this
+    let res = con.apply(obj,arguments)
+    // 4. 返回新对象
+    return typeof res === 'object'?res:obj;
+}
+```
+
+2. 然后构造函数里面的this会指向这个空对象
+
+3. 构造函数内的 this.x=1 就相当于将 1 赋值给了这个空对象
+
+4. 其实还默认做了一个事 即 return this
+
+5. 所以最后 x 得到了 return 回来的 this。
+
+6. 所以 x 有了 构造函数的属性
+
+```js
+var name = 'global';
+var obj = {
+    name: 'local',
+    foo: function(){
+        this.name = 'foo';
+    }.bind(window)
+};
+var bar = new obj.foo();// 1.foo 因为new 改变了bind的绑定，所以this指向的是新对象
+setTimeout(function() {
+    console.log(window.name);// 3.global 异步所以最后又因为obj并没有改到window的属性所以window还是global
+}, 0);
+console.log(bar.name);
+  
+var bar3 = bar2 = bar;
+bar2.name = 'foo2';// 2.foo2 因为js是引用赋值（浅拷贝），所以修改bar2就等于修改bar3
+console.log(bar3.name);
+// foo, foo2, global
+```
+
+bind返回一个函数，该函数体中的this绑定到window上，然后new对该函数进行构造调用，返回一个新对象，函数体中的this指向该对象。bind是硬绑定，new绑定的优先级高于硬绑定。所以this还是绑定在bar这个新对象上。this.name='foo'就是bar.name='foo'
 
 ## 数组
 
@@ -248,13 +307,19 @@ for(i=0;i<10;i++){
 
 }
 
-## 宏任务与微任务
+
+
+## Event loop
+
+https://segmentfault.com/a/1190000016278115
+
+### 宏任务与微任务
 
 宏任务一般是：包括整体代码script，setTimeout，setInterval。
 
 微任务：Promise，process.nextTick。
 
-setTimeout 和 setInterval 这连个宏异步任务，指向后是放到任务队列的最后，要比微任务后，因此当指向异步任务的时候无论位置如何，先执行Promise这一类异步任务在执行宏的异步任务
+setTimeout 和 setInterval 这连个宏异步任务，指向后是放到任务队列的最后，要比微任务后，因此当指向异步任务的时候无论位置如何，先执行Promise这一类异步任务在执行宏的异步任务。注意，如果有new Promise(()=>{})的话，这个回调函数内部出了reslove() reject()之外的所有代码执行的顺序都是在主线程队列的，即和外部代码是在同一个队列中的。
 
 ```js
 // 定时器任务属于宏任务，并且需要先在任务队列等待，等到同步任务执行完，执行栈清空，才会在任务队列中按顺序选任务进去
@@ -280,6 +345,23 @@ Promise.resolve().then(
  ).then(data => console.log(data)); // 3.打印 c
 // 打印顺序 bfcad 
 ```
+
+```js
+new Promise((resolve) => {
+console.log('1')
+    resolve()
+console.log('2')
+     }).then(() => {
+    console.log('3')
+     })
+     setTimeout(() => {
+    console.log('4')
+     })
+     console.log('5')
+// 12534  这里就是因为是 new Promise()里的回调函数是在主队列中的，因此按顺序执行125
+```
+
+
 
 ## MVC和MVVM
 
@@ -662,6 +744,35 @@ let patchs = diff(virtualDom1, virtualDom2);
 - 因此对element diff 的操作过程是先对列表组件加key，然后遍历确定要删除和新增的，然后把删除的直接删掉，然后创建新的节点，最后根据新的位置移动到相应的位置。加了key就是为了重用dom，减少对dom操作，从而提升性能。
 
 ![](./5.png)
+
+## 网络
+
+### 缓存
+
+http协议中与资源缓存相关的协议头有哪些
+
+- 通用首部
+
+  - Cache-Control: HTTP/1.1+控制缓存的协议头
+  - pragma：HTTP/1.1版本之前控制缓存的协议头
+- 实体首部
+- expires: 实体主题过期的时间
+
+通过响应来控制缓存，在响应头中主要有cache-control、pragma、expires三个响应头，其中expires是HTTP1.0中的响应头，后面直接跟一个缓存失效日期，但是服务器和客户端之间的时钟往往不同，因此通过该响应头来控制缓存失效时间不准确，一般不用，如果要设置客户端不缓存，则设置响应头“expires: -1”即可；pragema是HTTP1.1协议为了兼容HTTP1.0+协议，用来控制不缓存，“pragma: no-cache"；cache-control是HTTP1.1中的响应头，其参数为相对的秒值，即过多少秒缓存失效，因此建议使用该响应头来控制缓存失效时间，其后可以跟的内容有no-cache、no-store、max-age、must-revalidate
+为了兼容各个协议版本，要想客户端不缓存资源，一般都添加三个响应头：cache-control: no-cache、pragma: no-cache、expires: -1
+注意：cache-control: no-cache控制缓存，客户端是会缓存资源的，只是在于原始服务器进行再验证之前不会想客户端提供资源，也就是资源新鲜度永远过期，这样比直接访问服务器节省了资源在网络中的传输成本，相比开启缓存增加了再验证的成本，性能失效介于两者之间；要想客户端缓存不从响应中拷贝资源副本，则应该使用cache-control: no-store，使用该响应头内容也可以让缓存立即删除已经拷贝的副本；而must-revalidate是服务器希望缓存能严格遵守过期信息，一般情况下类似no-cache，但在缓存与原始服务器进行新鲜度验证的时候，原始服务器不可用，这将会导致这一段时间中访问该资源会504 gateway timeout，因此建议使用no-cache
+
+### Session/cookie
+
+http是无状态的网络协议,请求响应后，断开了TCP连接，下一次连接与上一次无关。为了识别不同的请求是否来自同一客户，引用HTTP会话机制,而维持这个会话则主要靠session和cookie。简单来说，cookie机制采用的是在客户端保持状态的方案，而session机制采用的是在服务器端保持状态的方案。
+
+### CORS
+
+跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器 让运行在一个 origin (domain) 上的Web应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
+
+而CORS 允许浏览器向跨源服务器，发出跨域请求，从而克服了AJAX只能同源使用的限制。
+
+CORS是一个W3C标准，它同时需要浏览器和服务端的支持，浏览器基本都支持，因此，想要实现CORS通信，只要服务器实现了CORS接口即可
 
 ## 工具
 
