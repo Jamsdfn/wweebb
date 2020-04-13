@@ -66,6 +66,18 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
   npx nodemon --version
   ```
 
+## HTML
+
+### 置换元素
+
+⼀个内容不受CSS视觉格式化模型控制，CSS渲染模型并不考虑对此内容的渲染，且元素本⾝⼀般拥有固有尺⼨（宽度，⾼度，宽⾼⽐）的元素，被称之为置换元素。例如：浏览器会根据<img>标签的src属性的 值来读取图片信息并显示出来，而如果查看(x)html代码，则看不到图片的实际内容；<input>标签的type属性来决定是显示输入 框，还是单选按钮等。
+
+<img>、<input>、<textarea>、<select>、<object> 这些都是置换元素
+
+### HTML中的图像格式
+
+网页html文档支持的图片格式有jpg   ,   gif  ,   png  和  bmp  这四种，jpg ， gif  和  png 格式的图片特点是体积很小，因为在网上很常见，然而 bmp就不常见了，因为这种格式虽然很清晰色彩丰富，但是所占内存很大，所以很少见，但是也是支持的。一共这4种。还有谷歌退出的webp。
+
 ## CSS3
 
 - vh单位，视窗高度的百分比
@@ -73,11 +85,25 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 - rem 相对于根字体大小（html）的单位，比如可以设置 1rem=50px
 -  em 相对于父级的font-size，比如font-size：16px（浏览器默认），则2em=32px
 
+### Width/Height
+
+ele.clientWidth = 宽度 + padding
+
+ele.offsetWidth = 宽度 + padding + border
+
+ ele.scrollTop = 被卷去的上侧距离
+
+ ele.scrollHeight = 自身实际的高度（不包括边框）
+
+![](./9.png)
+
 ## flex
 
 阮一峰老师的教程，写的十分详尽http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html
 
-## js new
+## js
+
+### new
 
 1. 创建一个空对象
 2. 连接原型链
@@ -129,6 +155,20 @@ console.log(bar3.name);
 ```
 
 bind返回一个函数，该函数体中的this绑定到window上，然后new对该函数进行构造调用，返回一个新对象，函数体中的this指向该对象。bind是硬绑定，new绑定的优先级高于硬绑定。所以this还是绑定在bar这个新对象上。this.name='foo'就是bar.name='foo'
+
+### Object.assign
+
+此方法用于对象的合并，将源对象（source）的所有可枚举属性，复制到目标对象（target）。
+
+```js
+const target = { a: 1 };
+
+const source1 = { b: 2 };
+const source2 = { c: 3 };
+
+Object.assign(target, source1, source2);
+target // {a:1, b:2, c:3}
+```
 
 ## 数组
 
