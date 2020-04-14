@@ -101,6 +101,32 @@ ele.offsetWidth = 宽度 + padding + border
 
 阮一峰老师的教程，写的十分详尽http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html
 
+### @import/link
+
+@import写着css文件中、link先在html中
+
+```css
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,800,700);
+@import url("normalize.css");
+@import url("grid.css");
+@import url("modal.css");
+```
+
+```html
+<link rel=stylesheet href="css/main.css">
+```
+
+@import 进来的样式在页面内容载入完毕后再加载, 如果网速慢, 页面可能闪烁, 故不推荐使用. 相对于这种方式, 如果要加载许多独立的CSS文件, 建议直接用 link[rel=stylesheet] 加载.
+
+如果CSS内容不是很多, 还是(按需)合并到一个文件里比较好, 减少请求.
+
+使用import要注意几点
+
+1. @import url（）机制是不同于link的，link是在加载页面前把css加载完毕，而@import url（）则是读取完文件后在加载，所以会出现一开始没有css样式，闪烁一下出现样式后的页面(网速慢的情况下)
+2. @import 是css2里面的，所以古老的ie5不支持。 
+3. 当使用javascript控制dom去改变样式的时候，只能使用link标签，因为@import不是dom可以控制的。
+4. link除了能加载css外还能定义RSS，定义rel连接属性，@import只能加载css 
+
 ## js
 
 ### new
