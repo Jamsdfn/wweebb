@@ -196,6 +196,10 @@ Object.assign(target, source1, source2);
 target // {a:1, b:2, c:3}
 ```
 
+**事件是否支持冒泡**
+
+![](10.png)
+
 ## 数组
 
 Array.prototype.sort()
