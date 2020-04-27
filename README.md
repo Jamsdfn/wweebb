@@ -78,6 +78,10 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 
 网页html文档支持的图片格式有jpg   ,   gif  ,   png  和  bmp  这四种，jpg ， gif  和  png 格式的图片特点是体积很小，因为在网上很常见，然而 bmp就不常见了，因为这种格式虽然很清晰色彩丰富，但是所占内存很大，所以很少见，但是也是支持的。一共这4种。还有谷歌退出的webp。
 
+### H5新增表单元素
+
+autocomplete、autofocus、form、formaction、formenctype、formmethod、formnovalidate、formtarget、height、list、max、min、**multiple**、**pattern**、**placeholder**、**required**、step、width。
+
 ## CSS3
 
 - vh单位，视窗高度的百分比
@@ -199,6 +203,24 @@ target // {a:1, b:2, c:3}
 **事件是否支持冒泡**
 
 ![](10.png)
+
+关于上述的onchange事件，onchange是在被改动的对象(如textbox)的值发生改变，**并失去焦点**的时候触发事件。如果想实现输入框值改变就触发事件可以用keyup事件
+
+### 变量提升
+
+js中用var修饰、函数都会进行变量提升，而函数的变量提升优先级比变量高，即函数在变量前面
+
+## ES6
+
+原生具备 Iterator 接口的数据结构如下。
+
+- Array
+- Map
+- Set
+- String
+- TypedArray
+- 函数的 arguments 对象
+- NodeList 对象
 
 ## 数组
 
