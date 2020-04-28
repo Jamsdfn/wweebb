@@ -74,6 +74,16 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 
 \<img\>、\<input\>、\<textarea\>、\<select\>、\<object\> 这些都是置换元素
 
+1.常见的块级元素(**自动换行，** **可设置高宽** )有：
+
+​    div,h1-h6,p,pre,ul,ol,li,**form**,table,**label**等
+
+2。常见的行内元素（**无法自动换行，无法设置宽高**）有：
+
+​    a,img,span，i（斜体）,em（强调）,sub(下标)，sup（上标）等。
+
+3.常见的行块级元素(拥有内在尺寸，**可设置高宽，不会自动换行** )有：
+
 ### HTML中的图像格式
 
 网页html文档支持的图片格式有jpg   ,   gif  ,   png  和  bmp  这四种，jpg ， gif  和  png 格式的图片特点是体积很小，因为在网上很常见，然而 bmp就不常见了，因为这种格式虽然很清晰色彩丰富，但是所占内存很大，所以很少见，但是也是支持的。一共这4种。还有谷歌退出的webp。
@@ -81,6 +91,10 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 ### H5新增表单元素
 
 autocomplete、autofocus、form、formaction、formenctype、formmethod、formnovalidate、formtarget、height、list、max、min、**multiple**、**pattern**、**placeholder**、**required**、step、width。
+
+**input**
+
+![](./11.png)
 
 ## CSS3
 
@@ -209,6 +223,30 @@ target // {a:1, b:2, c:3}
 ### 变量提升
 
 js中用var修饰、函数都会进行变量提升，而函数的变量提升优先级比变量高，即函数在变量前面
+
+### 顶级的对象
+
+Navagator：提供有关浏览器的信息
+
+Window：Window对象处于对象层次的最顶层，它提供了处理Navagator窗口的方法和属性
+
+Location：提供了与当前打开的URL一起工作的方法和属性，是一个静态的对象
+
+History：提供了与历史清单有关的信息
+
+Document：包含与文档元素一起工作的对象，它将这些元素封装起来供编程人员使用
+
+
+
+**readystatechange**
+document有readyState属性来描述document的loading状态，readyState的改变会触发readystatechange事件.
+
+- loading
+  文档仍然在加载
+- interactive
+  文档结束加载并且被解析，但是像图片，样式，frame之类的子资源仍在加载
+- complete
+  文档和子资源已经结束加载，该状态表明将要触发load事件。
 
 ## ES6
 
