@@ -96,6 +96,90 @@ autocomplete、autofocus、form、formaction、formenctype、formmethod、formno
 
 ![](./11.png)
 
+### 行内元素有
+
+\<a>标签可定义锚、\<abbr>表示一个缩写形式、\<acronym>   定义只取首字母缩写、\<b> 字体加粗、\<big>大号字体加粗、\<br>换行、\<cite>引用进行定义、\<em>    定义为强调的内容、\<i> 斜体文本效果、\<img> 向网页中嵌入一幅图像、\<input> 输入框、\<label>   标签为 input 元素定义标注
+
+\<select>创建单选或多选菜单、\<small>呈现小号字体效果、\<span>组合文档中的行内元素、\<strong>语气更强的强调的内容、\<textarea>多行的文本输入控件
+
+### 块级元素有
+
+\<address>定义地址
+
+\<caption>定义表格标题
+
+\<dd> 定义列表中定义条目
+
+\<div> 定义文档中的分区或节
+
+\<dl> 定义列表
+
+\<dt> 定义列表中的项目
+
+\<fieldset>定义一个框架集
+
+\<form> 创建 HTML 表单
+
+\<h1>定义最大的标题
+
+\<h2>定义副标题
+
+\<h3>定义标题
+
+\<h4>定义标题
+
+\<h5>定义标题
+
+\<h6>定义最小的标题
+
+\<hr>创建一条水平线
+
+\<legend>元素为 fieldset 元素定义标题
+
+\<li>标签定义列表项目
+
+\<noframes>为那些不支持框架的浏览器显示文本，于 frameset 元素内部
+
+\<noscript>定义在脚本未被执行时的替代内容
+
+\<ol>定义有序列表
+
+\<ul>定义无序列表
+
+\<p>标签定义段落
+
+\<pre>定义预格式化的文本
+
+\<table>标签定义 HTML 表格
+
+\<tbody>标签表格主体（正文）
+
+\<td>表格中的标准单元格
+
+\<tfoot>定义表格的页脚（脚注或表注）
+
+\<th>定义表头单元格
+
+\<thead>标签定义表格的表头
+
+\<tr>定义表格中的行
+
+### 可变元素有
+
+\<button>  按钮
+
+\<del> 定义文档中已被删除的文本
+
+\<iframe>   创建包含另外一个文档的内联框架（即行内框架）
+
+\<ins> 标签定义已经被插入文档中的文本
+
+\<map> 客户端图像映射（即热区）
+
+\<object>  object对象
+
+\<script>   客户端脚本
+
 ## CSS3
 
 - vh单位，视窗高度的百分比
@@ -604,6 +688,16 @@ MVVM:M(Model)、V(View)、VM(ViewModel)，因为用MVC的设计时会时Controll
 2. 数据双向绑定不利于代码重用。客户端开发最常用的是View，但是数据双向绑定技术，让你在一个View都绑定了一个model，不同的模块model都不同。那就不能简单重用view了
 
 3. 一个大的模块中model也会很大，虽然使用方便了也很容易保证数据的一致性，但是长期持有，不释放内存就造成话费更多的内存。
+
+## storage
+
+sessionStorage用于本地存储一个会话（session）中的数据，这些数据只有在同一个会话中的页面才能访问并且当会话结束后数据也随之销毁。因此    sessionStorage不是一种持久化的本地存储，仅仅是会话级别的存储。而localStorage用于持久化的本地存储，除非主动删除数据，否则数据是永远不会过期的。
+
+web storage和cookie的区别
+
+Web Storage的概念和cookie相似，区别是它是为了更大容量存储设计的。Cookie的大小是受限的，并且每次你请求一个新的页面的时候Cookie都会被发送过去，这样无形中浪费了带宽，另外cookie还需要指定作用域，不可以跨域调用。
+
+除此之外，Web Storage拥有setItem,getItem,removeItem,clear等方法，不像cookie需要前端开发者自己封装setCookie，getCookie。但是Cookie也是不可以或缺的：Cookie的作用是与服务器进行交互，作为HTTP规范的一部分而存在 ，而Web Storage仅仅是为了在本地“存储”数据而生。
 
 ## React
 
