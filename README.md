@@ -231,6 +231,8 @@ ele.offsetWidth = 宽度 + padding + border
 
 ## js
 
+注意：'use strict' 严格模式下进制使用this关键字，在此模式下的this为undefined
+
 ### new
 
 1. 创建一个空对象
