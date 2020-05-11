@@ -199,6 +199,185 @@ ele.offsetWidth = 宽度 + padding + border
 
 ![](./9.png)
 
+### BFC
+
+> https://blog.csdn.net/sinat_36422236/article/details/88763187
+
+BFC(Block formatting context)直译为"块级格式化上下文"。它是一个独立的渲染区域，只有Block-level box参与， 它规定了内部的Block-level Box如何布局，并且与这个区域外部毫不相干。
+
+BFC是一个独立的布局环境，其中的元素布局是不受外界的影响，并且在一个BFC中，块盒与行盒（行盒由一行中所有的内联元素所组成）都会垂直的沿着其父元素的边框排列。
+
+**BFC的布局规则**
+
+- 内部的Box会在垂直方向，一个接一个地放置。
+
+- Box垂直方向的距离由margin决定。属于同一个BFC的两个相邻Box的margin会发生重叠。
+
+- 每个盒子（块盒与行盒）的margin box的左边，与包含块border box的左边相接触(对于从左往右的格式化，否则相反)。即使存在浮动也是如此。
+
+- BFC的区域不会与float box重叠。
+
+- BFC就是页面上的一个隔离的独立容器，容器里面的子元素不会影响到外面的元素。反之也如此。
+
+- 计算BFC的高度时，浮动元素也参与计算。
+
+**如何创建BFC**
+
+1. float的值不是none。
+2. position的值不是static或者relative。
+3. display的值是inline-block、table-cell、flex、table-caption或者inline-flex
+4. overflow的值不是visible（这个方法常用，直接加overflow：hidden）
+
+**BFC的作用**
+
+1. 利用BFC避免margin重叠。（第二个元素创建BCF就可以了）
+2. 自适应两栏布局
+   - 一个元素左浮动一个元素无浮动的话，无浮动的元素就会包含浮动元素，无浮动元素中创建BCF就好了
+3. 清除浮动
+   - 如果父元素无高度的话，子元素设置为浮动，父元素高度会塌陷，父元素创建BCF就可以防止塌陷
+
+## 三栏布局
+
+### 圣杯布局
+
+经典圣杯布局
+
+- 子div设置为float
+- 左边margin-left:-100%
+- 右边margin-left:-自身宽度
+-  中间width：100%（前几步设置好后是会挡住中间部分的，解决办法如下两部）
+- 容器设置padding，左右为左组件和右组件的宽度
+- 子div加上position：relative，然后左右组件分别往左右一自身的宽度
+
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>css</title>
+	</head>
+	 <style type="text/css">
+	 	*{
+	 		margin:0;
+	 		padding: 0;
+	 	}
+	 	.main>div{
+            float: left;
+            height: 100px;
+            position: relative;
+	 	}
+	 	.left {
+	 		width: 200px;
+	 		background: red;
+	 		margin-left: -100%;
+			left:-200px;
+	 	}
+	 	.right{
+	 		width: 200px;
+	 		background: blue;
+	 		margin-left: -200px;
+			right:-200px;
+	 	}
+	 	.middle{
+	 		width: 100%;
+	 		background: yellow;
+	 	}
+		.main{
+			padding:0 200px 0 200px;
+		}
+	 </style>
+	<body>
+	<div class="main">
+		<div class="middle">中间
+		 </div>
+		<div class="left">
+			左边
+		</div>
+		<div class="right">
+			右边
+		</div>
+	</div>
+	</body>
+</html>
+```
+
+flex版圣杯布局 父容器设置为flex，order排序，flex-grow设置每一项的比例
+
+```css
+.main{
+    display:flex;
+    flex-direction:row;
+}
+.left {
+    order:-1;
+    flex-grow:1;
+}
+.middle {
+    order:0;
+    flex-grow:2;
+}
+.right {
+    order:1;
+    flex-grow:1;
+}
+```
+
+### 双飞翼
+
+双飞翼布局
+
+- 子div设置为float
+
+- 左边margin-left:-100%
+
+- 右边margin-left:-自身宽度
+
+- 中间width：100% （同圣杯布局，中间是会被挡住的）
+- 因为中间组件又有一个子容器，所以设置子容器margin左右控件的宽度就好了
+
+```css
+<style type="text/css">
+    .main>div{
+        float: left;
+        height: 100px;
+    }
+    .left {
+        width: 200px;
+        background: red;
+        margin-left: -100%;
+    }
+    .right{
+        width: 200px;
+        background: blue;
+        margin-left: -200px;
+    }
+    .middle{
+        width: 100%;
+        background: yellow;
+
+    }
+    .content{ /* 中间把内容顶到中间部分，防止左右遮住 */ 
+        margin-left: 200px;
+        margin-right: 200px;
+    }
+</style>
+<body>
+    <div class="main">
+        <div class="middle">
+            <div class="content">
+                中间
+            </div>
+        </div>
+        <div class="left">
+            左边
+        </div>
+        <div class="right">
+            右边
+        </div>
+    </div>
+</body>
+```
+
 ## flex
 
 阮一峰老师的教程，写的十分详尽http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html
