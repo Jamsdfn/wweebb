@@ -1179,6 +1179,399 @@ http是无状态的网络协议,请求响应后，断开了TCP连接，下一次
 
 CORS是一个W3C标准，它同时需要浏览器和服务端的支持，浏览器基本都支持，因此，想要实现CORS通信，只要服务器实现了CORS接口即可
 
+## 跨域
+
+> https://segmentfault.com/a/1190000011145364
+
+### **跨域解决方案**
+
+1. 通过jsonp跨域
+2.  document.domain + iframe跨域
+3.  location.hash + iframe
+4.  window.name + iframe跨域
+5. postMessage跨域
+6. 跨域资源共享（CORS）
+7.  nginx代理跨域 
+8. nodejs中间件代理跨域
+9. WebSocket协议跨域
+
+第七第八点服务器相关的其实就是对6的拓展
+
+### jsonp
+
+利用了js文件这些静态资源本身就能够跨域
+
+用法：在本域动态穿件一个script标签，src就是服务器的地址，这个服务器返回的数据类型是Content-Type: text/javascript 返回值就是调用一个回调函数（如果想跨域传参就带调用时候传实参就可以了）。这个回调函数在主域中定义。
+
+```js
+var script = document.createElement('script');
+script.type = 'text/javascript';
+
+// 传参一个回调函数名给后端，方便后端返回时执行这个在前端定义的回调函数
+script.src = 'http://www.domain2.com:8080/login?user=admin&callback=handleCallback';
+document.head.appendChild(script);
+
+// 回调执行函数
+function handleCallback(res) {
+    alert(JSON.stringify(res));
+}
+```
+
+```js
+// 服务器返回的jsonp，返回数据直接用字符串拼接就可以了
+handleCallback({test:1})
+```
+
+### document.domain + iframe
+
+此方案仅限主域相同，子域不同的跨域应用场景。
+
+实现原理：两个页面都通过js强制设置document.domain为基础主域，就实现了同域。
+
+1.）父窗口：(http://www.domain.com/a.html)
+
+```html
+<iframe id="iframe" src="http://child.domain.com/b.html"></iframe>
+<script>
+    document.domain = 'domain.com';
+    var user = 'admin';
+</script>
+```
+
+2.）子窗口：(http://child.domain.com/b.html)
+
+```html
+<script>
+    document.domain = 'domain.com';
+    // 获取父窗口中变量
+    alert('get js data from parent ---> ' + window.parent.user);
+</script>
+```
+
+### location.hash + iframe
+
+实现原理： a欲与b跨域相互通信，通过中间页c来实现。 三个页面，不同域之间利用iframe的location.hash传值，相同域之间直接js访问来通信。
+
+具体实现：A域：a.html -> B域：b.html -> A域：c.html，a与b不同域只能通过hash值单向通信，b与c也不同域也只能单向通信，但c与a同域，所以c可通过parent.parent访问a页面所有对象。
+
+1.）a.html：(http://www.domain1.com/a.html)
+
+```html
+<iframe id="iframe" src="http://www.domain2.com/b.html" style="display:none;"></iframe>
+<script>
+    var iframe = document.getElementById('iframe');
+
+    // 向b.html传hash值
+    setTimeout(function() {
+        iframe.src = iframe.src + '#user=admin';
+    }, 1000);
+    
+    // 开放给同域c.html的回调方法
+    function onCallback(res) {
+        alert('data from c.html ---> ' + res);
+    }
+</script>
+```
+
+2.）b.html：(http://www.domain2.com/b.html)
+
+```html
+<iframe id="iframe" src="http://www.domain1.com/c.html" style="display:none;"></iframe>
+<script>
+    var iframe = document.getElementById('iframe');
+
+    // 监听a.html传来的hash值，再传给c.html
+    window.onhashchange = function () {
+        iframe.src = iframe.src + location.hash;
+    };
+</script>
+```
+
+3.）c.html：(http://www.domain1.com/c.html)
+
+```html
+<script>
+    // 监听b.html传来的hash值
+    window.onhashchange = function () {
+        // 再通过操作同域a.html的js回调，将结果传回
+        window.parent.parent.onCallback('hello: ' + location.hash.replace('#user=', ''));
+    };
+</script>
+```
+
+### window.name + iframe
+
+因为ifram跳转的时候window.name 即使跳转也是跟着不变的，并且东可以改。但是只用在同域情况才可以读取，这个变量最大可以传2M数据。
+
+做法：A想跨域得到B的消息，先写一个同域的空白页面C，然后A iframe跳转到B，B把数据赋值给window.name 然后调去C(通过 iframe.contentWindow.location 切换 iframe 地址)，因为AC同域所以A可以直接获取到C的window.name 即得到了B的数据
+
+1.）a.html：(http://www.domain1.com/a.html)
+
+```js
+var proxy = function(url, callback) {
+    var state = 0;
+    var iframe = document.createElement('iframe');
+
+    // 加载跨域页面
+    iframe.src = url;
+
+    // onload事件会触发2次，第1次加载跨域页，并留存数据于window.name
+    iframe.onload = function() {
+        if (state === 1) {
+            // 第2次onload(同域proxy页)成功后，读取同域window.name中数据
+            callback(iframe.contentWindow.name);
+            destoryFrame();
+
+        } else if (state === 0) {
+            // 第1次onload(跨域页)成功后，切换到同域代理页面
+            iframe.contentWindow.location = 'http://www.domain1.com/proxy.html';
+            state = 1;
+        }
+    };
+
+    document.body.appendChild(iframe);
+
+    // 获取数据以后销毁这个iframe，释放内存；这也保证了安全（不被其他域frame js访问）
+    function destoryFrame() {
+        iframe.contentWindow.document.write('');
+        iframe.contentWindow.close();
+        document.body.removeChild(iframe);
+    }
+};
+
+// 请求跨域b页面数据
+proxy('http://www.domain2.com/b.html', function(data){
+    alert(data);
+});
+```
+
+2.）proxy.html：([http://www.domain1.com/proxy....](http://www.domain1.com/proxy.html))
+中间代理页，与a.html同域，内容为空即可。
+
+3.）b.html：(http://www.domain2.com/b.html)
+
+```html
+<script>
+    window.name = 'This is domain2 data!';
+</script>
+```
+
+总结：通过iframe的src属性由外域转向本地域，跨域数据即由iframe的window.name从外域传递到本地域。这个就巧妙地绕过了浏览器的跨域访问限制，但同时它又是安全操作。
+
+### postMessage
+
+postMessage是HTML5 XMLHttpRequest Level 2中的API，且是为数不多可以跨域操作的window属性之一，它可用于解决以下方面的问题：
+a.） 页面和其打开的新窗口的数据传递
+b.） 多窗口之间消息传递
+c.） 页面与嵌套的iframe消息传递
+d.） 上面三个场景的跨域数据传递
+
+用法：postMessage(data,origin)方法接受两个参数
+data： html5规范支持任意基本类型或可复制的对象，但部分浏览器只支持字符串，所以传参时最好用JSON.stringify()序列化。
+origin： 协议+主机+端口号，也可以设置为"*"，表示可以传递给任意窗口，如果要指定和当前窗口同源的话设置为"/"。
+
+其实这个就是一个 iframe 的新的方法。
+
+1.）a.html：(http://www.domain1.com/a.html)
+
+```html
+<iframe id="iframe" src="http://www.domain2.com/b.html" style="display:none;"></iframe>
+<script>       
+    var iframe = document.getElementById('iframe');
+    iframe.onload = function() {
+        var data = {
+            name: 'aym'
+        };
+        // 向domain2传送跨域数据
+        iframe.contentWindow.postMessage(JSON.stringify(data), 'http://www.domain2.com');
+    };
+
+    // 接受domain2返回数据
+    window.addEventListener('message', function(e) {
+        alert('data from domain2 ---> ' + e.data);
+    }, false);
+</script>
+```
+
+2.）b.html：(http://www.domain2.com/b.html)
+
+```html
+<script>
+    // 接收domain1的数据
+    window.addEventListener('message', function(e) {
+        alert('data from domain1 ---> ' + e.data);
+
+        var data = JSON.parse(e.data);
+        if (data) {
+            data.number = 16;
+
+            // 处理后再发回domain1
+            window.parent.postMessage(JSON.stringify(data), 'http://www.domain1.com');
+        }
+    }, false);
+</script>
+```
+
+### 跨域资源共享（CORS）
+
+其实就是服务器设置响应头允许某个域的访问 Access-Control-Allow-Origin
+
+普通跨域请求：只服务端设置Access-Control-Allow-Origin即可，前端无须设置，若要带cookie请求：前后端都需要设置。
+
+需注意的是：由于同源策略的限制，所读取的cookie为跨域请求接口所在域的cookie，而非当前页。如果想实现当前页cookie的写入,服务器也是设置一下Access-Control-Allow-Credentials: true
+
+目前，所有浏览器都支持该功能(IE8+：IE8/9需要使用XDomainRequest对象来支持CORS）)，CORS也已经成为主流的跨域解决方案。
+
+##### **1、 前端设置：**
+
+1.）原生ajax
+
+```js
+// 前端设置是否带cookie
+xhr.withCredentials = true;
+```
+
+示例代码：
+
+```js
+var xhr = new XMLHttpRequest(); // IE8/9需用window.XDomainRequest兼容
+
+// 前端设置是否带cookie
+xhr.withCredentials = true;
+
+xhr.open('post', 'http://www.domain2.com:8080/login', true);
+xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+xhr.send('user=admin');
+
+xhr.onreadystatechange = function() {
+    if (xhr.readyState == 4 && xhr.status == 200) {
+        alert(xhr.responseText);
+    }
+};
+```
+
+2.）jQuery ajax
+
+```js
+$.ajax({
+    ...
+   xhrFields: {
+       withCredentials: true    // 前端设置是否带cookie
+   },
+   crossDomain: true,   // 会让请求头中包含跨域的额外信息，但不会含cookie
+    ...
+});
+```
+
+##### **2、 服务端设置：**
+
+若后端设置成功，前端浏览器控制台则不会出现跨域报错信息，反之，说明没设成功。
+
+Nodejs后台示例：
+
+```js
+var http = require('http');
+var server = http.createServer();
+var qs = require('querystring');
+
+server.on('request', function(req, res) {
+    var postData = '';
+
+    // 数据块接收中
+    req.addListener('data', function(chunk) {
+        postData += chunk;
+    });
+
+    // 数据接收完毕
+    req.addListener('end', function() {
+        postData = qs.parse(postData);
+
+        // 跨域后台设置
+        res.writeHead(200, {
+            'Access-Control-Allow-Credentials': 'true',     // 后端允许发送Cookie
+            'Access-Control-Allow-Origin': 'http://www.domain1.com',    // 允许访问的域（协议+域名+端口）
+            /* 
+             * 此处设置的cookie还是domain2的而非domain1，因为后端也不能跨域写cookie(nginx反向代理可以实现)，
+             * 但只要domain2中写入一次cookie认证，后面的跨域接口都能从domain2中获取cookie，从而实现所有的接口都能跨域访问
+             */
+            'Set-Cookie': 'l=a123456;Path=/;Domain=www.domain2.com;HttpOnly'  // HttpOnly的作用是让js无法读取cookie
+        });
+
+        res.write(JSON.stringify(postData));
+        res.end();
+    });
+});
+
+server.listen('8080');
+console.log('Server is running at port 8080...');
+```
+
+### WebSocket协议跨域
+
+运用元素的socket来自己操作网络，即自己实现端到端的信息传输
+
+WebSocket protocol是HTML5一种新的协议。它实现了浏览器与服务器全双工通信，同时允许跨域通讯，是server push技术的一种很好的实现。
+原生WebSocket API使用起来不太方便，我们使用Socket.io，它很好地封装了webSocket接口，提供了更简单、灵活的接口，也对不支持webSocket的浏览器提供了向下兼容。
+
+1.）前端代码：
+
+```html
+<div>user input：<input type="text"></div>
+<script src="https://cdn.bootcss.com/socket.io/2.2.0/socket.io.js"></script>
+<script>
+var socket = io('http://www.domain2.com:8080');
+
+// 连接成功处理
+socket.on('connect', function() {
+    // 监听服务端消息
+    socket.on('message', function(msg) {
+        console.log('data from server: ---> ' + msg); 
+    });
+
+    // 监听服务端关闭
+    socket.on('disconnect', function() { 
+        console.log('Server socket has closed.'); 
+    });
+});
+
+document.getElementsByTagName('input')[0].onblur = function() {
+    socket.send(this.value);
+};
+</script>
+```
+
+2.）Nodejs socket后台：
+
+```js
+var http = require('http');
+var socket = require('socket.io');
+
+// 启http服务
+var server = http.createServer(function(req, res) {
+    res.writeHead(200, {
+        'Content-type': 'text/html'
+    });
+    res.end();
+});
+
+server.listen('8080');
+console.log('Server is running at port 8080...');
+
+// 监听socket连接
+socket.listen(server).on('connection', function(client) {
+    // 接收信息
+    client.on('message', function(msg) {
+        client.send('hello：' + msg);
+        console.log('data from client: ---> ' + msg);
+    });
+
+    // 断开处理
+    client.on('disconnect', function() {
+        console.log('Client socket has closed.'); 
+    });
+});
+```
+
 ## 工具
 
 ### concurrently
