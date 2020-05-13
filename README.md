@@ -68,6 +68,12 @@ npx 是 npm 5.0以后才有的命令他又一些有用的地方
 
 ## HTML
 
+### DOM树
+
+> https://www.jianshu.com/p/4f3cf54db0c8
+
+一个标签是一个节点，注释也是一个节点，文本也是一个节点甚至换行符都是一个节点。然后根据位置变成N叉树。这就是DOM树，具体解释可以看看这个链接。
+
 ### 置换元素
 
 ⼀个内容不受CSS视觉格式化模型控制，CSS渲染模型并不考虑对此内容的渲染，且元素本⾝⼀般拥有固有尺⼨（宽度，⾼度，宽⾼⽐）的元素，被称之为置换元素。例如：浏览器会根据<img>标签的src属性的 值来读取图片信息并显示出来，而如果查看(x)html代码，则看不到图片的实际内容；<input>标签的type属性来决定是显示输入 框，还是单选按钮等。
@@ -187,6 +193,37 @@ autocomplete、autofocus、form、formaction、formenctype、formmethod、formno
 - rem 相对于根字体大小（html）的单位，比如可以设置 1rem=50px
 -  em 相对于父级的font-size，比如font-size：16px（浏览器默认），则2em=32px
 
+### Font-Face
+
+其实就是让浏览器的字体变成自己服务器上存的字体，不用再局限于浏览其中的字体。注意这里只是引入了一种字体，在使用的时候还要在元素的css样式中设置。
+
+@font-face规则，网页设计师再也不必使用的"web-safe"的字体之一。
+
+字体的名称，font - face规则：
+
+- font-family: myFirstFont;
+
+字体文件包含在您的服务器上的某个地方，参考CSS：
+
+- src: url('Sansation_Light.ttf')
+
+如果字体文件是在不同的位置，请使用完整的URL：
+
+- src: url('http://www.w3cschool.css/css3/Sansation_Light.ttf')
+
+```css
+@font-face
+{
+font-family: myFirstFont;
+src: url('Sansation_Light.ttf'),
+     url('Sansation_Light.eot'); /* IE9 */
+}
+div
+{
+	font-family:myFirstFont;/*这个名字就是font-face设置的名字*/
+}
+```
+
 ### Width/Height
 
 ele.clientWidth = 宽度 + padding
@@ -235,6 +272,57 @@ BFC是一个独立的布局环境，其中的元素布局是不受外界的影�
    - 一个元素左浮动一个元素无浮动的话，无浮动的元素就会包含浮动元素，无浮动元素中创建BCF就好了
 3. 清除浮动
    - 如果父元素无高度的话，子元素设置为浮动，父元素高度会塌陷，父元素创建BCF就可以防止塌陷
+
+### icon
+
+关于css图标icon的六种实现方法
+
+- img 法
+- background 法
+- css sprites 法
+- font 法
+- SVG 法
+- CSS法
+
+1. img 法
+
+顾名思义用img标签插入图片。
+
+缺点：图片过多时，增加服务器请求，当然你可以使用cdn。
+
+2. background 法
+
+把图片放在css背景标签中，background属性能够控制图片居中，平铺，横向或者纵向自适应剪裁，在做复杂的图片处理时用background属性比img标签要好。 
+
+3. css sprites 法
+
+国内一般叫雪碧图或者精灵图，思路就是将多张图片拼成一张背景图，然后选择性展示背景图某一部分来达到展示不同icon的目的。
+
+优点：减少请求。
+
+可以用网上的css sprites生成器生成，然后将每张icon的位置代码复制粘贴即可。
+
+https://spritegen.website-performance.org/
+
+4. font 法
+
+简单的说就是用字体做icon，有些设计师将一些常用的icon集合做成了一套字体，通过字体选择将icon打出来，跟搜狗输入法的特殊符号有点像，不过大小不太好调整，得用font-size。
+
+5. SVG 法
+
+目前比较流行的方法，用svg矢量图做成icon图标。比如阿里巴巴矢量图图标库，比如搜索iphone，会有很多设计师设计的svg图片供你使用，选好图片后创建项目，生成js代码，按照教程将网站上生成的icon图标代码拷贝至你的代码中即可。
+
+优点：无论放多大都不存在图片锯齿。
+
+https://www.iconfont.cn/
+
+6. css 法
+
+很简单、用你学到的css知识写出来
+
+有个哥们在github上弄了一个项目，纯css写icon。目前已经写了几十个icon，有兴趣的可以去了解并尝试，该方法比较考验css技巧。
+
+https://cssicon.space/#/
 
 ## 三栏布局
 
@@ -1571,6 +1659,66 @@ socket.listen(server).on('connection', function(client) {
     });
 });
 ```
+
+## Storage
+
+我们常见且常用的前端存储方式主要由两种：cookie、webStorage（localStorage和sessionStorage）。
+
+**Cookie基于HTTP规范，用来识别用户。**
+
+Cookie是服务器发送到浏览器的一小段数据，会在浏览器下次向同一服务器再发起请求时被携带并发送到服务器上。
+
+Cookie诞生之初的作用就是解决HTTP的无状态请求，用来记录一些用户相关的一些状态。
+
+- 会话状态管理（如用户登录状态、购物车、游戏分数或其它需要记录的信息）
+- 个性化设置（如用户自定义设置、主题等）
+- 浏览器行为跟踪（如跟踪分析用户行为等）
+
+因为一些前端交互的需要，后来cookie也被用于存储一些客户端的数据。
+
+Cookie的原生api不友好，需要自行封装一下。下面是封装后的方法。
+
+```js
+document.cookie // 返回的是报文头cookie的值，也就是一串字符串，要自己处理
+```
+
+**webStorage基于HTML5规范**
+
+HTML5 提供了两种在客户端存储数据的新方法：localStorage和sessionStorage，挂载在window对象下。
+
+webStorage是本地存储，数据不是由服务器请求传递的。从而它可以存储大量的数据，而不影响网站的性能。
+
+Web Storage的目的是为了克服由cookie带来的一些限制，当数据需要被严格控制在客户端上时，无须持续地将数据发回服务器。比如客户端需要保存的一些用户行为或数据，或从接口获取的一些短期内不会更新的数据，我们就可以利用Web Storage来存储。
+
+**localStorage**的生命周期是永久性的。localStorage存储的数据，即使关闭浏览器，也不会让数据消失，除非主动的去删除数据。如果 想设置失效时间，需自行封装。
+
+**sessionStorage** 的生命周期是在浏览器关闭前。
+
+　　特性：
+
+- 关闭浏览器sessionStorage 失效；
+- 页面刷新不会消除数据；
+- 只有在当前页面打开的链接，才可以访sessionStorage的数据，使用window.open打开页面和改变localtion.href方式都可以获 取到sessionStorage内部的数据;
+
+## 页面优化
+
+**在 css/js 代码上线之后开发人员经常会优化性能，从用户刷新网页开始， 一次 js 请求一般情况下有哪些地方会有缓存处理?**
+
+dns 缓存，cdn 缓存，浏览器缓存，服务器缓存。
+
+
+
+**一个页面上有大量的图片(大型电商网站)，加载很慢，你有哪些方法优 化这些图片的加载，给用户更好的体验。**
+
+图片懒加载，在页面上的未可视区域可以添加一个滚动条事件，判断图片位置与浏览器顶端 的距离与页面的距离，如果前者小于后者，优先加载。
+
+如果为幻灯片、相册等，可以使用图片预加载技术，将当前展示图片的前一张和后一张优先 下载。
+
+如果图片为 css 图片，可以使用 CSSsprite，SVGsprite，Iconfont、Base64 等技术。
+
+如果图片过大，可以使用特殊编码的图片，加载时会先加载一张压缩的特别厉害的缩略图， 以提高用户体验。
+
+如果图片展示区域小于图片的真实大小，则因在服务器端根据业务需要先行进行图片压缩， 图片压缩后大小与展示一致。
 
 ## 工具
 
