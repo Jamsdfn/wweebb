@@ -601,6 +601,124 @@ document有readyState属性来描述document的loading状态，readyState的改�
 - complete
   文档和子资源已经结束加载，该状态表明将要触发load事件。
 
+## JS常用设计模式
+
+### **单例模式**
+
+在执行当前 Single 只获得唯一一个对象
+单例模式，是一种常用的软件设计模式。在它的核心结构中只包含一个被称为单例的特殊类。通过单例模式可以保证系统中，应用该模式的一个类只有一个实例。即一个类只有一个对象实例。
+
+```js
+var Single = (function(){
+    var instance;
+    function init() {
+        // 定义私有方法和属性
+        // 操作逻辑
+        return {
+           // 定义公共方法和属性
+        };
+    }
+    return {
+        // 获取实例
+        getInstance:function(){
+            if(!instance){
+                instance = init();
+            }
+            return instance;
+        }
+    }
+})();
+
+var obj1 = Single.getInstance();
+var obj2 = Single.getInstance();
+console.log(obj1 === obj2);
+```
+
+### **工厂模式**
+
+工厂模式是我们最常用的实例化对象模式了，是用工厂方法代替new操作的一种模式。
+
+因为工厂模式就相当于创建实例对象的new，我们经常要根据类Class生成实例对象，如A a=new A() 工厂模式也是用来创建实例对象的，所以以后new时就要多个心眼，是否可以考虑使用工厂模式，虽然这样做，可能多做一些工作，但会给你系统带来更大的可扩展性和尽量少的修改量。
+
+```js
+function Animal(opts){
+    var obj = new Object();
+    obj.color = opts.color;
+    obj.name= opts.name;
+    obj.getInfo = function(){
+        return '名称：'+ onj.name+'， 颜色：'+ obj.color;
+    }
+    return obj;
+}
+var cat = Animal({name: '波斯猫', color: '白色'});
+cat.getInfo();
+```
+
+### **构造函数模式**
+
+　 ECMAScript中的构造函数可用来创建特定类型的对象，像Array和Object这样的原生构造函数，在运行时会自动出现在执行环境中。此外，也可以创建自定义的构造函数，从而定义自定义对象的属性和方法。使用构造函数的方法，既解决了重复实例化的问题，又解决了对象识别的问题。
+
+```js
+function Animal(name, color){
+    this.name = name;
+    this.color = color;
+    this.getName = function(){
+        return this.name;
+    }
+}
+// 实例一个对象
+var cat = new Animal('猫', '白色');
+console.log( cat.getName() );
+```
+
+### **订阅/发布模式（subscribe & publish）**
+
+　　text属性变化了，set方法触发了，但是文本节点的内容没有变化。 如何才能让同样绑定到text的文本节点也同步变化呢？ 这里又有一个知识点： 订阅发布模式。
+　　订阅发布模式又称为观察者模式，定义了一种一对多的关系，让多个观察者同时监听某一个主题对象，这个主题对象的状态发生改变时就会通知所有的观察者对象。
+**发布者发出通知 =>主题对象收到通知并推送给订阅者 => 订阅者执行相应的操作。**
+
+```js
+ // 一个发布者 publisher，功能就是负责发布消息 - publish
+var pub = {
+    publish: function () {
+        dep.notify();
+    }
+}
+// 多个订阅者 subscribers， 在发布者发布消息之后执行函数
+var sub1 = { 
+    update: function () {
+        console.log(1);
+    }
+}
+var sub2 = { 
+    update: function () {
+        console.log(2);
+    }
+}
+var sub3 = { 
+    update: function () {
+        console.log(3);
+    }
+}
+// 一个主题对象
+function Dep() {
+    this.subs = [sub1, sub2, sub3];
+}
+Dep.prototype.notify = function () {
+    this.subs.forEach(function (sub) {
+        sub.update();
+    });
+}
+
+// 发布者发布消息， 主题对象执行notify方法，进而触发订阅者执行Update方法
+var dep = new Dep();
+pub.publish();
+```
+
+**思路： 发布者负责发布消息、 订阅者负责接收接收消息，而最重要的是主题对象，他需要记录所有的订阅这特消息的人，然后负责吧发布的消息通知给哪些订阅了消息的人。**
+
+**所以，当set方法触发后做的第二件事情就是作为发布者发出通知： “我是属性text，我变了”。 文本节点作为订阅者，在接收到消息之后执行相应的更新动作。**
+
 ## ES6
 
 原生具备 Iterator 接口的数据结构如下。
@@ -789,8 +907,6 @@ for(i=0;i<10;i++){
 　　一系列关于windowHeight的操作.......
 
 }
-
-
 
 ## Event loop
 
