@@ -205,6 +205,44 @@ autocomplete、autofocus、form、formaction、formenctype、formmethod、formno
 - rem 相对于根字体大小（html）的单位，比如可以设置 1rem=50px
 -  em 相对于父级的font-size，比如font-size：16px（浏览器默认），则2em=32px
 
+### 新增属性
+
+1、box-shadow（阴影效果）
+
+2、border-color（为边框设置多种颜色）
+
+3、border-image（图片边框）
+
+4、text-shadow（文本阴影）
+
+5、text-overflow（文本截断）
+
+6、word-wrap（自动换行）
+
+7、border-radius（圆角边框）
+
+8、opacity（透明度）
+
+9、box-sizing（控制盒模型的组成模式）
+
+10、resize（元素缩放）
+
+11、outline（外边框）
+
+12、background-size（指定背景图片尺寸）
+
+13、background-origin（指定背景图片从哪里开始显示）
+
+14、background-clip（指定背景图片从什么位置开始裁剪）
+
+15、background（为一个元素指定多个背景）
+
+16、hsl（通过色调、饱和度、亮度来指定颜色颜色值）
+
+17、hsla（在hsl的基础上增加透明度设置）
+
+18、rgba（基于rgb设置颜色，a设置透明度）
+
 ### Font-Face
 
 其实就是让浏览器的字体变成自己服务器上存的字体，不用再局限于浏览其中的字体。注意这里只是引入了一种字体，在使用的时候还要在元素的css样式中设置。
@@ -335,6 +373,16 @@ https://www.iconfont.cn/
 有个哥们在github上弄了一个项目，纯css写icon。目前已经写了几十个icon，有兴趣的可以去了解并尝试，该方法比较考验css技巧。
 
 https://cssicon.space/#/
+
+### 浮动
+
+1、行内元素与浮动元素发生重叠，边框、背景、内容都会显示在浮动元素之上
+
+2、块级元素与浮动元素发生重叠，边框、背景会显示在浮动元素之下，内容会显示在浮动元素之上
+
+### 选择器
+
+伪类选择器和类选择器的优先级是一样的
 
 ## 三栏布局
 
@@ -510,7 +558,17 @@ flex版圣杯布局 父容器设置为flex，order排序，flex-grow设置每一
 
 ## js
 
+JavaScript是解释性语言，有非独立性、效率低的特点
+
+非独立：JavaScript语言依赖执行环境，对于客户端来说是浏览器，对于服务端来说是node。
+
+效率低：执行前不需要编译，执行时才编译，因此效率低。
+
 注意：'use strict' 严格模式下进制使用this关键字，在此模式下的this为undefined
+
+(()=>{}).length; 获取方法形参个数，形参为0
+
+with、try-catch、eval可以改变作用域链
 
 ### new
 
@@ -601,9 +659,8 @@ History：提供了与历史清单有关的信息
 
 Document：包含与文档元素一起工作的对象，它将这些元素封装起来供编程人员使用
 
+### readystatechange
 
-
-**readystatechange**
 document有readyState属性来描述document的loading状态，readyState的改变会触发readystatechange事件.
 
 - loading
@@ -921,6 +978,14 @@ a.sort((forward,next) => {
     return next-forward// 降序
 })
 ```
+
++[] 隐式类型转换，因为[]是对象，所以toPrimitive->valueOf->toString为''，结果就是+''===0
+
+## 字符串
+
+下面哪些语句可以 在JS里判断一个对象oStringObject是否为String？
+
+因为一直oStringObject是一个对象，也就是 new String('') 出来的，所以用typeof 得出的是object 因此稚嫩够用instanceof来判断
 
 ## 短路运算符
 
