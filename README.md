@@ -556,7 +556,7 @@ flex版圣杯布局 父容器设置为flex，order排序，flex-grow设置每一
 3. 当使用javascript控制dom去改变样式的时候，只能使用link标签，因为@import不是dom可以控制的。
 4. link除了能加载css外还能定义RSS，定义rel连接属性，@import只能加载css 
 
-## js
+## JS
 
 JavaScript是解释性语言，有非独立性、效率低的特点
 
@@ -569,6 +569,15 @@ JavaScript是解释性语言，有非独立性、效率低的特点
 (()=>{}).length; 获取方法形参个数，形参为0
 
 with、try-catch、eval可以改变作用域链
+
+### Video/Audio
+
+video/Audio 中的事件
+
+```
+方法：load() play() pause()
+事件：play() playing() pause() seeked() seeking() abort()当音频/视频的加载已放弃时触发
+```
 
 ### new
 
@@ -669,6 +678,100 @@ document有readyState属性来描述document的loading状态，readyState的改�
   文档结束加载并且被解析，但是像图片，样式，frame之类的子资源仍在加载
 - complete
   文档和子资源已经结束加载，该状态表明将要触发load事件。
+
+### 节流、防抖
+
+> 参考 https://www.jianshu.com/p/c8b86b09daf0
+
+在开发过程中，有时候会需要绑定一些持续触发的事件（resize、scroll、mousemove），但是为了性能优化又不希望频繁的触发，因此节流和防抖的概念就出现了。
+
+#### 防抖
+
+防抖就是在一定时间内只触发一次，在这段时间内又触发了那么就会重新刷新定时器，也就是如果持续触发，则方法只会调用一次，等停止触发一段时间后才能再次触发
+
+**非立即执行**
+
+触发事件会等过了定时器的时间才会触发函数，重新触发事件定时器重新计算，也就是停止触发一段时间后才能够重复触发
+
+```js
+function debounce(func, wait) {
+    let timeout;
+    return function () {
+        // 记录this和参数列表因为有可能会用到事件对象e
+        let context = this;
+        let args = arguments;
+
+        if (timeout) clearTimeout(timeout);
+        
+        timeout = setTimeout(() => {
+            func.apply(context, args)
+        }, wait);
+    }
+}
+// 调用
+document.querySelector('#a').debounce(func,1000)
+```
+
+**立即执行**
+
+先触发函数，再等定时器。只有等最后一次触发后停止触发事件n秒才会再执行
+
+```js
+function debounce(func,wait) {
+    let timeout;
+    return function() {
+        let context = this
+        let args = arguments
+        if (timeout) clearTimeout(timeout) // 即使清除了定时器timeout也是有值得
+        let callNow = !timeout
+        timeout = setTimeout(() => {
+            timeout = null // 只有这里请null下次触发才有效，也就是最后一次停止触发
+        },wait)
+        if (callNow) func.apply(context,args)
+    }
+}
+```
+
+#### 节流
+
+节流就是只要与第一次触发事件时间比大于等于n就可以再触发
+
+**事件戳版本**
+
+```js
+function throttle(func,wait) {
+    let previous = 0
+    return function() {
+        let now = Date.now() // 获得当前时间戳
+        let context = this
+        let args = arguments
+        // 因为都已经2020了，时间戳远远大于0，因此可以看出先触发
+        if (now - previous >= wait) {
+            func.apply(context,args)
+            previous = now
+        }
+    }
+}
+// 使用方式和防抖一样
+```
+
+**定时器版本**
+
+```js
+function throttle(func,wait) {
+    let timeout;
+    return function() {
+        let context = this
+        let args = arguments
+        if (!timeout) {
+            timeout = setTimeout(()=>{
+                timeout = null
+                func.apply(context,args)
+            },wait)
+        }
+    }
+}
+```
 
 ## JS常用设计模式
 
