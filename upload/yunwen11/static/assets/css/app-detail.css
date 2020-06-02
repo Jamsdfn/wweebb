@@ -1,0 +1,150 @@
+body{
+    background-color: #f5f5f5;
+}
+
+.course{
+    background-color: white;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+}
+
+.course .container{
+    width: 90%;
+}
+
+.course .row{
+    margin: 0;
+}
+
+.return{
+    display: inline-block;
+    color: white;
+    position: absolute;
+    margin-top: 0.5rem;
+    margin-left: 1rem;
+}
+
+.course .name .course-name{
+    display: inline-block;
+    margin-top: 10px;
+    color: #373737;
+    font-size: 1.25em;
+
+}
+.course .name .count{
+    display: inline-block;
+    margin-top: 15px;
+    color: #888;
+    font-size: 1em;
+    float: right;
+}
+
+.course .time{
+    display: inline-block;
+    padding-top: -10px;
+    color: #888;
+    font-size: 1em;
+}
+
+.overview .container{
+    width: 90%;
+}
+
+.overview .overview-panel{
+    background-color: white;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    margin-bottom: 10px;
+}
+.overview .overview-panel .panel-title{
+    height: 2em;
+    font-size: 1.3em;
+    line-height: 2em;
+    border-bottom: solid #ccc 1px;
+}
+.overview .overview-panel .panel-body{
+    display: inline-block;
+    color: #575757;
+    font-size: 1em;
+}
+
+
+
+.superior .container{
+    width: 90%;
+}
+
+.superior .superior-panel{
+    background-color: white;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    margin-bottom: 10px;
+}
+
+.superior .superior-panel .panel-title{
+    height: 2em;
+    font-size: 1.3em;
+    line-height: 2em;
+    border-bottom: solid #ccc 1px;
+}
+.superior .superior-panel .panel-body .avatar{
+    margin-left: -10%;
+}
+.superior .superior-panel .panel-body img{
+    border-radius: 50%;
+}
+
+.superior .superior-panel .panel-body{
+    display: inline-block;
+    color: #575757;
+    font-size: 1em;
+    line-height: 33%;
+}
+
+.outline{
+    margin-bottom: 60px;
+}
+
+.outline .container{
+    width: 90%;
+}
+
+.outline .outline-panel{
+    background-color: white;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
+    margin-bottom: 10px;
+}
+
+.outline .outline-panel .mypanel-title{
+    height: 2em;
+    font-size: 1.3em;
+    line-height: 2em;
+    border-bottom: solid #ccc 1px;
+}
+.outline .outline-panel .mypanel-body{
+    width: 100%;
+    margin-top: 10px;
+    display: inline-block;
+    color: #575757;
+    font-size: 1em;
+}
+
+.outline .outline-panel .mypanel-body .panel-body{
+    /*text-align: center;*/
+}
+
+
+.footer{
+    position: fixed;
+    width: 100%;
+    background-color: white;
+    border-top: solid #ccc 1px;
+    box-shadow: 0 -1px 4px #dbdfe2;
+    bottom: 0;
+}
+
+.footer .container{
+    width: 85%;
+}
+
+.footer a{
+    margin: 5px;
+}

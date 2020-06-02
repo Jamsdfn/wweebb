@@ -1,0 +1,199 @@
+body{
+    background-color: #eee !important;
+}
+
+ul, dl, dt, dd, h1, h2, h3, h4, h5, h6, p {
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+.nav-brand img{
+    height: 40px;
+}
+.nav-brand {
+    float: left;
+    height: 50px;
+    padding-left: 150px;
+    padding-top: 5px;
+    font-size: 0;
+}
+
+.content{
+    width: 1000px;
+    margin: 0 auto;
+    padding-top: 70px;
+}
+
+.container{
+    width: 90%;
+}
+
+.content .course{
+    position: relative;
+}
+
+.content .panel-title{
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ccc;
+}
+
+.content .course{
+    padding: 20px;
+    background-color: white;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+.content .overview{
+    padding: 20px;
+    background-color: white;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+.content .superior{
+    padding: 20px;
+    background-color: white;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+.content .outline{
+    padding: 20px;
+    background-color: white;
+    margin-bottom: 115px;
+    border-radius: 5px;
+}
+
+.content .footer{
+    padding: 20px;
+    background-color: white;
+    margin-bottom: 30px;
+    border-radius: 5px;
+}
+
+.content .course img{
+    height: 250px;
+    border-radius: 5px;
+}
+
+.content .course .course-img{
+    width: 460px;
+    border-right: 1px solid #ccc;
+}
+
+.content .course .course-text{
+    position: absolute;
+    width: 500px;
+    height: 80px;
+    border-bottom: 1px solid #ccc;
+    top: 50px;
+    left: 500px;
+}
+
+.content .course .submit{
+    position: absolute;
+    width: 500px;
+    height: 100px;
+    top: 150px;
+    left: 500px;
+}
+
+.content .course .submit img{
+    position: absolute;
+    height: 100px;
+    left: 50px;
+}
+
+.content .course .submit .price{
+    position: absolute;
+    font-size: 30px;
+    color: #fa6240;
+    top: 7px;
+    right: 55px;
+    font-weight: 100;
+}
+
+.content .course .submit .sub{
+    position: absolute;
+    right: 66px;
+    bottom: 10px;
+}
+
+.content .course .course-text p.name{
+    display: inline-block;
+    position: absolute;
+    top: 0px;
+    left: 44px;
+    font-size: 35px;
+}
+
+.content .course .course-text p.time{
+    display: inline-block;
+    position: absolute;
+    bottom: 27px;
+    right: 70px;
+    font-size: 14px;
+    color: #888;
+}
+
+.content .course .course-text p.count{
+    display: inline-block;
+    position: absolute;
+    top: -10px;
+    right: 75px;
+    font-size: 14px;
+    color: #888;
+}
+
+.content .superior img{
+    width: 100px;
+}
+
+.content .superior .panel-body{
+    position: relative;
+}
+
+.content .superior .good{
+    line-height: 33px;
+    position: absolute;
+    top: 15px;
+    left: 150px;
+
+}
+
+.content .outline .panel-title{
+    border: 0;
+    padding-bottom: 6px;
+}
+
+.content .footer{
+    position: fixed;
+    width: 1000px;
+    bottom: -30px;
+}
+
+.content .form .container{
+    width: 100%;
+}
+
+.content .form .select{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.content .form label.name{
+    padding-left: 15px;
+}
+
+.content .form label.phone{
+    padding-left: 15px;
+}
+
+.content .form{
+    margin-bottom: 30px;
+}

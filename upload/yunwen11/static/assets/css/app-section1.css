@@ -1,0 +1,98 @@
+.app .section1 {
+    display: none
+}
+
+.app .section2 {
+    display: none
+}
+
+.app .section3 {
+    display: none
+}
+
+.app .section4 {
+    display: none
+}
+
+.app .navbar .row li{
+    /*background: white;*/
+    text-align: center;
+}
+
+.app nav .dropdown{
+    text-align: center;
+}
+
+.app .section1 .container{
+    margin-top: 15px;
+    width: 88%;
+}
+
+
+.app nav .glyphicon {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.app nav .glyphicon.glyphicon-blackboard {
+    margin-left: 1px;
+}
+
+.app nav .fa {
+    font-size: 2rem;
+    text-align: center;
+}
+
+.app nav .myNav-text .text{
+    font-size: 1rem;
+    margin-top: -10px;
+    margin-left: 1px;
+}
+
+.app .navbar .container {
+    width: 88%;
+}
+
+.app .navbar-nav > li > a {
+    padding-top: 4px;
+    padding-bottom: 0;
+    height: 38px;
+}
+
+.app .navbar {
+    min-height: 38px;
+}
+
+.app ul.navbar-nav {
+    float: none;
+}
+
+.app .section1.active {
+    display: block;
+}
+
+
+.app .section1 .main{
+    /*margin-right: 0;*/
+    width: 100%;
+    /*margin-top: 20px;*/
+    margin-bottom: 50px;
+}
+
+.app .section1 .main img{
+    width: 100%;
+}
+
+.app .section2.active {
+    display: block;
+}
+
+.app .section3.active {
+    display: block;
+}
+
+.app .section4.active {
+    display: block;
+}
+
+

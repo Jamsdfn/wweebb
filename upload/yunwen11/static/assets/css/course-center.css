@@ -1,0 +1,212 @@
+body{
+    background-color: #eee !important;
+}
+
+ul, dl, dt, dd, h1, h2, h3, h4, h5, h6, p {
+    padding: 0;
+    margin: 0;
+}
+
+ul {
+    list-style: none;
+}
+
+
+.content{
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.nav-brand img{
+    height: 40px;
+}
+.nav-brand {
+    float: left;
+    height: 50px;
+    padding-left: 150px;
+    padding-top: 5px;
+    font-size: 0;
+}
+
+.classify{
+    background-color: white;
+    margin-top: 80px;
+    height: 65px;
+    /*border: 1px solid black;*/
+    border-radius: 5px;
+    line-height: 25px;
+}
+
+.classify span{
+    display: inline-block;
+    margin-left: 65px;
+    color: #888;
+}
+
+.classify ul{
+    margin-top: 18px;
+    display: inline-block;
+
+}
+
+.classify li{
+    display: inline-block;
+    /*height: 32px;*/
+    margin-left: 20px;
+    padding: 0 10px 0 10px;
+}
+
+.classify li:hover{
+    cursor: pointer;
+}
+
+.classify ul li.active{
+    border: 1px solid #ffc210;
+    color: #ffc210;
+    border-radius: 13px;
+    /*border-radius: ;*/
+}
+
+.course {
+    margin-top: 30px;
+    height: 500px;
+    border-radius: 5px;
+}
+
+.course .grade{
+    display: none;
+}
+
+
+.course .grade.now{
+    display: block;
+}
+
+.course .grade .detail{
+    position: relative;
+    background-color: white;
+    height: 220px;
+    border-radius: 3px;
+    margin-bottom: 30px;
+}
+
+.course .grade .detail .img{
+    position: absolute;
+    padding: 10px;
+    border-right: 1px solid #eee;
+}
+
+.course .grade .detail img{
+    border-radius: 3px;
+    height: 200px;
+}
+
+.course .grade .detail .text{
+    position: absolute;
+    left: 400px;
+    width: 575px;
+    height: 97px;
+    border-bottom: 1px solid #eee;
+}
+
+
+.course .grade .detail .text p.name{
+    position: absolute;
+    padding: 10px;
+    top: 10px;
+    left: 15px;
+    font-size: 25px;
+}
+
+.course .grade .detail .text p.time{
+    position: absolute;
+    padding: 10px;
+    top: 55px;
+    left: 15px;
+    font-size: 14px;
+    color: #888;
+}
+
+.course .grade .detail .text p.count{
+    position: absolute;
+    padding: 10px;
+    top: 55px;
+    left: 165px;
+    font-size: 14px;
+    color: #888;
+}
+
+.course .grade .detail .text .font{
+    padding: 10px;
+    background-color: #fa6240;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 10px;
+    line-height: 15px;
+    text-align: center;
+}
+
+.course .grade .detail .sub{
+    position: absolute;
+    left: 400px;
+    top: 110px;
+    width: 575px;
+    height: 97px;
+}
+
+.course .grade .detail .sub p.price{
+    position: absolute;
+    right: 40px;
+    top: -82px;
+    color: #fa6240;
+    font-size: 31px;
+}
+
+.course .grade .detail .sub p.good1{
+    position: absolute;
+    left: 25px;
+    top: 2px;
+    color: #888;
+}
+
+.course .grade .detail .sub p.good2{
+    position: absolute;
+    left: 25px;
+    top: 35px;
+    color: #888;
+}
+
+.course .grade .detail .sub p.good3{
+    position: absolute;
+    left: 25px;
+    top: 65px;
+    color: #888;
+}
+
+.course .grade .detail .sub .btn{
+    position: absolute;
+    bottom: 32px;
+    right: 40px;
+    background-color: white;
+    border: 1px solid #fa6240;
+    color: #fa6240;
+}
+
+.content .form .select{
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.content .form label.name{
+    padding-left: 15px;
+}
+
+.content .form label.phone{
+    padding-left: 15px;
+}
+
+.content .form{
+    margin-bottom: 30px;
+}
+

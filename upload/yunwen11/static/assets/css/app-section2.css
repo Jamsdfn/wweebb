@@ -1,0 +1,164 @@
+.app .section2 .navbar-nav > li > a {
+    padding-top: 4px;
+    padding-bottom: 0;
+    line-height: 20px;
+    font-size: 16px;
+    height: 30px;
+    text-align: center;
+    /*font-weight: bold;*/
+}
+
+.app .section2 .navbar {
+    min-height: 38px;
+    height: 45px;
+}
+
+.navbar-nav .open .dropdown-menu {
+    background-color: white;
+}
+
+.section2 .container:nth-child(2) {
+    margin-top: 50px;
+    width: 95%;
+}
+
+.section2 .container #grade1 {
+    margin-top: -50px;
+    padding-top: 50px;
+    padding-bottom: 38px;
+    display: none;
+}
+
+.section2 .container #grade2 {
+    margin-top: -50px;
+    padding-top: 50px;
+    padding-bottom: 38px;
+    display: none;
+}
+
+.section2 .container #grade3 {
+    margin-top: -50px;
+    padding-top: 50px;
+    padding-bottom: 38px;
+    display: none;
+}
+
+.section2 .container #grade4 {
+    margin-top: -50px;
+    padding-top: 50px;
+    padding-bottom: 38px;
+    display: none;
+}
+
+.section2 .container #grade5 {
+    margin-top: -50px;
+    padding-top: 50px;
+    padding-bottom: 38px;
+    display: none;
+}
+
+.section2 .container #grade6 {
+    margin-top: -50px;
+    padding-top: 50px;
+    padding-bottom: 38px;
+    display: none;
+}
+
+.section2 .mypanel {
+    box-shadow: 0 4px 8px 0 #ccc;
+    border-radius: 10px 10px 10px 10px;
+    margin-bottom: 30px;
+    margin-top: 5px;
+}
+
+.section2 .mypanel .body {
+    position: relative;
+    border-radius: 10px 10px 0 0;
+
+}
+
+.section2 .mypanel .body img {
+    border-radius: 10px 10px 0 0;
+}
+
+.section2 .mypanel .footer {
+    position: relative;
+    height: 65px;
+    border-radius: 0 0 10px 10px;
+}
+
+.section2 .mypanel .footer p {
+    width: 60px;
+}
+
+.section2 > .container > div {
+    margin-bottom: 40px;
+}
+
+.section2 > .container {
+    height: 20px;
+    color: #5a5959;
+    font-size: 20px;
+    /*font-weight: bold;*/
+}
+
+.section2 .mypanel .footer .mybutton {
+    position: absolute;
+    display: inline-block;
+    line-height: 65px;
+    right: 10%;
+}
+
+.section2 .mypanel .footer .mybutton .btn-info {
+    background-color: #6abac5;
+}
+
+.section2 .mypanel .footer .active {
+    color: #ff6b43;
+    font-size: 12px;
+    border: 1px solid #ff6b43;
+    border-radius: 2px;
+
+}
+
+.section2 .mypanel .footer .price {
+    color: #f5a623;
+    font-size: 16px;
+}
+
+.section2 .mypanel .footer .original-price {
+    font-size: 12px;
+    color: #b2b2b2;
+    text-decoration: line-through;
+}
+
+.section2 .mypanel .footer .footer-price {
+    position: absolute;
+    left: 10%;
+    display: inline-block;
+    line-height: 65px
+}
+
+.section2 #grade6 {
+    padding-bottom: 38px;
+}
+
+.section2 .grade-container #grade1.g-active {
+    display: block;
+}
+
+.section2 .grade-container #grade2.g-active{
+    display: block;
+}
+.section2 .grade-container #grade3.g-active{
+    display: block;
+}
+.section2 .grade-container #grade4.g-active{
+    display: block;
+}
+.section2 .grade-container #grade5.g-active{
+    display: block;
+}
+.section2 .grade-container #grade6.g-active{
+    display: block;
+}

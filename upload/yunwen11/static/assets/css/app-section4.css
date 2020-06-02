@@ -1,0 +1,44 @@
+.section4 img{
+    position: absolute;
+    width: 100%;
+}
+
+.section4{
+    /*background-color: #efefef;*/
+    background-color: #ccc;
+}
+
+.section4 .form{
+    position: absolute;
+    width: 100%;
+    margin-top: -38px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    /*background: url("../img/form.png");*/
+}
+
+.section4 .form>.container{
+    width: 80%;
+    /*background-color: #ccc;*/
+    /*border: 1px solid black;*/
+}
+.section4 .form .form-control.container{
+    width: 90%;
+}
+.section4 .sub{
+    /*display: block;*/
+    margin-top: 15px;
+    float: right;
+    margin-right: 10%;
+}
+
+
+.section4 .form button{
+    margin-bottom: 10px;
+}
+
+.section4 .form a.btn{
+    margin-top: 15px;
+    margin-left: 10%;
+}

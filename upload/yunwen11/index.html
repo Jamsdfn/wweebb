@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>韵文1对1</title>
+    <link rel="shortcut icon" href="./static/assets/img/icon.png" type="image/x-icon">
+    <link href="./static/assets/vendors/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="./static/assets/vendors/font-awesome-4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="./static/assets/css/app-section1.css">
+    <link rel="stylesheet" href="./static/assets/css/app-section2.css">
+    <link rel="stylesheet" href="./static/assets/css/app-section4.css">
+    <link rel="stylesheet" href="./static/assets/css/pc.css">
+    <!--[if lt IE 9]>
+    <script src="https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body data-spy="scroll" data-target=".scroll-target">
+<!--SEO优化-->
+<!--<div class="seo" style="display:none;font-size: 0"></div>-->
+<!--手机端-->
+<div class="app visible-xs visible-sm">
+    <nav class="navbar navbar-default navbar-fixed-bottom" role="navigation">
+        <div class="container">
+            <div class="row">
+                <ul class="nav navbar-nav col-md-offset-3">
+                    <li class="col-xs-4 col-sm-4 col-md-4 ">
+                        <a href="#" class="myNav-text" data-my="1">
+                            <p class="glyphicon glyphicon-home" aria-hidden="true"></p>
+                            <p class="text">首页</p>
+                        </a>
+                    </li>
+                    <li class="col-xs-4 col-sm-4 col-md-4">
+                        <a href="#" class="myNav-text" data-my="2">
+                            <p class="glyphicon glyphicon-blackboard" aria-hidden="true"></p>
+                            <p class="text">课程</p>
+                        </a>
+                    </li>
+                    <li class="col-xs-4 col-sm-4 col-md-4">
+                        <a href="#" class="myNav-text" data-my="4">
+                            <p class="glyphicon glyphicon-pencil" aria-hidden="true"></p>
+                            <p class="text">报名</p>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="section1 active">
+        <div id="myCarousel" class="carousel slide" data-ride="carousel" data-interval="3500">
+            <!-- 轮播（Carousel）指标 -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <!--<li data-target="#myCarousel" data-slide-to="2"></li>-->
+            </ol>
+            <!-- 轮播（Carousel）项目 -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <img class="img-responsive" data-app="./static/assets/img/run-1.png" alt="First slide">
+                </div>
+                <!--<div class="item">-->
+                <!--<img class="img-responsive" src="./static/assets/img/g1-english.jpg" alt="Second slide">-->
+                <!--</div>-->
+                <div class="item">
+                    <img class="img-responsive" data-app="./static/assets/img/run-2.png" alt="Third slide">
+                </div>
+            </div>
+        </div>
+        <div class="main">
+            <div>
+                <img data-app="./static/assets/img/main1.png" class="img-responsive">
+            </div>
+            <div>
+                <img data-app="./static/assets/img/main2.png" class="img-responsive">
+            </div>
+            <div>
+                <img data-app="./static/assets/img/main3.png" class="img-responsive">
+            </div>
+            <div>
+                <img data-app="./static/assets/img/main4.png" class="img-responsive">
+            </div>
+            <div>
+                <img data-app="./static/assets/img/main5.png" class="img-responsive">
+            </div>
+        </div>
+    </div>
+    <div class="section2">
+        <nav class="scroll-target navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="bs-js-navbar-scrollspy container">
+                <ul class="nav navbar-nav">
+                    <li class="dropdown col-xs-4 col-sm-4 col-md-4">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>小学</span>
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#grade1" class="grade1">小学</a></li>
+                            <li><a href="#grade2" class="grade2">小升初</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown col-xs-4 col-sm-4 col-md-4">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>初中</span>
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#grade3" class="grade3">初中</a></li>
+                            <li><a href="#grade4" class="grade4">中考</a></li>
+                        </ul>
+                    </li>
+                    <li class="dropdown col-xs-4 col-sm-4 col-md-4">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <span>高中</span>
+                            <span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#grade5" class="grade5">高中</a></li>
+                            <li><a href="#grade6" class="grade6">高考</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div class="container grade-container">
+            <div id="grade1" class="g-active">
+                &nbsp;&nbsp;<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                &nbsp;小学课程
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g1-chinese"><img data-app="./static/assets/img/g1-chinese.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g1-chinese">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g1-math"><img data-app="./static/assets/img/g1-math.jpg"
+                                                                        class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g1-math">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g1-english"><img data-app="./static/assets/img/g1-english.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g1-english">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="grade2">
+                &nbsp;&nbsp;<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                &nbsp;小升初课程
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g2-chinese"><img data-app="./static/assets/img/g2-chinese.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g2-chinese">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g2-math"><img data-app="./static/assets/img/g2-math.jpg"
+                                                                        class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g2-math">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="grade3">
+                &nbsp;&nbsp;<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                &nbsp;初中课程
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g3-chinese"><img data-app="./static/assets/img/g3-chinese.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g3-chinese">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g3-math"><img data-app="./static/assets/img/g3-math.jpg"
+                                                                        class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g3-math">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g3-english"><img data-app="./static/assets/img/g3-english.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g3-english">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g3-physical"><img
+                                data-app="./static/assets/img/g3-physical.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g3-physical">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g3-biology"><img data-app="./static/assets/img/g3-biology.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g3-biology">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g3-geography"><img
+                                data-app="./static/assets/img/g3-geography.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g3-geography">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="grade4">
+                &nbsp;&nbsp;<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                &nbsp;中考课程
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g4-chinese"><img data-app="./static/assets/img/g4-chinese.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g4-chinese">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g4-math"><img data-app="./static/assets/img/g4-math.jpg"
+                                                                        class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g4-math">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g4-english"><img data-app="./static/assets/img/g4-english.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g4-english">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g4-physical"><img
+                                data-app="./static/assets/img/g4-physical.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g4-physical">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g4-chemistry"><img
+                                data-app="./static/assets/img/g4-chemistry.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g4-chemistry">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="grade5">
+                &nbsp;&nbsp;<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                &nbsp;高中课程
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g5-chinese"><img data-app="./static/assets/img/g5-chinese.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g5-chinese">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g5-math"><img data-app="./static/assets/img/g5-math.jpg"
+                                                                        class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g5-math">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g5-english"><img data-app="./static/assets/img/g5-english.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g5-english">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g5-physical"><img
+                                data-app="./static/assets/img/g5-physical.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g5-physical">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g5-chemistry"><img
+                                data-app="./static/assets/img/g5-chemistry.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g5-chemistry">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g5-biology"><img data-app="./static/assets/img/g5-biology.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g5-biology">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="grade6">
+                &nbsp;&nbsp;<span class="glyphicon glyphicon-tags" aria-hidden="true"></span>
+                &nbsp;高考课程
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g6-chinese"><img data-app="./static/assets/img/g6-chinese.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g6-chinese">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g6-math"><img data-app="./static/assets/img/g6-math.jpg"
+                                                                        class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g6-math">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g6-english"><img data-app="./static/assets/img/g6-english.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g6-english">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g6-physical"><img
+                                data-app="./static/assets/img/g6-physical.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g6-physical">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g6-chemistry"><img
+                                data-app="./static/assets/img/g6-chemistry.jpg"
+                                class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g6-chemistry">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="mypanel">
+                    <div class="body">
+                        <a href="./app-detail.html?course=g6-biology"><img data-app="./static/assets/img/g6-biology.jpg"
+                                                                           class="img-responsive" alt=""></a>
+                    </div>
+                    <div class="footer">
+                        <div class="footer-price">
+                            <span class="active">限时</span>
+                            <span class="price">￥80/h</span>
+                            <span class="original-price">120</span>
+                        </div>
+                        <div class="mybutton">
+                            <a class="btn btn-info" href="./app-detail.html?course=g6-biology">点击查询</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section4">
+        <img data-app="./static/assets/img/form.png" class="img-responsive" alt="">
+        <div class="form">
+            <div class="container">
+                <form class="form-horizontal" role="form" action="">
+                    <div class="form-group">
+                        <label for="firstname" class="name">名字</label>
+                        <div class="col-md-12 name">
+                            <input type="text" class="form-control name-input" id="firstname"
+                                   placeholder="请输入名字" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastname" class="phone">电话</label>
+                        <div class="col-md-12 phone">
+                            <input type="text" class="form-control phone-input" id="lastname"
+                                   placeholder="请输入11位有效电话" name="phone">
+                        </div>
+                    </div>
+                    <div class="form-group grade">
+                        <label>选择年级</label>
+                        <select class="form-control container" name="grade">
+                            <option value="-1">请选择</option>
+                            <option value="0">四年级</option>
+                            <option value="1">五年级</option>
+                            <option value="2">六年级</option>
+                            <option value="3">初一</option>
+                            <option value="4">初二</option>
+                            <option value="5">初三</option>
+                            <option value="6">高一</option>
+                            <option value="7">高二</option>
+                            <option value="8">高三</option>
+                        </select>
+                    </div>
+                    <div class="form-group subject">
+                        <label>选择科目</label>
+                        <select class="form-control container" name="subject">
+                            <option value="-1">请选择</option>
+                            <option>语文</option>
+                            <option>数学</option>
+                            <option>英语</option>
+                            <option>物理</option>
+                            <option>化学</option>
+                            <option>生物</option>
+                            <option>地理</option>
+                        </select>
+                    </div>
+                    <div class="form-group location">
+                        <label>选择地址</label>
+                        <select class="form-control container" name="location">
+                            <option value="-1">请选择</option>
+                            <option value="长沙市">长沙市</option>
+                            <option value="株洲市">株洲市</option>
+                            <option value="湘潭市">湘潭市</option>
+                            <option value="衡阳市">衡阳市</option>
+                            <option value="益阳市">益阳市</option>
+                        </select>
+                    </div>
+                </form>
+                <button class="btn btn-default sub">立即报名</button>
+                <a href="tel:073155575070" class="btn btn-default">联系我们</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!--pc端-->
+<div class="pc visible-lg  visible-md">
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="navbar-header">
+            <a class="nav-brand" href="#"><img data-pc="./static/assets/img/nav-brand.png" class="logo img-responsive">韵文1对1</a>
+        </div>
+        <div class="navbar-default" id="example-navbar-content">
+            <ul class="nav navbar-nav">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span
+                            class="glyphicon glyphicon-map-marker" aria-hidden="true"></span> <span
+                            class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">长沙市</a></li>
+                        <li><a href="#">株洲市</a></li>
+                        <li><a href="#">湘潭市</a></li>
+                        <li><a href="#">衡阳市</a></li>
+                        <li><a href="#">益阳市</a></li>
+                    </ul>
+                </li>
+                <li class="active">
+                    <a href="#">服务优势</a>
+                </li>
+                <li><a href="./course-center.html">课程中心</a></li>
+                <li><a href="./news-main.html">新闻动态</a></li>
+
+            </ul>
+        </div>
+    </nav>
+    <div class="banner">
+        <img data-pc="./static/assets/img/banner.png" class="img-responsive" alt="">
+    </div>
+    <div class="bs-js-navbar-scrollspy scroll-target">
+        <ul class="nav">
+            <li>
+                <a href="#screen01"></a>
+                <div id="screen01">
+                    <div class="inner">
+                        <div class="container">
+                            <div class="img">
+                                <img data-pc="./static/assets/img/host-g1.png" class="img-responsive" alt="">
+                                <img data-pc="./static/assets/img/host-g2.png" class="img-responsive" alt="">
+                                <img data-pc="./static/assets/img/host-g3.png" class="img-responsive" alt="">
+                            </div>
+                            <div class="img-text">
+                                <div class="g1">小学<p>培养良好学习习惯</p>
+                                    <p>结合湘潭小升初考点进行专项训练</p></div>
+                                <div class="g2">初中<p>建立学科知识体系</p>
+                                    <p>湘潭中考必考点、知识重点一应俱全</p></div>
+                                <div class="g3">高中<p>知识点全面查漏补缺</p>
+                                    <p>高考题型专项讲解，高效提分</p></div>
+                            </div>
+                            <div class="text">
+                                <h2>韵文1对1，专注于上门1对1辅导</h2>
+                                <p>个性化制定学习方案，从根源上解决孩子学习难题</p>
+                            </div>
+                            <div class="compare">
+                                <div class="good1">
+                                    <img data-pc="./static/assets/img/money-icon.png" class="img-responsive" alt="">
+                                    <p class="title">性价比高</p>
+                                    <p class="detail">同样的师资，更好的教研<br>只需其他机构一半的价格</p>
+                                </div>
+                                <div class="good2">
+                                    <img data-pc="./static/assets/img/user-icon.png" class="img-responsive" alt="">
+                                    <p class="title">1对1上门辅导</p>
+                                    <p class="detail">省去孩子出行时间<br>家长省心又省钱</p>
+                                </div>
+                                <div class="good3">
+                                    <img data-pc="./static/assets/img/draw-icon.png" class="img-responsive" alt="">
+                                    <p class="title">个性化学习方案制定</p>
+                                    <p class="detail">根据接受能力等6相数据<br>定制专属学习计划</p>
+                                </div>
+                                <div class="good4">
+                                    <img data-pc="./static/assets/img/global-icon.png" class="img-responsive" alt="">
+                                    <p class="title">免费作业解疑社群</p>
+                                    <p class="detail">孩子作业存在疑点难点<br>社群老师实时解答</p>
+                                </div>
+                                <div class="good5">
+                                    <img data-pc="./static/assets/img/location-icon.png" class="img-responsive" alt="">
+                                    <p class="title">本地考点</p>
+                                    <p class="detail">结合湘潭本地真题、必考点<br>夯实基础掌握每个知识点</p>
+                                </div>
+                                <div class="good6">
+                                    <img data-pc="./static/assets/img/gift-icon.png" class="img-responsive" alt="">
+                                    <p class="title">各种学习大礼包</p>
+                                    <p class="detail">学习文具、错题本<br>各种礼包免费赠送</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#screen05"></a>
+                <div id="screen05">
+                    <div class="inner">
+                        <div class="set">
+                            <img data-pc="./static/assets/img/set-1.png" class="img-responsive" alt="">
+                            <h3>测-基本情况</h3>
+                            <p>孩子偏科原因<br>学科薄弱点</p>
+                        </div>
+                        <div class="set">
+                            <img data-pc="./static/assets/img/set-2.png" class="img-responsive" alt="">
+                            <h3>定-个性化方案</h3>
+                            <p>根据接受能力、学习习惯等数据<br>制定个性化学习方案</p>
+                        </div>
+                        <div class="set">
+                            <img data-pc="./static/assets/img/set-3.png" class="img-responsive" alt="">
+                            <h3>学-1对1上门辅导</h3>
+                            <p>通俗易懂讲解知识点<br>高效提高孩子基础</p>
+                        </div>
+                        <div class="set">
+                            <img data-pc="./static/assets/img/set-4.png" class="img-responsive" alt="">
+                            <h3>练-湘潭本地考点</h3>
+                            <p>湘潭小升初、中考必考点<br>知识点专项训练提升</p>
+                        </div>
+                        <div class="set">
+                            <img data-pc="./static/assets/img/set-5.png" class="img-responsive" alt="">
+                            <h3>管-学管师督学</h3>
+                            <p>教师每日反馈教学情况<br>学管师督促接受实施情况</p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#screen02"></a>
+                <div id="screen02">
+                    <div class="inner">
+                        <div class="container">
+                            <div class="text">
+                                <h2>严选湘潭名校精英</h2>
+                                <p>来自湘大、科大等名校，有过丰富教学经验</p>
+                            </div>
+                            <div class="good">
+                                <div class="teacher-img">
+                                    <img data-pc="./static/assets/img/teacher.png" class="img-responsive" alt="">
+                                </div>
+                                <div class="teacher-good1">
+                                    <img data-pc="./static/assets/img/teacher-good.png"
+                                         class="good-content img-responsive" alt="">
+                                    <img data-pc="./static/assets/img/teacher-good-1.png"
+                                         class="teacher-good-icon img-responsive" alt="">
+                                    <div>
+                                        <p class="good-1">一层筛选</p>
+                                        <p class="good-1-detail">湘潭优秀名校精英</p>
+                                    </div>
+                                </div>
+                                <div class="teacher-good2">
+                                    <img data-pc="./static/assets/img/teacher-good.png"
+                                         class="good-content img-responsive" alt="">
+                                    <img data-pc="./static/assets/img/teacher-good-2.png"
+                                         class="teacher-good-icon img-responsive" alt="">
+                                    <div>
+                                        <p class="good-1">二层筛选</p>
+                                        <p class="good-1-detail">丰富教学经验</p>
+                                    </div>
+                                </div>
+                                <div class="teacher-good3">
+                                    <img data-pc="./static/assets/img/teacher-good.png"
+                                         class="good-content img-responsive" alt="">
+                                    <img data-pc="./static/assets/img/teacher-good-3.png"
+                                         class="teacher-good-icon img-responsive" alt="">
+                                    <div>
+                                        <p class="good-1">三层筛选</p>
+                                        <p class="good-1-detail">面试教课环节通过</p>
+                                    </div>
+                                </div>
+                                <div class="teacher-good4">
+                                    <img data-pc="./static/assets/img/teacher-good.png"
+                                         class="good-content img-responsive" alt="">
+                                    <img data-pc="./static/assets/img/teacher-good-4.png"
+                                         class="teacher-good-icon img-responsive" alt="">
+                                    <div>
+                                        <p class="good-1">四层筛选</p>
+                                        <p class="good-1-detail">培训过程符合要求</p>
+                                    </div>
+                                </div>
+                                <div class="teacher-good5">
+                                    <img data-pc="./static/assets/img/teacher-good.png"
+                                         class="good-content img-responsive" alt="">
+                                    <img data-pc="./static/assets/img/teacher-good-5.png"
+                                         class="teacher-good-icon img-responsive" alt="">
+                                    <div>
+                                        <p class="good-1">五层筛选</p>
+                                        <p class="good-1-detail">试教好评率高</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#screen03"></a>
+                <div id="screen03">
+                    <div class="inner">
+                        <div class="text">
+                            <h2>省心又省钱，性价比高</h2>
+                            <p>无需线下高额租金与维护费用</p>
+                            <p>为家长省一半的补课费用</p>
+                        </div>
+                        <div class="container" id="echart-container">
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <a href="#screen04"></a>
+                <div id="screen04">
+                    <div class="inner">
+                        <!--<div class="container">-->
+                        <div class="text">
+                            <h2>更低的价格，更好的学习效果</h2>
+                            <p>专注于1对1上门辅导，全方面压倒性优势</p>
+                        </div>
+                        <img data-pc="./static/assets/img/chart.png" class="img-responsive table-content" alt="">
+                        <table class="table table-striped table-hover">
+                            <thead class="thead-dark">
+                            <tr>
+                                <th>其他机构</th>
+                                <th><span class="fa fa-balance-scale"></span></th>
+                                <th>韵文1对1</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>线下成本高，收费居高不下</td>
+                                <td><span class="fa fa-cny fa-2x"></span></td>
+                                <td>节省线下课室高额费用，为家长省去教育成本</td>
+                            </tr>
+                            <tr>
+                                <td>无完善招聘体系，大多为没有经验的大学生</td>
+                                <td><span class="fa fa-user-secret fa-2x"></span></td>
+                                <td>拥有其他机构教学经验，录用率仅18.7%</td>
+                            </tr>
+                            <tr>
+                                <td>上课过程不透明，教学效果难以保证</td>
+                                <td><span class="fa fa-line-chart fa-2x"></span></td>
+                                <td>旁听老师上课，随时监督教学效果</td>
+                            </tr>
+                            <tr>
+                                <td>一次性缴纳大量费用，退费限制繁多</td>
+                                <td><span class="fa fa-money fa-2x"></span></td>
+                                <td>先上课后缴费，无效果不收任何费用</td>
+                            </tr>
+                            <tr>
+                                <td>上课1小时，路上出行两小时<br>家长担心孩子出行风险</td>
+                                <td><span class="fa fa-bus fa-2x"></span></td>
+                                <td>1对1上门辅导，节省孩子出行时间<br>提高孩子学习效率</td>
+                            </tr>
+                            <tr>
+                                <td>老师自己备课，通用教学模式<br>教学效果参差不齐</td>
+                                <td><span class="fa fa-file-text-o fa-2x"></span></td>
+                                <td>根据接受能力等6项数据<br>制定专属学习计划</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <!--</div>-->
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <footer class="pc-footer">
+        <div class="content">
+            <p>Copyright © 深圳韵文教育科技有限公司 (粤ICP备19038587号) </p>
+            <p>深圳韵文教育科技有限公司 版权所有</p>
+        </div>
+    </footer>
+    <div class="submit">
+        <a href="./course-center.html" class="choose">
+            <p class="fa fa-tasks"></p>
+            <p class="bm">选课</p>
+        </a>
+        <a class="pc-index-submit" data-toggle="modal" data-target="#myModal">
+            <p class="fa fa-file-text"></p>
+            <p class="bm">报名</p>
+        </a>
+        <div class="wechat">
+            <span class="fa fa-wechat"></span>
+        </div>
+    </div>
+    <div class="wechat-img">
+        <img data-pc="./static/assets/img/QR-code.jpg" class="img-responsive" alt="">
+    </div>
+    <div class="submit-phone">
+        <a class="phone" data-toggle="modal" data-target="#myModal"></a>
+    </div>
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                        &times;
+                    </button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        报名表
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form">
+                        <div class="">
+                            <form class="form-horizontal" role="form" action="">
+                                <div class="form-group">
+                                    <label for="firstname" class="name">名字</label>
+                                    <div class="col-md-12 name">
+                                        <input type="text" class="form-control name-input"
+                                               placeholder="请输入名字" name="name">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastname" class="phone">电话</label>
+                                    <div class="col-md-12 phone">
+                                        <input type="text" class="form-control phone-input"
+                                               placeholder="请输入11位有效电话" name="phone">
+                                    </div>
+                                </div>
+                                <div class="select">
+                                    <div class="form-group grade">
+                                        <label>选择年级</label>
+                                        <select class="form-control container" name="grade">
+                                            <option value="-1">请选择</option>
+                                            <option value="0">四年级</option>
+                                            <option value="1">五年级</option>
+                                            <option value="2">六年级</option>
+                                            <option value="3">初一</option>
+                                            <option value="4">初二</option>
+                                            <option value="5">初三</option>
+                                            <option value="6">高一</option>
+                                            <option value="7">高二</option>
+                                            <option value="8">高三</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group subject">
+                                        <label>选择科目</label>
+                                        <select class="form-control container" name="subject">
+                                            <option value="-1">请选择</option>
+                                            <option>语文</option>
+                                            <option>数学</option>
+                                            <option>英语</option>
+                                            <option>物理</option>
+                                            <option>化学</option>
+                                            <option>生物</option>
+                                            <option>地理</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group location">
+                                        <label>选择地址</label>
+                                        <select class="form-control container" name="location">
+                                            <option value="-1">请选择</option>
+                                            <option value="长沙市">长沙市</option>
+                                            <option value="株洲市">株洲市</option>
+                                            <option value="湘潭市">湘潭市</option>
+                                            <option value="衡阳市">衡阳市</option>
+                                            <option value="益阳市">益阳市</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                        </button>
+                        <button type="button" class="btn btn-primary sub">
+                            提交表格
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="./static/assets/vendors/jquery.min.js"></script>
+<script src="./static/assets/vendors/bootstrap/js/bootstrap.js"></script>
+<script src="./static/assets/vendors/echarts.min.js"></script>
+<script src="./static/assets/js/index.js"></script>
+<script>
+    function IsPC() {
+        var userAgentInfo = navigator.userAgent;
+        var Agents = ["Android", "iPhone",
+            "SymbianOS", "Windows Phone",
+            "iPad", "iPod"];
+        var flag = true;
+        for (var v = 0; v < Agents.length; v++) {
+            if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                flag = false;
+                break;
+            }
+        }
+        return flag;
+    }
+
+    $(function ($) {
+        if (IsPC()) {
+            $('body').attr('data-offset', '600')
+            $('.pc img').each(function () {
+                $(this).attr('src', $(this).attr('data-pc'))
+            })
+            $('.pc .scroll-target').on('activate.bs.scrollspy', function () {
+                $(".pc .scroll-target li.active .inner").addClass('now')
+                if ($(".pc #screen03 .inner").hasClass('now')) {
+                    setTimeout(function () {
+                        myChart.setOption(eChartOption)
+                    }, 1000)
+                }
+            })
+            $(window).scroll(function () {
+                if ($(this).scrollTop() > 200) {
+                    $('.pc .submit').fadeIn()
+                    $('.pc .submit-phone').fadeIn()
+                }
+            })
+        } else {
+            $('body').attr('data-offset', '38')
+            $('.app img').each(function () {
+                $(this).attr('src', $(this).attr('data-app'))
+            })
+        }
+
+        //给底部导航栏绑定点击事件
+        $('.myNav-text').on('click', navClick())
+        // 跟传回的url决定是否进入报名界面
+        //
+        // if (isSignup) {
+        //     $('.section4').addClass('active').siblings().removeClass('active')
+        // }
+        $('.app .section4 img').css('height', $(window).height() - 55)
+        $('.app .section4').css('height', $(window).height())
+        $('.pc .submit .wechat').mouseenter(function () {
+            $('.pc .wechat-img').fadeIn()
+        }).mouseleave(function () {
+            $('.pc .wechat-img').fadeOut()
+        })
+
+        $('.pc img').on('click', function () {
+            $(location).attr('href', './course-center.html')
+        })
+
+    })
+</script>
+</body>
+</html>
