@@ -1084,6 +1084,28 @@ a.sort((forward,next) => {
 
 +[] 隐式类型转换，因为[]是对象，所以toPrimitive->valueOf->toString为''，结果就是+''===0
 
+**判断数组是否非数组**
+
+- arr instanceof Array 但是 arr instanceof Object 也返回的是true，如果单单是判读一个对象，这个方法是可行的
+- arr.constructor == Array 对象的构造函数如果是Array那么对象必定是数组
+- Object.prototype.toString.call(arr) == '[object Array]' 用Object原型链上的toString方法来暑促arr的类型，因为如果是不同的对象toString是不同的，所以要用Object的toString
+- Array.isArray(arr) 数组对象的方法
+
+**every和some**
+
+[].every(item => 布尔) 只要有一个为false返回值就为false,全部为true才为true
+
+[].some(item => 布尔) 只要有一个为true就为true，全为false才为false
+
+## 对象
+
+Object.assigin(obja,objb...) 把所有参数的obj合并。返回值就是合并好的obj，如果出现同名属性，后面的会把前面的覆盖。注意这里第一个参数的obj会被改变，其余的obj不会改变，返回值和第一个obj的引用是一样的
+
+```js
+var returnObj =  Object.assign(target,source) // 合并target和source
+returnObj == target // true
+```
+
 ## 字符串
 
 下面哪些语句可以 在JS里判断一个对象oStringObject是否为String？
