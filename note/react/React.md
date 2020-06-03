@@ -2659,6 +2659,19 @@ export {App,store};
 
 执行combineReducer后，因为每一个reducer是独立的，所以state也是独立互不干扰的，但是action是共用的（因为store.dispatch()方法没变），所以如果同名会共同触发事件
 
+### 重新渲染
+
+上述讲了这么多的redux的东西，正删改查动的都是redux而不是react，没有触发setState，因此如果单纯这样用redux代替state页面是不会重新渲染的，因此要把render给redux监听，如果redux中的state改变，就会触发render方法重新渲染
+
+```js
+function render() {
+    ReactDOM.render(<App />, document.getElementById('root'));
+}
+render() // 页面第一次渲染
+
+store.subscribe(render) // 监听render
+```
+
 ### applyMiddleware
 
 中间件，数据渲染的中间环节的操作，也可以用来当做拦截器
@@ -2727,6 +2740,22 @@ click() {
     })
 }
 ```
+
+### redux+immutable.js
+
+因为redux的reducers函数官方要求要保证reducer的纯净性。**永远不要**在 reducer 里做这些操作：
+
+- 修改传入参数；
+- 执行有副作用的操作，如 API 请求和路由跳转；
+- 调用非纯函数，如 `Date.now()` 或 `Math.random()`。
+
+因此我们不能改变传入的参数state，而用immutable.js正是为了防止改变传入的参数。除了这个方案，我们还可以用数组的解构运算符... 后者Object.assign({},state,change)来防止传入的参数的改变。
+
+## React-redux
+
+redux 是一个独立的库，不是依赖于react的，可以说在所有用js的地方都可以用。react专用的redux库就是react-redux
+
+> http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_three_react-redux.html
 
 ## TodoMVC
 
