@@ -2069,7 +2069,7 @@ image[lazy=loading] {
 
 在 webpack 4+ 中，你可以使用 `mode` 选项：
 
-```
+```js
 module.exports = {
   mode: 'production'
 }
@@ -2077,7 +2077,7 @@ module.exports = {
 
 但是在 webpack 3 及其更低版本中，你需要使用 DefinePlugin：
 
-```
+```js
 var webpack = require('webpack')
 
 module.exports = {
@@ -2091,7 +2091,101 @@ module.exports = {
 }
 ```
 
+## Vuex
 
+> 具体的时候这里就不阐述了，可以参考官方的文档https://vuex.vuejs.org/zh/guide/
+
+这里就简单介绍一些 vuex要注意的点。
+
+每一个 Vuex 应用的核心就是 store（仓库）。“store”基本上就是一个容器，它包含着你的应用中大部分的**状态 (state)**。Vuex 和单纯的全局对象有以下两点不同：
+
+1. Vuex 的状态存储是响应式的。当 Vue 组件从 store 中读取状态的时候，若 store 中的状态发生变化，那么相应的组件也会相应地得到高效更新。
+2. 你不能直接改变 store 中的状态。改变 store 中的状态的唯一途径就是显式地**提交 (commit) mutation**。这样使得我们可以方便地跟踪每一个状态的变化，从而让我们能够实现一些工具帮助我们更好地了解我们的应用。
+
+同理redux通过subscribe函数触发组件更新状态，如果是单纯的全局变量是做不到的，还是要触发在组件内触发state。想要改变state的值只能通过action才改变，而全局变量是暴露出来的，任何地方都可以改变，很危险。
+
+### Mutation 需遵守 Vue 的响应规则
+
+既然 Vuex 的 store 中的状态是响应式的，那么当我们变更状态时，监视状态的 Vue 组件也会自动更新。这也意味着 Vuex 中的 mutation 也需要与使用 Vue 一样遵守一些注意事项：
+
+1. 最好提前在你的 store 中初始化好所有所需属性。
+2. 当需要在对象上添加新属性时，你应该
+
+- 使用 `Vue.set(obj, 'newProp', 123)`, 或者
+
+- 以新对象替换老对象。例如，利用对象展开运算符我们可以这样写：
+
+  ```js
+  state.obj = { ...state.obj, newProp: 123 }
+  ```
+
+### Mutation 必须是同步函数
+
+现在想象，我们正在 debug 一个 app 并且观察 devtool 中的 mutation 日志。每一条 mutation 被记录，devtools 都需要捕捉到前一状态和后一状态的快照。然而，在上面的例子中 mutation 中的异步函数中的回调让这不可能完成：因为当 mutation 触发的时候，回调函数还没有被调用，devtools 不知道什么时候回调函数实际上被调用——实质上任何在回调函数中进行的状态的改变都是不可追踪的。
+
+在 mutation 中混合异步调用会导致你的程序很难调试。例如，当你调用了两个包含异步回调的 mutation 来改变状态，你怎么知道什么时候回调和哪个先回调呢？这就是为什么我们要区分这两个概念。在 Vuex 中，**mutation 都是同步事务**：
+
+Action 类似于 mutation，不同在于：
+
+- Action 提交的是 mutation，而不是直接变更状态。
+- Action 可以包含任意异步操作。
+
+### 表单处理
+
+当在严格模式中使用 Vuex 时，在属于 Vuex 的 state 上使用 `v-model` 会比较棘手：
+
+```html
+<input v-model="obj.message">
+```
+
+假设这里的 `obj` 是在计算属性中返回的一个属于 Vuex store 的对象，在用户输入时，`v-model` 会试图直接修改 `obj.message`。在严格模式中，由于这个修改不是在 mutation 函数中执行的, 这里会抛出一个错误。
+
+用“Vuex 的思维”去解决这个问题的方法是：给 `` 中绑定 value，然后侦听 `input` 或者 `change` 事件，在事件回调中调用一个方法:
+
+```html
+<input :value="message" @input="updateMessage">
+// ...
+computed: {
+  ...mapState({
+    message: state => state.obj.message
+  })
+},
+methods: {
+  updateMessage (e) {
+    this.$store.commit('updateMessage', e.target.value)
+  }
+}
+```
+
+下面是 mutation 函数：
+
+```js
+// ...
+mutations: {
+  updateMessage (state, message) {
+    state.obj.message = message
+  }
+}
+```
+
+#### 双向绑定的计算属性
+
+必须承认，这样做比简单地使用“`v-model` + 局部状态”要啰嗦得多，并且也损失了一些 `v-model` 中很有用的特性。另一个方法是使用带有 setter 的双向绑定计算属性：
+
+```html
+<input v-model="message">
+// ...
+computed: {
+  message: {
+    get () {
+      return this.$store.state.obj.message
+    },
+    set (value) {
+      this.$store.commit('updateMessage', value)
+    }
+  }
+}
+```
 
 ## 其他
 

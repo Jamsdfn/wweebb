@@ -198,6 +198,12 @@ autocomplete、autofocus、form、formaction、formenctype、formmethod、formno
 
 \<script>   客户端脚本
 
+### canvas
+
+HTML5 \<canvas> 标签用于绘制图像（通过脚本，通常是 JavaScript）。
+
+不过，\<canvas> 元素本身并没有绘制能力（它仅仅是图形的容器） - 您必须使用js来完成实际的绘图任务。getContext() 方法可返回一个对象，该对象提供了用于在画布上绘图的方法和属性。
+
 ## CSS3
 
 - vh单位，视窗高度的百分比
@@ -1097,6 +1103,18 @@ a.sort((forward,next) => {
 
 [].some(item => 布尔) 只要有一个为true就为true，全为false才为false
 
+**Array.form()**
+
+`Array.from()` 方法从一个类似数组或可迭代对象创建一个新的，浅拷贝的数组实例。
+
+```js
+console.log(Array.from('foo'));
+// expected output: Array ["f", "o", "o"]
+
+console.log(Array.from([1, 2, 3], x => x + x));
+// expected output: Array [2, 4, 6]
+```
+
 ## 对象
 
 Object.assigin(obja,objb...) 把所有参数的obj合并。返回值就是合并好的obj，如果出现同名属性，后面的会把前面的覆盖。注意这里第一个参数的obj会被改变，其余的obj不会改变，返回值和第一个obj的引用是一样的
@@ -1110,7 +1128,152 @@ returnObj == target // true
 
 下面哪些语句可以 在JS里判断一个对象oStringObject是否为String？
 
-因为一直oStringObject是一个对象，也就是 new String('') 出来的，所以用typeof 得出的是object 因此稚嫩够用instanceof来判断
+因为一直oStringObject是一个对象，也就是 new String('') 出来的，所以用typeof 得出的是object 因此只能够用instanceof来判断
+
+### String.replace()
+
+replace() 方法用于在字符串中用一些字符替换另一些字符，或替换一个与正则表达式匹配的子串。
+
+
+**语法**
+
+
+```js
+stringObject.replace(regexp/substr,replacement)
+```
+
+
+| 参数          | 描述                                                         |
+| :------------ | :----------------------------------------------------------- |
+| regexp/substr | 必需。规定子字符串或要替换的模式的 RegExp 对象。请注意，如果该值是一个字符串，则将它作为要检索的直接量文本模式，而不是首先被转换为 RegExp 对象。 |
+| replacement   | 必需。一个字符串值。规定了替换文本或生成替换文本的函数。     |
+
+**返回值**
+
+一个新的字符串，是用 *replacement* 替换了 regexp 的第一次匹配或所有匹配之后得到的。
+
+不会改变原字符串的值
+
+## RegExp对象
+
+### 定义 RegExp
+
+RegExp 对象用于存储检索模式。
+
+通过 new 关键词来定义 RegExp 对象。以下代码定义了名为 patt1 的 RegExp 对象，其模式是 "e"：
+
+```js
+var patt1=new RegExp("e");
+```
+
+当您使用该 RegExp 对象在一个字符串中检索时，将寻找的是字符 "e"。
+
+### RegExp 对象的方法
+
+RegExp 对象有 3 个方法：test()、exec() 以及 compile()。
+
+#### test()
+
+test() 方法检索字符串中的指定值。返回值是 true 或 false。
+
+例子：
+
+```js
+var patt1=new RegExp("e");
+
+console.log(patt1.test("The best things in life are free")); 
+```
+
+由于该字符串中存在字母 "e"，以上代码的输出将是：
+
+```js
+true
+```
+
+#### exec()
+
+exec() 方法检索字符串中的指定值。返回值是被找到的值。如果没有发现匹配，则返回 null。
+
+例子 1：
+
+```js
+var patt1=new RegExp("e");
+
+console.log(patt1.exec("The best things in life are free")); 
+```
+
+由于该字符串中存在字母 "e"，以上代码的输出将是：
+
+```js
+e
+```
+
+例子 2：
+
+您可以向 RegExp 对象添加第二个参数，以设定检索。例如，如果需要找到所有某个字符的所有存在，则可以使用 "g" 参数 ("global")。
+
+如需关于如何修改搜索模式的完整信息，请访问我们的 [RegExp 对象参考手册](https://www.w3school.com.cn/jsref/jsref_obj_regexp.asp)。
+
+在使用 "g" 参数时，exec() 的工作原理如下：
+
+- 找到第一个 "e"，并存储其位置
+- 如果再次运行 exec()，则从存储的位置开始检索，并找到下一个 "e"，并存储其位置
+
+```js
+var patt1=new RegExp("e","g");
+do
+{
+result=patt1.exec("The best things in life are free");
+console.log(result);
+}
+while (result!=null) 
+```
+
+由于这个字符串中 6 个 "e" 字母，代码的输出将是：
+
+```js
+e
+e
+e
+e
+e
+e
+null
+```
+
+#### compile()
+
+compile() 方法用于改变 RegExp。
+
+compile() 既可以改变检索模式，也可以添加或删除第二个参数。
+
+**例子：**
+
+```js
+var patt1=new RegExp("e");
+
+console.log(patt1.test("The best things in life are free"));
+
+patt1.compile("d");
+
+console.log(patt1.test("The best things in life are free"));
+```
+
+由于字符串中存在 "e"，而没有 "d"，以上代码的输出是：
+
+```js
+true
+false
+```
+
+### 支持正则表达式的String对象方法
+
+注意是String对象的方法，不是RegExp的
+
+- search
+- match
+- replace
+- split
 
 ## 短路运算符
 
