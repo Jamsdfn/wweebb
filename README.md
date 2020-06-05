@@ -204,6 +204,62 @@ HTML5 \<canvas> 标签用于绘制图像（通过脚本，通常是 JavaScript�
 
 不过，\<canvas> 元素本身并没有绘制能力（它仅仅是图形的容器） - 您必须使用js来完成实际的绘图任务。getContext() 方法可返回一个对象，该对象提供了用于在画布上绘图的方法和属性。
 
+### script标签中的async、defer问题
+
+defer 会按照顺序在 DOMContentLoaded 前按照页面出现顺序依次执行。
+
+async 则是下载完立即执行。
+
+#### 普通 script
+
+先来看一个普通的 script 标签。
+
+```xml
+<script src="a.js"></script>
+```
+
+浏览器会做如下处理
+
+- 停止解析 document.
+- 请求 a.js
+- 执行 a.js 中的脚本
+- 继续解析 document
+
+#### defer
+
+```xml
+<script src="d.js" defer></script>
+<script src="e.js" defer></script>
+```
+
+- 不阻止解析 document， 并行下载 d.js, e.js
+- 即使下载完 d.js, e.js 仍继续解析 document
+- 按照页面中出现的顺序，在其他同步脚本执行后，`DOMContentLoaded` 事件前 依次执行 d.js, e.js。
+
+#### async
+
+```xml
+<script src="b.js" async></script>
+<script src="c.js" async></script>
+```
+
+- 不阻止解析 document, 并行下载 b.js, c.js
+- 当脚本下载完后立即执行。（两者执行顺序不确定，执行阶段不确定，可能在 `DOMContentLoaded` 事件前或者后 ）
+
+#### 其他
+
+- 如果 script 无 src 属性，则 defer, async 会被忽略
+- 动态添加的 script 标签隐含 async 属性。
+
+#### 结论
+
+- 两者都不会阻止 document 的解析
+- defer 会在 DOMContentLoaded 前依次执行 （可以利用这两点哦！）
+- async 则是下载完立即执行，不一定是在 DOMContentLoaded 前
+- async 因为顺序无关，所以很适合像 Google Analytics 这样的无依赖脚本
+
+
+
 ## CSS3
 
 - vh单位，视窗高度的百分比
@@ -329,6 +385,22 @@ BFC是一个独立的布局环境，其中的元素布局是不受外界的影�
 3. 清除浮动
    - 如果父元素无高度的话，子元素设置为浮动，父元素高度会塌陷，父元素创建BCF就可以防止塌陷
 
+### IFC
+
+Inline Formatting Context 内敛格式化上下文。
+
+#### ifc是什么
+
+IFC的line box（线框高度由其包含行内元素中最高的实际高度计算而来（不受到竖直方向的padding/margin影响）
+
+IFC的inline box一般左右都贴紧整个IFC，但是因为float元素二扰乱。float元素会位于IFC与line box之间，使得line box宽度缩短。同个IFC下的多个line box高度会不同。IFC中不可能有块级元素，当插入块级元素时（如p中插入div）会产生两个匿名快与div分隔开，即产生两个IFC，每个IFC对外表现为块级元素，与div垂直排列。
+
+#### 作用
+
+水平居中：当一个块要在环境中水平居中时候，设置其为inline-block则会在外层产生IFC，通过text-align:center则可以使其水平居中。
+
+垂直居中：创建一个IFC，用其中一个元素撑开父元素的高度，然后设置其vertical-align:middle,其他行内元素则可以在此父元素下垂直居中。
+
 ### icon
 
 关于css图标icon的六种实现方法
@@ -389,6 +461,12 @@ https://cssicon.space/#/
 ### 选择器
 
 伪类选择器和类选择器的优先级是一样的
+
+### 隐藏元素的各方法之间的区别
+
+opacity=0，该元素隐藏起来了，但不会改变页面布局，并且，如果该元素已经绑定一些事件，如click事件，那么点击该区域，也能触发点击事件的
+visibility=hidden，该元素隐藏起来了，但不会改变页面布局，但是不会触发该元素已经绑定的事件
+display=none，把元素隐藏起来，并且会改变页面布局，可以理解成在页面中把该元素删除掉一样
 
 ## 三栏布局
 
@@ -575,6 +653,8 @@ JavaScript是解释性语言，有非独立性、效率低的特点
 (()=>{}).length; 获取方法形参个数，形参为0
 
 with、try-catch、eval可以改变作用域链
+
+Number 数据类型为64位浮点数
 
 ### Video/Audio
 
@@ -849,7 +929,11 @@ var cat = new Animal('猫', '白色');
 console.log( cat.getName() );
 ```
 
-### **订阅/发布模式（subscribe & publish）**
+### 代理模式
+
+代理模式（Proxy），为其他对象提供一种代理以控制对这个对象的访问，为了不暴露执行对象的部分代码。也就是ES6提出的Proxy。就是在访问对象前先经过拦截器处理。
+
+### 订阅/发布模式（subscribe & publish）
 
 　　text属性变化了，set方法触发了，但是文本节点的内容没有变化。 如何才能让同样绑定到text的文本节点也同步变化呢？ 这里又有一个知识点： 订阅发布模式。
 　　订阅发布模式又称为观察者模式，定义了一种一对多的关系，让多个观察者同时监听某一个主题对象，这个主题对象的状态发生改变时就会通知所有的观察者对象。
@@ -1073,6 +1157,29 @@ setInterval(replaceThing, 1000);
 - TypedArray
 - 函数的 arguments 对象
 - NodeList 对象
+
+### Proxy
+
+> https://es6.ruanyifeng.com/#docs/proxy
+
+proxy本来是代理的意思，在es6中proxy更像是拦截器，他就是用来在访问或者修改一个对象前，先经过proxy处理后再修改
+
+```js
+let target = { age: 18, name: 'Niko Bellic' }
+let handlers = {
+  get (target, property) {
+    return `${property}: ${target[property]}`
+  },
+  set (target, property, value) {
+    target[property] = value
+  }
+}
+let proxy = new Proxy(target, handlers)
+
+proxy.age = 19
+console.log(target.age, proxy.age)   // 19,          age : 19
+console.log(target.name, proxy.name) // Niko Bellic, name: Niko Bellic
+```
 
 ## 数组
 
@@ -1905,6 +2012,20 @@ http协议中与资源缓存相关的协议头有哪些
 
 http是无状态的网络协议,请求响应后，断开了TCP连接，下一次连接与上一次无关。为了识别不同的请求是否来自同一客户，引用HTTP会话机制,而维持这个会话则主要靠session和cookie。简单来说，cookie机制采用的是在客户端保持状态的方案，而session机制采用的是在服务器端保持状态的方案。
 
+cookie大小普遍在4K左右，根据浏览器的不同可能会有几K的变化
+
+#### cookie属性
+
+- name　　字段为一个cookie的名称。
+
+- value　字段为一个cookie的值。
+- domain　　字段为可以访问此cookie的域名。
+- path　　字段为可以访问此cookie的页面路径。 比如domain是abc.com,path是/test，那么只有/test路径下的页面可以读取此cookie。
+- expires/Max-Age 　字段为此cookie超时时间。若设置其值为一个时间，那么当到达此时间后，此cookie失效。不设置的话默认值是Session，意思是cookie会和session一起失效。当浏览器关闭(不是浏览器标签页，而是整个浏览器) 后，此cookie失效。
+- Size　　字段 此cookie大小。
+- http　　字段  cookie的httponly属性。若此属性为true，则只有在http请求头中会带有此cookie的信息，而不能通过document.cookie来访问此cookie。
+- secure　　 字段 设置是否只能通过https来传递此条cookie
+
 ### CORS
 
 跨域资源共享(CORS) 是一种机制，它使用额外的 HTTP 头来告诉浏览器 让运行在一个 origin (domain) 上的Web应用被准许访问来自不同源服务器上的指定的资源。当一个资源从与该资源本身所在的服务器不同的域、协议或端口请求一个资源时，资源会发起一个跨域 HTTP 请求。
@@ -1934,6 +2055,22 @@ http://hui.m.a.com:8080/index.html这个链接中，顶级域名是com，二级�
 4. 连接建立后，浏览器给服务器发送请求，服务器处理请求并响应的信息（通常是网站的文件，也可能是交互信息）传给服务器。
 5. 服务器接收到文件后进行渲染或者根据响应的信息执行脚本
 6. 渲染完成后就给用户呈现页面 / 脚本执行完成后呈现效果
+
+### websocket与ajax的区别
+
+websocket是一种新的协议，实现客户端和浏览器之间的全双工模式。而ajax只是一个交互式网页开发的技术
+
+websocket可以实现长连接，只要会话不关闭，就可以一直保持连接。而ajax发送完请求，接收完数据后就关闭了
+
+websocket在连接的时候可以从服务器发信息给客户端，客户端也可以发信息给服务器，就类似于计算机网络中的点对点模式。而ajax是典型的客户端/服务器模式，只有客户端发送请求服务器才能响应。
+
+### fetch API与传统xhr的区别
+
+fetch是用promise封装的，xmlhttprequest是用回调函数的方法来执行的。
+
+fetch携带更多的报文信息，因此fetch比xhr更灵活
+
+关于fetch的用法https://github.com/Jamsdfn/wweebb/blob/master/note/react/React.md#fetch
 
 ## 跨域
 
@@ -1977,6 +2114,13 @@ function handleCallback(res) {
 // 服务器返回的jsonp，返回数据直接用字符串拼接就可以了
 handleCallback({test:1})
 ```
+
+#### JSONP污染全局变量的问题
+
+JSONP返回只能全局变量，没想到其它办法
+但是可以减少污染全局变量，用现成的变量代替这个全局
+svr端返回 myobj.callback123456({xxx})
+那这个只对myobj有影响，要清除的时候，myobj={}指向一个新对象就回收了旧的
 
 ### document.domain + iframe
 

@@ -66,3 +66,73 @@ function LRUCache(limit) {
 }
 ```
 
+## 排序
+
+### 冒泡排序 O(n²)
+
+```js
+const sort = (array) => {
+    let arr = array.concat()
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = 0; j < arr.length-i-1; j++) {
+            if (arr[j] < arr[j+1]) { // 降序
+                let temp = arr[j]
+                arr[j] = arr[j+1]
+                arr[j+1] = temp
+            }
+        }
+    }
+    return arr
+}
+```
+
+### 快速排序 O(nlogn)
+
+```js
+const quickSort = (array) => {
+    const subSort = (arr, left = 0, right = array.length - 1) => {
+        if (left >= right) {
+            return
+        }
+        let i = left
+        let j = right
+        let baseVal = arr[j]
+        while (i<j) { 
+            // 因为arr[i]是左边开始的，左边开始的大于基数就换到右边去，所以是升序
+            while (i<j && arr[i] <= baseVal) {
+                i++
+            }
+            arr[j] = arr[i]
+            while (j>i && arr[j] >= baseVal) {
+                j--
+            }
+            arr[i] = arr[j]
+        }
+        arr[j] = baseVal
+        subSort(arr, left, j-1)
+        subSort(arr, j+1 , right)
+    }
+    let arr = array.concat()// 防止改变原函数的索引
+    subSort(arr)
+    return arr
+}
+```
+
+### 选择排序 O(n²)
+
+```js
+const sort = (array) => {
+    let arr = array.concat()
+    for (let i = 0; i < arr.length; i++) {
+        for (let j = i + 1; j < arr.length; j++) {
+			if (arr[j] > arr[i]) { // 大的就放在第一位
+                let temp = arr[i]
+                arr[i] = arr[j]
+                arr[j] = temp
+            }
+        }
+    }
+    return arr
+}
+```
+
