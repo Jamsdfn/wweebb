@@ -2187,6 +2187,8 @@ computed: {
 }
 ```
 
+vue双向绑定的方法在2.x版本中用的是 Object.defineProterty()方法设置get、set函数，也就是在设置属性的前，修改模型中的值。在3.x版本中因为ES6中出现了proxy对象，所以用proxy作为拦截器，在对对象进行修改前把值赋值给model
+
 ## 其他
 
 ### Moment.js

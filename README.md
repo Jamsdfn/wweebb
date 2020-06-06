@@ -468,6 +468,35 @@ opacity=0，该元素隐藏起来了，但不会改变页面布局，并且，�
 visibility=hidden，该元素隐藏起来了，但不会改变页面布局，但是不会触发该元素已经绑定的事件
 display=none，把元素隐藏起来，并且会改变页面布局，可以理解成在页面中把该元素删除掉一样
 
+### 居中
+
+```css
+/* flex */
+.content {
+    display:flex;
+    justify-content:center;
+}
+.content > .item {
+    align-self:center;
+}
+/* css 法一 */
+.item {
+    display:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    /* 如果知道宽高也可以直接margin宽高的一半 */
+}
+/* css 法二 */
+.content { dispaly:table; }
+.content > .item {
+    display: table-cell;
+    vertical-align:middle;
+}
+```
+
+
+
 ## 三栏布局
 
 ### 圣杯布局
@@ -1142,9 +1171,25 @@ setInterval(replaceThing, 1000);
 
 代码片段做了一件事情：每次调用 `replaceThing` `，theThing` 得到一个包含一个大数组和一个新闭包（`someMethod`）的新对象。同时，变量 `unused` 是一个引用 `originalThing` 的闭包（先前的 `replaceThing` 又调用了 `theThing` ）。思绪混乱了吗？最重要的事情是，闭包的作用域一旦创建，它们有同样的父级作用域，作用域是共享的。`someMethod` 可以通过 `theThing` 使用，`someMethod` 与 `unused` 分享闭包作用域，尽管 `unused` 从未使用，它引用的 `originalThing` 迫使它保留在内存中（防止被回收）。当这段代码反复运行，就会看到内存占用不断上升，垃圾回收器（GC）并无法降低内存占用。本质上，闭包的链表已经创建，每一个闭包作用域携带一个指向大数组的间接的引用，造成严重的内存泄漏。
 
-## 继承
+## ES5继承
 
 > https://www.jianshu.com/p/d8d065185631
+
+这里就写个组合寄生继承
+
+```js
+function B() {
+    A.apply(this,arguments)
+}
+
+function inherit(parent, son) {
+    var proto = Object.create(parent.prototype)
+    proto.constructor = son
+    son.prototype = proto
+}
+
+inherit(A,B)
+```
 
 ## ES6
 
@@ -1229,6 +1274,25 @@ Object.assigin(obja,objb...) 把所有参数的obj合并。返回值就是合并
 ```js
 var returnObj =  Object.assign(target,source) // 合并target和source
 returnObj == target // true
+```
+
+判断对象是否为空对象
+
+```js
+const isEmpty = (obj) => {
+    for (var key in obj) return false
+    return true
+}
+
+const isEmpty = (obj) => {
+    if (JSON.stringify(obj) === "{}") return true
+    return false
+}
+
+const isEmpty = (obj) => {
+    if (Object.keys(obj).length === 0) return true
+    return false
+}
 ```
 
 ## 字符串
@@ -1995,18 +2059,52 @@ let patchs = diff(virtualDom1, virtualDom2);
 
 ### 缓存
 
-http协议中与资源缓存相关的协议头有哪些
+缓存的有点有很多
 
-- 通用首部
+- 减少了不必要的数据传输、节省带宽
+- 减少了服务器的负担，提升网站性能
+- 加快了客户端加载页面的速度
+- 用户体验友好
 
-  - Cache-Control: HTTP/1.1+控制缓存的协议头
-  - pragma：HTTP/1.1版本之前控制缓存的协议头
-- 实体首部
-- expires: 实体主题过期的时间
+但是也会出现一些问题，比如有时候服务器更新了资源客户端来不及更新。
 
-通过响应来控制缓存，在响应头中主要有cache-control、pragma、expires三个响应头，其中expires是HTTP1.0中的响应头，后面直接跟一个缓存失效日期，但是服务器和客户端之间的时钟往往不同，因此通过该响应头来控制缓存失效时间不准确，一般不用，如果要设置客户端不缓存，则设置响应头“expires: -1”即可；pragema是HTTP1.1协议为了兼容HTTP1.0+协议，用来控制不缓存，“pragma: no-cache"；cache-control是HTTP1.1中的响应头，其参数为相对的秒值，即过多少秒缓存失效，因此建议使用该响应头来控制缓存失效时间，其后可以跟的内容有no-cache、no-store、max-age、must-revalidate
-为了兼容各个协议版本，要想客户端不缓存资源，一般都添加三个响应头：cache-control: no-cache、pragma: no-cache、expires: -1
-注意：cache-control: no-cache控制缓存，客户端是会缓存资源的，只是在于原始服务器进行再验证之前不会想客户端提供资源，也就是资源新鲜度永远过期，这样比直接访问服务器节省了资源在网络中的传输成本，相比开启缓存增加了再验证的成本，性能失效介于两者之间；要想客户端缓存不从响应中拷贝资源副本，则应该使用cache-control: no-store，使用该响应头内容也可以让缓存立即删除已经拷贝的副本；而must-revalidate是服务器希望缓存能严格遵守过期信息，一般情况下类似no-cache，但在缓存与原始服务器进行新鲜度验证的时候，原始服务器不可用，这将会导致这一段时间中访问该资源会504 gateway timeout，因此建议使用no-cache
+#### 强缓存
+
+强制缓存的意思，就是在cache-control: max-age=xxx设置时间内（单位s），只要是这个文件就会从缓存中获取。因此强缓存的重点就是设置cache-control，如果设置为no-cache就是不进行强缓存。
+
+cache-control处理设置max-age外还会设置那些地方能缓存，那些地方不能缓存。
+
+- public 的话就是所有请求了这个资源的地方都缓存。
+- private 的话就是代理服务器不能缓存，只有客户端能缓存
+- no-cache 的话就是跳过强缓存、进行协商缓存
+- no-store 的话完全不缓存
+
+#### 协商缓存
+
+简单的讲就是，在获取资源前，想向服务器发送一个请求，看资源是否过期，如果过期了，就向服务器发送请求，如果没有过期就从缓存中获取
+
+response header里面的设置
+
+```bash
+etag: '5c20abbd-e2e8'
+last-modified: Mon, 24 Dec 2018 09:49:49 GMT
+```
+
+etag：每个文件的hash值，类似于webpack打包的hashchunk，每个文件有唯一的hash值
+
+last-modified：文件的修改时间，就是通过这个来判断缓存的文件有没有过期的
+
+如果没有过期，就会响应304，表示协商后文件没有改变，从缓存中获取资源
+
+如果过期了，就会响应200，因为是从服务器重新请求的资源
+
+#### 缓存的作用
+
+因为一个网站或者一个客户端不可能只有简单的几个文件，如果是这样，那么这个网站就出问题了。因为，这样的话，如果服务器的文件只改变1b的东西，整个网站的所有东西都要从下下载一遍，严重的影响了用户打开网站或者客户端的速度，影响用户体验。如果我们把资源分散开来，那么和缓存机制的配合就可以做到，当服务器更新的时候影响的东西最小化。
+
+当然也不能够为了缓存而分散的太多，因为也要考虑第一次使用客户端的用户体验，如果太多了，http请求就会变得多，打开的速度也会变慢，也会影响用户体验，因此要做取舍。
+
+用了缓存要慎用强缓存因为不可能知道下一次更新在什么时候。即使是公司的logo也是可能改的
 
 ### Session/cookie
 
@@ -2511,6 +2609,18 @@ Web Storage的目的是为了克服由cookie带来的一些限制，当数据需
 - 关闭浏览器sessionStorage 失效；
 - 页面刷新不会消除数据；
 - 只有在当前页面打开的链接，才可以访sessionStorage的数据，使用window.open打开页面和改变localtion.href方式都可以获 取到sessionStorage内部的数据;
+
+## 前端开发的优化问题
+
+- 减少 http 请求次数:CSS Sprites, JS、CSS 源码压缩、图片大小控制合适;网页Gzip，CDN 托管，data 缓存 ，图片服务器。
+- 前端模板 JS+数据，减少由于 HTML 标签导致的带宽浪费，前端用变量保存 AJAX请求结果，每次操作本地变量，不用请求，减少请求次数
+- 用 innerHTML 代替 DOM 操作，减少 DOM 操作次数，优化 javascript 性能。
+- 当需要设置的样式很多时设置 className 而不是直接操作 style。
+- 少用全局变量、缓存 DOM 节点查找的结果。减少 IO 读取操作。
+- 避免使用 CSS Expression(css 表达式)又称 Dynamic properties(动态属性)。 (7) 图片预加载，将样式表放在顶部，将脚本放在底部 加上时间戳。
+- 避免在页面的主体布局中使用 table，table 要等其中的内容完全下载之后才会显示出来，显示比 div+css 布局慢。
+
+
 
 ## 页面优化
 
