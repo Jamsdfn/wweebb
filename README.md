@@ -1226,6 +1226,14 @@ console.log(target.age, proxy.age)   // 19,          age : 19
 console.log(target.name, proxy.name) // Niko Bellic, name: Niko Bellic
 ```
 
+## ES7
+
+### async\await
+
+> https://segmentfault.com/a/1190000007535316 边城
+
+这里说的比较清楚。其实就是async修饰的方法的返回值直接用promise封装了，await用在async的代码内，因为await会阻塞代码。await是从右往左执行的，也就是await func() 的话会先调用func函数，然后看到await关键字就放入微任务队列，继续执行主任务。但是await后的任务执行顺序就有点看不懂了。
+
 ## 数组
 
 Array.prototype.sort()
@@ -2170,6 +2178,54 @@ fetch携带更多的报文信息，因此fetch比xhr更灵活
 
 关于fetch的用法https://github.com/Jamsdfn/wweebb/blob/master/note/react/React.md#fetch
 
+### HTTP
+
+HTTP协议（HyperText Transfer Protocol，超文本传输协议）是因特网上应用最为广泛的一种网络传输协议，所有的WWW文件都必须遵守这个标准。
+
+HTTP是一个基于TCP/IP通信协议来传递数据（HTML 文件, 图片文件, 查询结果等）。默认端口为80
+
+- HTTP是无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。
+- HTTP是媒体独立的：这意味着，只要客户端和服务器知道如何处理的数据内容，任何类型的数据都可以通过HTTP发送。客户端以及服务器指定使用适合的MIME-type内容类型。
+- HTTP是无状态：HTTP协议是无状态协议。无状态是指协议对于事务处理没有记忆能力。缺少状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。
+
+#### HTTP消息结构
+
+**客户端**
+
+![](https://www.runoob.com/wp-content/uploads/2013/11/2012072810301161.png)
+
+由请求行、请求头、空行、请求体体构成。上图就是客户端请求的消息结构和服务器响应的信息的区别主要在于请求行。
+
+**服务器**
+
+![](https://www.runoob.com/wp-content/uploads/2013/11/httpmessage.jpg)
+
+请求行和客户端写消息明显不同。由状态行、消息包头、空行、响应体构成
+
+#### 请求方法
+
+HTTP1.0只有三种请求方法：GET、POST、HEAD
+
+HTTP1.1增加了六种情趣方法：PATCH、TRACE、CONNECT、DELETE、PUT、OPTIONS
+
+|      | 方法    | 描述                                                         |
+| :--- | :------ | :----------------------------------------------------------- |
+| 1    | GET     | 请求指定的页面信息，并返回实体主体。                         |
+| 2    | HEAD    | 类似于 GET 请求，只不过返回的响应中没有具体的内容，用于获取报头 |
+| 3    | POST    | 向指定资源提交数据进行处理请求（例如提交表单或者上传文件）。数据被包含在请求体中。POST 请求可能会导致新的资源的建立和/或已有资源的修改。 |
+| 4    | PUT     | 从客户端向服务器传送的数据取代指定的文档的内容。             |
+| 5    | DELETE  | 请求服务器删除指定的页面。                                   |
+| 6    | CONNECT | HTTP/1.1 协议中预留给能够将连接改为管道方式的代理服务器。    |
+| 7    | OPTIONS | 允许客户端查看服务器的性能。                                 |
+| 8    | TRACE   | 回显服务器收到的请求，主要用于测试或诊断。                   |
+| 9    | PATCH   | 是对 PUT 方法的补充，用来对已知资源进行局部更新 。           |
+
+### HTTPS
+
+## HTTPS通信过程
+
+**HTTPS协议 = HTTP协议 + SSL/TLS协议**，在HTTPS数据传输的过程中，需要用SSL/TLS对数据进行加密和解密，需要用HTTP对加密后的数据进行传输，由此可以看出HTTPS是由HTTP和SSL/TLS一起合作完成的。默认端口443
+
 ## 跨域
 
 > https://segmentfault.com/a/1190000011145364
@@ -2619,6 +2675,14 @@ Web Storage的目的是为了克服由cookie带来的一些限制，当数据需
 - 少用全局变量、缓存 DOM 节点查找的结果。减少 IO 读取操作。
 - 避免使用 CSS Expression(css 表达式)又称 Dynamic properties(动态属性)。 (7) 图片预加载，将样式表放在顶部，将脚本放在底部 加上时间戳。
 - 避免在页面的主体布局中使用 table，table 要等其中的内容完全下载之后才会显示出来，显示比 div+css 布局慢。
+
+### 浏览器渲染的过程
+
+- DOM Tree：浏览器将HTML解析成树形的数据结构。
+- CSS Rule Tree：浏览器将CSS解析成树形的数据结构。
+- Render Tree: DOM和CSSOM合并后生成Render Tree。
+- layout: 有了Render Tree，浏览器已经能知道网页中有哪些节点、各个节点的CSS定义以及他们的从属关系，从而去计算出每个节点在屏幕中的位置。
+- painting: 按照算出来的规则，通过显卡，把内容画到屏幕上。
 
 
 

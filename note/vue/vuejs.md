@@ -1410,7 +1410,16 @@ Vue.use(plugin)是 vue 用来使用插件的全局 API
 <style></style>
 ```
 
+### vue生命周期
 
+- **beforeCreate**
+- **created**
+- **beforeMount**
+- **mounted**
+- **beforeUpdate**
+- **updated**
+- **beforeDestroy**
+- **destroyed**
 
 ### Vue-router
 
